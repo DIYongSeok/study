@@ -80,12 +80,25 @@
 - His words caused a lot of hurt.
 - He was badly hurt in the accident.
 
-> when, even though (생략) 방법
-
 > before your statement
 - To be honest,
 - As far as I know,
 - When it comes to ~,
 - It has something to do with,
 
+> whether (if와 비슷, 두 가지 이상의 선택지)
+- She didn't know whether to stay or leave
+- I don't know whether he will come or not.
+- Whether you like it or not, you have to do it (네가 좋아하든 말든, 그것을 해야 한다.)
+
+> increase, decrease (명사도 가능)
+- The company plans to increase its production next year.
+- Her responsibilities at work have increased over the years.
+- The government aims to decrease unemployment rates.
+- The temperature will decrease significantly at night.
+
+> when, even though (생략) 방법
+
 > Assume
+
+> rather than 

@@ -25,3 +25,11 @@
 0 I attached a straw to the hose and blew hard to clear the clogged hose.
 
 > university
+- I am a seventh-year university student.
+- I'm in my seventh year of university.
+- I have attended university for 15 semesters so far.
+- I am currently an undergraduate, but I am considering whether to pursue a master's and doctorate in graduate school.
+- I have just graduated from university
+
+> trip
+- They also have a traditional side dish of salted and fermented vegetables called Kimchi which is served at nearly every meal.
