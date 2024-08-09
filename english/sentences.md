@@ -97,8 +97,22 @@
 - The government aims to decrease unemployment rates.
 - The temperature will decrease significantly at night.
 
+> come up with (생각해내다)
+- I couldn't come up with an answer to his question
+- The team came up with several innovative ideas.
+
+> go through(경험하다, 조사하다, 해내다, 통과하다)
+- He went through a tough time after his divorce.
+- I need to go through these documents before the meeting
+- They went through the entire training program
+- We went through the tunnel to reach the other side
+
+> take charge of (맡다, 책임지다)
+- Is anyone willing to take charge of this project?
+
 > when, even though (생략) 방법
 
 > Assume
 
 > rather than 
+

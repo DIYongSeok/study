@@ -23,3 +23,18 @@
 - 실질금리 = 명목금리 - 물가상승률
 
 ![image](https://github.com/user-attachments/assets/fb44b02b-3515-4856-ba66-16059278a8cf)
+
+> 5. 실업률
+- 실업 : 15세 이상 중 일할 의사와 일할 능력은 있지만, 경제 활동을 안하고 있는 상태.
+
+![image](https://github.com/user-attachments/assets/8c5d8cc1-8f23-4739-80a6-c5989213a9df)
+
+> 6. 확장실업률
+- 기존 실업률의 한계를 보완한다. (잠재경제활동인구와 알바생들도 추가)
+
+![image](https://github.com/user-attachments/assets/fc2a33af-a696-47a1-803f-f5088ddba5bb)
+
+
+> 7. 고용률
+- 전체 15세 이상 인구에서 취업자를 나눈 백분율.
+- 즉, 분모에 비경제활동인구도 들어간다.

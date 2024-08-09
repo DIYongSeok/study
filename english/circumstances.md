@@ -12,6 +12,13 @@
 - The item is in front of the window.
 - It is above the fireplace.
 
+> university
+- I am a seventh-year university student.
+- I'm in my seventh year of university.
+- I have attended university for 15 semesters so far.
+- I am currently an undergraduate, but I am considering whether to pursue a master's and doctorate in graduate school.
+- I have just graduated from university
+
 > back hurt
 - I hurt my back while moving the refrigerator.
 - A disc has slightly protruded, causing inflammation in the surrounding area.
@@ -22,14 +29,21 @@
 > water leak from an air conditioner.
 - There is a hose that drains the accumulated water from the air conditioner, but it got clogged, causing water to leak from the air conditioner
 - I found a disassembly guide online and tried taking apart the air conditioner.
-0 I attached a straw to the hose and blew hard to clear the clogged hose.
+- I attached a straw to the hose and blew hard to clear the clogged hose.
 
-> university
-- I am a seventh-year university student.
-- I'm in my seventh year of university.
-- I have attended university for 15 semesters so far.
-- I am currently an undergraduate, but I am considering whether to pursue a master's and doctorate in graduate school.
-- I have just graduated from university
+> trip while storm
+- It started pouring rain as soon as we arrived.
+- There was a beach near the accommodation
+- The water has risen up to waist level.
+- The water rose up to my ankles.
+- I packed my things and left the accommodation as if escaping.
+- I didn't want to let my car be submerged in water.
 
-> trip
-- They also have a traditional side dish of salted and fermented vegetables called Kimchi which is served at nearly every meal.
+> language exchange cafe
+- Words would be enough, so why go to the trouble of acting..?
+
+> running competition
+- At that time, 'hit and run' was a trend among elementary school students.
+- Someone recommended me to be a representative in the running competition
+- I was chosen to represent my class in the running competition.
+- But I finished last in the running race
