@@ -110,6 +110,19 @@
 > take charge of (맡다, 책임지다)
 - Is anyone willing to take charge of this project?
 
+> as ~ as
+- There are as many people who speak English better than me as there are in the United States.
+- He sings as beautifully as he plays the piano.
+- He is as excited as he was on his first day at work.
+- He isn't as confident as he was before the accident.
+
+> have a hard time
+- I heard many people had a hard time working with him.
+
+> it turns out
+
+> leave
+
 > when, even though (생략) 방법
 
 > Assume

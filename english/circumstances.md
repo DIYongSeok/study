@@ -47,3 +47,8 @@
 - Someone recommended me to be a representative in the running competition
 - I was chosen to represent my class in the running competition.
 - But I finished last in the running race
+
+> engllish
+- There are as many people who can speak English better than me as there are in the U.S.
+- About a billion people are able to speak better than I do.
+- Excessive comparisons are meaningless
