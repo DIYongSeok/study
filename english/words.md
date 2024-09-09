@@ -2,7 +2,7 @@
 
 > dissipate : 소멸시키다
 
-> formented : 발효된
+> fermented : 발효된
 
 > admire : 감탄하다
 
