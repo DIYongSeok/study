@@ -169,6 +169,10 @@
 - We should walk rather than drive.
 - He decided to relax at home rather than go to the party.
 
+> sleep, Go to bed
+- I need to sleep early tonight.
+- I usually go to bed around 11 PM.
+
 > when, even though (생략) 방법
 
 
