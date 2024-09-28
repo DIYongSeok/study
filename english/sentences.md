@@ -173,6 +173,15 @@
 - I need to sleep early tonight.
 - I usually go to bed around 11 PM.
 
+> 운동 - exercise(명사/동사 가능)
+- I try to exercise every day.
+- I did a great workout this morning.
+
+> prepare
+- We need to prepare for the meeting. (~을 준비하다, ~을 위해 준비하다.)
+- I need to prepare dinner. (무엇을 준비하다, 준비시키다.)
+- I am preparing to leave.
+
 > when, even though (생략) 방법
 
 
