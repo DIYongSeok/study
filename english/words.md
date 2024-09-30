@@ -9,3 +9,5 @@
 > contradict : 부정하다.
 
 > genuinely : 진심으로 
+
+> dictate : 명령하다.

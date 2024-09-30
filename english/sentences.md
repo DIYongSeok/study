@@ -182,6 +182,11 @@
 - I need to prepare dinner. (무엇을 준비하다, 준비시키다.)
 - I am preparing to leave.
 
+> appreciate
+- I really appreciate your help.
+- I appreciate you taking the time to meet with me.
+- I appreciate you for your patience.
+
 > when, even though (생략) 방법
 
 
