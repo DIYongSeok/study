@@ -187,6 +187,15 @@
 - I appreciate you taking the time to meet with me.
 - I appreciate you for your patience.
 
+> prefer
+- I prefer coffee to tea. (나는 차보다 커피를 더 좋아해.)
+- I prefer to stay home on weekends. (나는 주말에 집에 있는 것을 더 좋아해.)
+- They prefer eating out to cooking at home. (그들은 집에서 요리하는 것보다 외식하는 것을 더 선호해.)
+
+> stress(형용사, 명사)
+- She has been under a lot of stress lately. (그녀는 최근에 많은 스트레스를 받고 있어.)
+- I'm feeling really stressed about the upcoming deadline. (다가오는 마감 기한 때문에 정말 스트레스를 받고 있어.)
+
 > when, even though (생략) 방법
 
 
