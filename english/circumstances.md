@@ -52,3 +52,9 @@
 - There are as many people who can speak English better than me as there are in the U.S.
 - About a billion people are able to speak better than I do.
 - Excessive comparisons are meaningless
+
+> EVENTEASI
+- I've been making a site in which people are able to prepare everything for an academic event.
+- you know, the workers in the institution of my university have to contact design, catering and even photograph stores for preparation.
+- So I want to let them see the stores in one place on the site.
+- My final purpose is to make it a platform so that everyone can prepare an academic event by just clicking a few buttons.
