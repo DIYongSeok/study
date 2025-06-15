@@ -196,6 +196,13 @@
 - She has been under a lot of stress lately. (그녀는 최근에 많은 스트레스를 받고 있어.)
 - I'm feeling really stressed about the upcoming deadline. (다가오는 마감 기한 때문에 정말 스트레스를 받고 있어.)
 
+> be out of (다 떨어지다)
+- We're out of coffee.(커피가 다 떨어지다.)
+- run out (syn. be out of, deplete)
+    + We ran out of milk.(우유가 다 떨어졌어.)
+- lack (부족하다, 처음부터 부족한 상태)
+    + She lacks experience. (그녀는 경험이 부족하다)
+
 > when, even though (생략) 방법
 
 
