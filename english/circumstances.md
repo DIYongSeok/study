@@ -58,3 +58,13 @@
 - you know, the workers in the institution of my university have to contact design, catering and even photograph stores for preparation.
 - So I want to let them see the stores in one place on the site.
 - My final purpose is to make it a platform so that everyone can prepare an academic event by just clicking a few buttons.
+
+> tutoring
+- I received a complaint from a parent during tutoring.
+- The parent blamed me for not informing them before scolding their child.
+
+> chickenpox
+- I had chickenpox before, and it left some scars on my face. I've been getting treatment for them lately.
+- The treatment process is not only very painful, but also expensive.
+- Since chickenpox is contagious, I stayed home for a week to avoid spreading it to others.
+

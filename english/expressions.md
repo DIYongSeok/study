@@ -1,4 +1,4 @@
-### sentences I learn
+### expressions I learn
 > tend to
 - There tends to be a lot of traffic in New York City.
 - Apartments in this area tend to be a bit pricey, but we can find something if we keep looking.
@@ -46,9 +46,14 @@
 - They walked along the river.
 - Can I come along with you? (나도 함께 가도 될까?)
 
-> got to
+> have got to (~해야 한다)
+- I’ve got to finish my homework tonight.
+- We’ve got to leave now or we’ll be late.
+- Gotta go! (→ I’ve got to go.)
+    + ✅ 회화에서는 보통 "have" 생략하고 그냥 "got to"처럼 말하기도 함
+
+> get to (~할 기회가 있다)
 - I got to meet my favorite author at the book signing event. (책 사인회에서 내가 가장 좋아하는 작가를 만날 기회가 있었다.)
-- I’ve got to go now. (나 지금 가야 해.)
 
 > afford
 - he can't afford to rent an apartment.
@@ -127,24 +132,6 @@
 - (어떤 상태로) 두다
     + The accident left him injured.
 
-> Conditional (가정법)
-
-- 가정법 현재(보통 사실이나 일반적인 진리)
-    + If you heat water to 100°C, it boils.
-
-- 가정법 미래(미래에 일어날 가능성이 높은 상황)
-    + If it rains tomorrow, we will cancel the picnic.
-
-- 가정법 과거(현재 또는 미래에 일어날 가능성이 희박한 상황)
-    + If I were rich, I would travel the world.
-    + If she had more time, she could learn a new language.
-
-- 가정법 과거완료 (이미 일어난 일에 대한 가정)
-    + If I had known about the party, I would have gone.
-
-- 혼합 가정법 (과거의 상황이 현재에 미치는 영향)
-    + If I had studied harder, I would be a doctor now.
-
 > adapt (적응하다, 조정하다)
 - She quickly adapted to the new environment. (새로운 환경, 상황, 조건 등에 적응)
 - They adapted the curriculum to meet the needs of the students.(특정 목적에 맞게 무언가를 변경하거나 수정)
@@ -161,9 +148,6 @@
     + I didn’t like the movie. It was interesting, though.
     + It was a hard day. I had fun, though.
 
-> it turns out
-- We were worried about the test, but it turns out it wasn’t that hard
-- I thought the meeting was canceled, but it turns out it’s still happening.
 
 > rather than 
 - We should walk rather than drive.
@@ -176,6 +160,7 @@
 > 운동 - exercise(명사/동사 가능)
 - I try to exercise every day.
 - I did a great workout this morning.
+- I usually work out.
 
 > prepare
 - We need to prepare for the meeting. (~을 준비하다, ~을 위해 준비하다.)
@@ -195,6 +180,8 @@
 > stress(형용사, 명사)
 - She has been under a lot of stress lately. (그녀는 최근에 많은 스트레스를 받고 있어.)
 - I'm feeling really stressed about the upcoming deadline. (다가오는 마감 기한 때문에 정말 스트레스를 받고 있어.)
+- This project is stressing me out.
+- I’m stressed out.(나 스트레스 받아.)
 
 > be out of (다 떨어지다)
 - We're out of coffee.(커피가 다 떨어지다.)
@@ -203,7 +190,53 @@
 - lack (부족하다, 처음부터 부족한 상태)
     + She lacks experience. (그녀는 경험이 부족하다)
 
-> when, even though (생략) 방법
+> end up, result in, turn out
+- end up (결국 ~에 이르다)
+    + We got lost and ended up walking for hours.
+- result in (A result in B - A가 B를 초래하다)
+    + The new policy resulted in higher costs.
+- turn out (~임이 드러나다)
+    + The rumor turned out to be true.
+    + It turned out that he was right.
+    + The weather turned out better than expected.
+    + We were worried about the test, but it turns out it wasn’t that hard
+    + I thought the meeting was canceled, but it turns out it’s still happening.
 
+> inform
+- She informed me of the schedule change.
+- I informed him about the new rules.
+- 👉 of / about 둘 다 쓰이지만 → of가 더 격식 있고 딱딱함.
+ 
+> I can't help but (나는 ~할 수밖에 없다)
+- I can’t help but laugh. (웃지 않을 수 없었다)
+- I can’t help laughing.
+- 👉둘 다 자연스럽고 많이 써요.
+    + ✅ can't help but + 동사원형
+    + ✅ can't help + 동사ing
 
+> marry
+- I want to marry him.
+(나는 그와 결혼하고 싶어.)
+- She is married to a lawyer.
+(그녀는 변호사와 결혼했다.)
+- My parents got married in 1990.
+(우리 부모님은 1990년에 결혼하셨다.)
 
+> 형제, 자매, 조카, 사촌, 삼촌
+- sibling : 형재 자매
+
+![image](https://mblogthumb-phinf.pstatic.net/MjAyMjAxMjVfMjMy/MDAxNjQzMDk2NTk3Nzk4.0ciD3jQSCkQYHFGYsVdXvNMQoTc48utywu2RsIHWzicg.rdz5Uw1M5cNpKCIqVKnhOfoPx10lBTk_0igj0DblfBwg.JPEG.smart_yoons/06_%EA%B0%80%EC%A1%B1%EA%B4%80%EA%B3%84%EB%8F%84_%EC%88%98%EC%A0%95.jpg?type=w800)
+
+> time
+- I think I'll be there in 3 minutes.
+- on time
+    + 정시에 / 약속된 시간에 딱 맞게
+    + I left home early and got to the station on time. (정시에 도착함 → 계획대로 잘 도착)
+- in time
+    + 약간 여유가 있거나 막차, 마감 전에 간신히 세이브하는 느낌
+    + I almost missed the train, but I arrived just in time. (간신히 제시간에 도착함 → 위기 탈출)
+
+> If it hadn’t been for(~가 아니었더라면)
+- If it hadn’t been for your help, I wouldn’t have done it.
+
+> fun, funny
