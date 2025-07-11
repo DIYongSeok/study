@@ -2,6 +2,13 @@
 - I'm 29 years old.
 - I've been running my own business which is related to video, providing online streaming services for academic events.
 
+> university
+- I am a seventh-year university student.
+- I'm in my seventh year of university.
+- I have attended university for 15 semesters so far.
+- I am currently an undergraduate, but I am considering whether to pursue a master's and doctorate in graduate school.
+- I have just graduated from university
+
 > objects-explanation
 - The object is located in the center of the room
 - You can find it on the left side of the table
@@ -11,13 +18,6 @@
 - You will see it behind the door.
 - The item is in front of the window.
 - It is above the fireplace.
-
-> university
-- I am a seventh-year university student.
-- I'm in my seventh year of university.
-- I have attended university for 15 semesters so far.
-- I am currently an undergraduate, but I am considering whether to pursue a master's and doctorate in graduate school.
-- I have just graduated from university
 
 > back hurt
 - I hurt my back while moving the refrigerator.
@@ -48,7 +48,7 @@
 - I was chosen to represent my class in the running competition.
 - But I finished last in the running race
 
-> engllish
+> english
 - There are as many people who can speak English better than me as there are in the U.S.
 - About a billion people are able to speak better than I do.
 - Excessive comparisons are meaningless
@@ -67,4 +67,7 @@
 - I had chickenpox before, and it left some scars on my face. I've been getting treatment for them lately.
 - The treatment process is not only very painful, but also expensive.
 - Since chickenpox is contagious, I stayed home for a week to avoid spreading it to others.
+- When you get chickenpox, the virus causes blisters, and after they burst, the wounds don’t heal well.
+- As a result, the scars often heal as sunken marks on the skin.
+- To treat them, you have to deliberately injure the area again to stimulate new skin growth and help the surface rise back up.
 

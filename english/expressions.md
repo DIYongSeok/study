@@ -3,9 +3,10 @@
 - There tends to be a lot of traffic in New York City.
 - Apartments in this area tend to be a bit pricey, but we can find something if we keep looking.
 
-> get used to
+> get used to, be used to
 - It took me a while to get used to the noise in the city(도시의 소음에 익숙해지는데 시간이 좀 걸렸다)
 - You will get used to living alone
+- At first, it was quite a burden for me, but now I’ve gotten used to it.
 
 > used to
 - I used to spend time with my friends
@@ -222,11 +223,6 @@
 - My parents got married in 1990.
 (우리 부모님은 1990년에 결혼하셨다.)
 
-> 형제, 자매, 조카, 사촌, 삼촌
-- sibling : 형재 자매
-
-![image](https://mblogthumb-phinf.pstatic.net/MjAyMjAxMjVfMjMy/MDAxNjQzMDk2NTk3Nzk4.0ciD3jQSCkQYHFGYsVdXvNMQoTc48utywu2RsIHWzicg.rdz5Uw1M5cNpKCIqVKnhOfoPx10lBTk_0igj0DblfBwg.JPEG.smart_yoons/06_%EA%B0%80%EC%A1%B1%EA%B4%80%EA%B3%84%EB%8F%84_%EC%88%98%EC%A0%95.jpg?type=w800)
-
 > time
 - I think I'll be there in 3 minutes.
 - on time
@@ -239,4 +235,40 @@
 > If it hadn’t been for(~가 아니었더라면)
 - If it hadn’t been for your help, I wouldn’t have done it.
 
-> fun, funny
+> fun(즐거운), funny(웃긴)
+- The movie was fun.(그 영화 재미있었어)
+- The movie was funny. (그 영화 웃겼어)
+
+> worry, be worried
+- I worry about my future.
+(나는 내 미래를 걱정한다.)
+- I am worried about my future.
+(나는 내 미래가 걱정된다.)
+
+> so that (~하기 위해서, ~한 결과로)
+- I studied hard so that I could pass the test.
+(시험을 통과할 수 있도록 열심히 공부했다.)
+- The box was so heavy, that I couldn’t lift it.
+(그 상자는 너무 무거워서 나는 들 수 없었다.)
+
+> suppose
+- I suppose you're right.
+(네 말이 맞는 것 같아.)
+- Suppose you won the lottery. What would you do?
+(네가 복권에 당첨됐다고 가정해봐. 뭘 할 거야?)
+    - suppose (현재): 추측, 생각
+    - suppose + 주어 + 과거: 가정 표현
+- be supposed to (~하기로 되어 있다, ~해야 한다, ~할 예정이었다)
+    - 우리말로는 “~하는 게 맞는 건데…” 라는 뉘앙스를 가질 때 자주 씀
+    - You’re supposed to wear a uniform at school.
+    (학교에서는 교복을 입어야 해.)
+    - We’re supposed to start at 2 p.m.
+    (우리는 2시에 시작하기로 되어 있어.)
+
+> worth
+- This book is worth reading.
+(이 책은 읽을 만한 가치가 있어.)
+- It’s not worth the money.
+(그건 돈 값어치가 없어.)
+- That movie was worth watching.
+(그 영화는 볼 가치가 있었다.)

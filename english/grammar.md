@@ -35,3 +35,49 @@
 
 - 혼합 가정법 (과거의 상황이 현재에 미치는 영향)
     + If I had studied harder, I would be a doctor now.
+
+> than, as
+- than
+
+    | 문장                             | 뜻    |
+    | ------------------------------ | ---- |
+    | He is smarter than me.         | (회화) |
+    | He is smarter than I am.       | (정확) |
+    | She works harder than him.     | (회화) |
+    | She works harder than he does. | (정확) |
+
+- as
+
+    | 패턴                      | 예문                                 |
+    | ----------------------- | ---------------------------------- |
+    | as + 형용사 + as + 명사      | She is **as tall as** her brother. |
+    | as + 형용사 + as + 주어 + 동사 | He is **as smart as** I am.        |
+    
+    + Stay as long as you like (to stay).
+    + Take as many as you want (to take).
+
+> neither, either
+- neither = 둘 다 아니다 (부정)
+- either = 둘 중 하나 / 또는 둘 다 아니라는 의미로도 쓰임
+
+| 단어                    | 뜻              | 예문                                       | 해석                |
+| --------------------- | -------------- | ---------------------------------------- | ----------------- |
+| **neither A nor B**   | A도 B도 아니다      | Neither Tom nor Jane came.               | 탐도 제인도 오지 않았다.    |
+| **neither of + 복수명사** | 둘 중 누구도 \~ 아니다 | Neither of them is correct.              | 둘 다 틀렸다.          |
+| **either A or B**     | A 또는 B         | Either you or I have to go.              | 너나 나 중 하나는 가야 해.  |
+| **either of + 복수명사**  | 둘 중 하나         | Either of them is fine.                  | 둘 중 아무거나 괜찮아.     |
+| **(not) either**      | \~도 아니다 (부분부정) | I don't like it, and she doesn't either. | 나도 안 좋아해. 그녀도 그래. |
+
+> time
+
+
+| Time of Day  | Time Span     |
+|--------------|---------------|
+| Dawn         | 4:00 – 8:00   |
+| Morning      | 8:00 – 10:00  |
+| Noon         | 10:00 – 2:00  |
+| Afternoon    | 2:00 – 4:00   |
+| Sunset       | 4:00 – 6:00   |
+| Evening      | 6:00 – 10:00  |
+| Night        | 10:00 – 12:00 |
+| Midnight     | 12:00 – 4:00  | 
