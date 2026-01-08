@@ -274,3 +274,24 @@
 > 테이퍼링
 - 양적완화정책 시행시, **서서히** 시장에 푸는 돈을 줄이는 것
 - 국책 구입 중단 => 기준금리 인상
+
+> 금본위제, 브레튼우즈체제, 페트로달러시스템
+- 금본위제 (Gold Standard) : A system where the value of a country’s currency is directly linked to gold.
+- 브레튼우즈 체제 (Bretton Woods System) : A post-WWII international monetary system created in 1944.
+    - Only the U.S. dollar was convertible into gold (at $35/oz).
+- 페트로달러 시스템 (Petrodollar System) : An unofficial system where oil is traded globally in U.S. dollars.
+    - Oil would be priced and sold in dollars.
+    - In return, the U.S. provided military and political support.
+
+> 중앙은행 (Central Bank)
+- A government-controlled institution that manages a country’s money and financial system.
+- Main Role:
+    1) Issue Currency : Only the central bank can legally print the nation’s money.
+    2) Control Inflation & Interest Rates
+    3) Lender of Last Resort : Helps banks in crisis to avoid financial collapse.
+    4) Regulate Banks : Oversees commercial banks to keep the financial system safe.
+    5) Manage Foreign Reserves & Exchange Rates : Keeps national currency stable in global markets.
+
+> Big Mac Index(빅맥지수)
+- The Big Mac Index is used to compare the value of currencies between two countries by estimating the price of a Big Mac in each country.
+- It is often used as an informal measure to determine whether a currency is overvalued or undervalued compared to the US dollar.

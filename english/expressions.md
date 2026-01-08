@@ -145,12 +145,13 @@
 - 접속사 (비록~일지라도)
     + Though it was raining, we still went hiking.
     + He passed the exam, though he didn’t study much.
-- 부사
+- 부사 (그래도)
     + I didn’t like the movie. It was interesting, though.
     + It was a hard day. I had fun, though.
 
 
-> rather than 
+> rather than (~하기 보단, 오히려)
+- We should rather walk than drive.
 - We should walk rather than drive.
 - He decided to relax at home rather than go to the party.
 
@@ -178,7 +179,7 @@
 - I prefer to stay home on weekends. (나는 주말에 집에 있는 것을 더 좋아해.)
 - They prefer eating out to cooking at home. (그들은 집에서 요리하는 것보다 외식하는 것을 더 선호해.)
 
-> stress(형용사, 명사)
+> stress(명사, 동사)
 - She has been under a lot of stress lately. (그녀는 최근에 많은 스트레스를 받고 있어.)
 - I'm feeling really stressed about the upcoming deadline. (다가오는 마감 기한 때문에 정말 스트레스를 받고 있어.)
 - This project is stressing me out.

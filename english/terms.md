@@ -63,3 +63,21 @@
 | 자궁           | uterus          |
 | 난소           | ovary / ovaries |
 | 고환           | testicle(s)     |
+
+
+> position 
+
+| Category | Preposition | Usage / Meaning | Example |
+| :--- | :--- | :--- | :--- |
+| **1. Side-by-Side** | **Next to** | The most common way to say something is at the side of something else. | "I sit **next to** my best friend." |
+| | **Beside** | Exactly the same meaning as "next to," but slightly more formal. | "Put the keys **beside** the lamp." |
+| | **Between** | When an object is in the middle of two other objects. | "The bank is **between** the post office and the cafe." |
+| **2. Front & Back** | **In front of** | When something is further forward than something else. *(Note: Do not confuse with "Opposite")* | "There is a tree **in front of** my house." |
+| | **Behind** | When something is at the back of something else. | "The cat is hiding **behind** the sofa." |
+| **3. Vertical** | **Over** | Directly above, often covering or touching. | "Put a blanket **over** him."<br>"The plane flew **over** the city." |
+| | **Above** | Higher than, but not necessarily directly over or touching. | "The clock is on the wall **above** the whiteboard." |
+| | **Under** | Directly below, often covered by the object. | "Your shoes are **under** the bed." |
+| | **Below** | Lower than, similar to "above" (often used for measurements or levels). | "The temperature is **below** freezing." |
+| **4. Distance** | **Near / Close to** | A short distance away. | "Is there a subway station **near** here?" |
+| | **Far from** | A long distance away. | "My house is **far from** the school." |
+| **5. Facing** | **Opposite / Across from** | Used when two things are facing each other, usually with a street or table in the middle. | "The bakery is **across from** the school."<br>"She sat **opposite** me at dinner." |
