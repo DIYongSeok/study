@@ -9,16 +9,6 @@
 - I am currently an undergraduate, but I am considering whether to pursue a master's and doctorate in graduate school.
 - I have just graduated from university
 
-> objects-explanation
-- The object is located in the center of the room
-- You can find it on the left side of the table
-- It is placed next to the bookshelf.
-- The item is positioned between the two chairs
-- The object is on top of the desk.
-- You will see it behind the door.
-- The item is in front of the window.
-- It is above the fireplace.
-
 > back hurt
 - I hurt my back while moving the refrigerator.
 - A disc has slightly protruded, causing inflammation in the surrounding area.
