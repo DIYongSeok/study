@@ -68,16 +68,4 @@
 | **either of + 복수명사**  | 둘 중 하나         | Either of them is fine.                  | 둘 중 아무거나 괜찮아.     |
 | **(not) either**      | \~도 아니다 (부분부정) | I don't like it, and she doesn't either. | 나도 안 좋아해. 그녀도 그래. |
 
-> time
 
-
-| Time of Day  | Time Span     |
-|--------------|---------------|
-| Dawn         | 4:00 – 8:00   |
-| Morning      | 8:00 – 10:00  |
-| Noon         | 10:00 – 2:00  |
-| Afternoon    | 2:00 – 4:00   |
-| Sunset       | 4:00 – 6:00   |
-| Evening      | 6:00 – 10:00  |
-| Night        | 10:00 – 12:00 |
-| Midnight     | 12:00 – 4:00  | 

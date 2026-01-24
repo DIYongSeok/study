@@ -81,3 +81,16 @@
 | **4. Distance** | **Near / Close to** | A short distance away. | "Is there a subway station **near** here?" |
 | | **Far from** | A long distance away. | "My house is **far from** the school." |
 | **5. Facing** | **Opposite / Across from** | Used when two things are facing each other, usually with a street or table in the middle. | "The bakery is **across from** the school."<br>"She sat **opposite** me at dinner." |
+
+> time
+
+| Time of Day  | Time Span     |
+|--------------|---------------|
+| Dawn         | 4:00 – 8:00   |
+| Morning      | 8:00 – 10:00  |
+| Noon         | 10:00 – 2:00  |
+| Afternoon    | 2:00 – 4:00   |
+| Sunset       | 4:00 – 6:00   |
+| Evening      | 6:00 – 10:00  |
+| Night        | 10:00 – 12:00 |
+| Midnight     | 12:00 – 4:00  | 

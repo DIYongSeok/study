@@ -1,6 +1,7 @@
 > self-introduction
-- I'm 29 years old.
+- I'm 31 years old.
 - I've been running my own business which is related to video, providing online streaming services for academic events.
+- I entered graduate school and am pursuing a combined master's and doctoral program.
 
 > university
 - I am a seventh-year university student.

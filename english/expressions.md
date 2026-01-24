@@ -224,14 +224,14 @@
 - My parents got married in 1990.
 (우리 부모님은 1990년에 결혼하셨다.)
 
-> time
-- I think I'll be there in 3 minutes.
-- on time
-    + 정시에 / 약속된 시간에 딱 맞게
-    + I left home early and got to the station on time. (정시에 도착함 → 계획대로 잘 도착)
-- in time
-    + 약간 여유가 있거나 막차, 마감 전에 간신히 세이브하는 느낌
+> time (시간 관련 전치사)
+- in + 시간: ~ 후에 (지금으로부터 해당 시간이 경과한 시점)
+    + I think I'll be there in 3 minutes. (3분 뒤에 도착할 것 같아.)
+- on time: 정시에 (계획된 시각 정각에, 늦지 않게)
+    + I left home early and got to the station on time. (정시에 도착함 → 계획대로 도착)
+- in time: 제시간에 / 늦지 않게 (마감/사건 직전에 간신히 혹은 여유 있게)
     + I almost missed the train, but I arrived just in time. (간신히 제시간에 도착함 → 위기 탈출)
+    + We arrived in time for the movie. (영화 시작 전에 늦지 않게 도착했다.)
 
 > If it hadn’t been for(~가 아니었더라면)
 - If it hadn’t been for your help, I wouldn’t have done it.
@@ -273,3 +273,15 @@
 (그건 돈 값어치가 없어.)
 - That movie was worth watching.
 (그 영화는 볼 가치가 있었다.)
+
+> cost / charge / pay (비용과 지불)
+- This laptop costs $1,000. (이 노트북은 1,000달러이다 - 사물이 주어)
+- The mechanic charged me $50 for the repair. (수리공이 수리비로 50달러를 청구했다 - 판매자가 주어)
+- I paid $50 for the repair. (나는 수리비로 50달러를 냈다 - 구매자가 주어)
+- ✅ Tip: 'Cost'는 물건의 가격, 'Charge'는 서비스 요금 청구, 'Pay'는 실제 돈을 내는 행위에 집중함.
+
+> fee / fare / fine / rent (다양한 요금의 명칭)
+- I had to pay a tuition fee. (수업료/수수료를 내야 했다.)
+- The bus fare just went up. (버스 요금이 방금 올랐다 - 교통수단 요금)
+- I got a parking fine yesterday. (어제 주차 벌금을 받았다.)
+- My rent is due on the first of the month. (월세는 매달 1일에 내야 한다.)
