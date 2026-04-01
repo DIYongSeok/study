@@ -1,355 +1,455 @@
-### 1. Flexible Arguments (`*args` & `**kwargs`)
+# Python Advanced
 
-#### `*args` (Positional Arguments)
+## Table of Contents
 
-Allows a function to accept any number of positional arguments, storing them as a **tuple**.
+1. [Concise Syntax](#1-concise-syntax)
+   - 1.1 [Short Conditionals](#11-short-conditionals)
+   - 1.2 [Short Loops](#12-short-loops)
+   - 1.3 [Type Hints](#13-type-hints)
+2. [Flexible Function Arguments](#2-flexible-function-arguments)
+   - 2.1 [`*args` — Variable Positional Arguments](#21-args--variable-positional-arguments)
+   - 2.2 [`**kwargs` — Variable Keyword Arguments](#22-kwargs--variable-keyword-arguments)
+3. [Lambda & Functional Tools](#3-lambda--functional-tools)
+   - 3.1 [Lambda Functions](#31-lambda-functions)
+   - 3.2 [`map`, `filter`, `sorted`](#32-map-filter-sorted)
+4. [Generators](#4-generators)
+5. [Decorators](#5-decorators)
+6. [Magic Methods (Dunder Methods)](#6-magic-methods-dunder-methods)
+   - 6.1 [Common Magic Methods](#61-common-magic-methods)
+   - 6.2 [Operator Overloading](#62-operator-overloading)
+7. [Context Managers (`with`)](#7-context-managers-with)
 
-* **Basic approach (Week 3):** `def add(a, b): return a + b` (Fails if you want to add 3 numbers).
-* **Advanced approach:**
+---
+
+## 1. Concise Syntax
+
+### 1.1 Short Conditionals
+
+When both branches are single statements, Python allows more compact forms.
+
+```python
+# Standard form
+if condition:
+    statement_a
+else:
+    statement_b
+
+# Compact one-liner (both branches on the same line)
+if condition: statement_a
+else: statement_b
+
+# Ternary expression (inline if-else)
+result = statement_a if condition else statement_b
+
+# Examples
+x = 7
+label = "odd" if x % 2 != 0 else "even"
+print("positive" if x > 0 else "non-positive")
+```
+
+### 1.2 Short Loops
+
+```python
+# Standard form
+result = []
+for i in range(100):
+    if i % 2 == 0:
+        result.append(2 * i)
+
+# List comprehension — one line
+result = [2 * i for i in range(100) if i % 2 == 0]
+
+# General syntax
+# [expression  for item in iterable  if condition]
+squares    = [x**2 for x in range(10)]
+even_only  = [x for x in range(20) if x % 2 == 0]
+```
+
+### 1.3 Type Hints
+
+Type hints declare expected types for variables, parameters, and return values. They do **not** enforce types at runtime — Python remains dynamically typed. Their value is readability and IDE/static-analysis support.
+
+```python
+# Variable annotation
+count: int = 0
+name: str = "Alice"
+
+# Function with type hints
+def add(a: int, b: int) -> int:
+    return a + b
+
+def greet(name: str, age: int) -> str:
+    return f"Hello, {name}. You are {age} years old."
+
+# Without hints — caller has no idea what types to pass
+def process(data):
+    ...
+
+# With hints — intent is clear
+def process(data: list[int]) -> dict[str, int]:
+    ...
+```
+
+Complex types from the `typing` module (Python 3.8 and earlier):
+
+```python
+from typing import List, Dict, Tuple, Optional, Union
+
+def scores(data: List[int]) -> Optional[float]:
+    if not data:
+        return None       # Optional means the return can be None
+    return sum(data) / len(data)
+
+def lookup(key: str) -> Union[int, str]:
+    ...                   # Union means the return is int OR str
+```
+
+From Python 3.9+, built-in types can be used directly:
+
+```python
+def process(data: list[int]) -> dict[str, int]: ...
+```
+
+---
+
+## 2. Flexible Function Arguments
+
+### 2.1 `*args` — Variable Positional Arguments
+
+Collects any number of positional arguments into a **tuple**.
+
 ```python
 def add_many(*args):
-    # args behaves like a tuple: (1, 2, 3, ...)
-    result = 0
+    # args is a tuple: (1, 2, 3, ...)
+    total = 0
     for num in args:
-        result += num
-    return result
+        total += num
+    return total
 
-print(add_many(1, 2, 3))       # Output: 6
-print(add_many(10, 20, 30, 40)) # Output: 100
+print(add_many(1, 2, 3))         # 6
+print(add_many(10, 20, 30, 40))  # 100
+
+# Mixing with regular parameters
+def first_and_rest(first, *rest):
+    print("first:", first)
+    print("rest:", rest)
+
+first_and_rest(1, 2, 3, 4)
+# first: 1
+# rest: (2, 3, 4)
 ```
-#### `**kwargs` (Keyword Arguments)
 
-Allows a function to accept any number of keyword arguments (key-value pairs), storing them as a **dictionary**.
+### 2.2 `**kwargs` — Variable Keyword Arguments
 
-* **Example:**
+Collects any number of keyword arguments into a **dictionary**.
+
 ```python
 def introduce(**kwargs):
-    # kwargs behaves like: {'name': 'Alice', 'age': 30}
     for key, value in kwargs.items():
         print(f"{key}: {value}")
 
 introduce(name="Alice", age=30, city="Seoul")
+# name: Alice
+# age: 30
+# city: Seoul
 
+# Combining all three parameter types
+def mixed(a, b=10, *args, **kwargs):
+    print(a, b, args, kwargs)
 
-
+mixed(1, 2, 3, 4, x=5, y=6)
+# 1 2 (3, 4) {'x': 5, 'y': 6}
 ```
 
 ---
 
+## 3. Lambda & Functional Tools
 
+### 3.1 Lambda Functions
 
-### 2. Decorators (`@` Annotation)
+An anonymous single-expression function. Used for short, one-time operations.
 
- A **Decorator** allows you to modify the behavior of a function without changing its code directly.
+```python
+# Syntax: lambda parameters: expression
 
-* **Syntax:** uses the `@` symbol above a function definition.
-* **Use Case:** Logging, measuring execution time, or checking login status.
+# Standard def
+def add(x, y):
+    return x + y
 
-**Example: Measuring Run Time**
+# Equivalent lambda
+add = lambda x, y: x + y
+print(add(3, 5))  # 8
+
+# Commonly used inline (not assigned to a variable)
+result = (lambda x: x ** 2)(4)  # 16
+```
+
+### 3.2 `map`, `filter`, `sorted`
+
+```python
+nums = [1, 2, 3, 4, 5]
+
+# map(function, iterable) — apply function to every element
+squared = list(map(lambda x: x**2, nums))
+print(squared)   # [1, 4, 9, 16, 25]
+
+doubled = list(map(lambda x: x * 2, nums))
+print(doubled)   # [2, 4, 6, 8, 10]
+
+# filter(function, iterable) — keep elements where function returns True
+evens = list(filter(lambda x: x % 2 == 0, nums))
+print(evens)     # [2, 4]
+
+# sorted(iterable, key=..., reverse=...) — sort by custom key
+words = ["banana", "apple", "cherry", "date"]
+print(sorted(words))                          # alphabetical
+print(sorted(words, key=len))                 # by length
+print(sorted(words, key=lambda w: w[-1]))     # by last character
+print(sorted(nums, reverse=True))             # descending
+
+# Sorting a list of dicts
+students = [{"name": "Bob", "score": 85},
+            {"name": "Alice", "score": 92},
+            {"name": "Carol", "score": 78}]
+by_score = sorted(students, key=lambda s: s["score"], reverse=True)
+```
+
+---
+
+## 4. Generators
+
+A generator **produces items one at a time** only when requested, instead of building the entire sequence in memory. Essential when dealing with large or infinite sequences.
+
+```python
+# Using yield instead of return
+def countdown(n):
+    while n > 0:
+        yield n      # pause here, return n, resume on next call
+        n -= 1
+
+gen = countdown(3)
+print(next(gen))  # 3
+print(next(gen))  # 2
+print(next(gen))  # 1
+# next(gen) would raise StopIteration
+
+# Use in a for loop (most common)
+for val in countdown(5):
+    print(val)     # 5 4 3 2 1
+
+# Generator expression — like list comprehension but lazy
+big = (x**2 for x in range(10**8))  # no memory used yet
+print(next(big))  # 0
+print(next(big))  # 1
+```
+
+Comparison with a list:
+
+| Feature      | List `[...]`                | Generator `(...)` / `yield` |
+|--------------|-----------------------------|-----------------------------|
+| Memory       | All items stored at once    | One item at a time          |
+| Speed        | Fast for repeated access    | Fast for single-pass        |
+| Reusable     | Yes                         | No — exhausted after one pass |
+| Best for     | Small data, random access   | Large/infinite sequences    |
+
+---
+
+## 5. Decorators
+
+A decorator **wraps a function** to extend or modify its behavior without changing its code. Uses the `@` syntax.
+
+```python
+# Step 1 — define the decorator (a function that takes a function)
+def my_decorator(func):
+    def wrapper(*args, **kwargs):
+        print("before")
+        result = func(*args, **kwargs)  # call the original function
+        print("after")
+        return result
+    return wrapper
+
+# Step 2 — apply with @
+@my_decorator
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Alice")
+# before
+# Hello, Alice!
+# after
+```
+
+`@my_decorator` is exactly equivalent to writing `greet = my_decorator(greet)`.
+
+**Practical example — measuring execution time:**
 
 ```python
 import time
 
-# 1. Define the decorator (The Wrapper)
-def timer_decorator(func):
-    def wrapper():
-        start_time = time.time()
-        func()  # Run the original function
-        end_time = time.time()
-        print(f"Execution time: {end_time - start_time} seconds")
+def timer(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:.4f}s")
+        return result
     return wrapper
 
-# 2. Apply the decorator
-@timer_decorator
-def heavy_calculation():
-    # Simulating a Week 2 loop for calculation
+@timer
+def heavy_work():
     total = 0
-    for i in range(1000000):
+    for i in range(1_000_000):
         total += i
-    print("Calculation Done")
+    return total
 
-# Execution
+heavy_work()
+# heavy_work took 0.0523s
+```
 
-heavy_calculation()
+**Stacking decorators:**
 
-# Output:
-
-# Calculation Done
-
-# Execution time: 0.05 seconds
-
+```python
+@decorator_a
+@decorator_b
+def func(): ...
+# Applied bottom-up: decorator_a(decorator_b(func))
 ```
 
 ---
 
+## 6. Magic Methods (Dunder Methods)
 
+Methods named with double underscores (`__method__`) let your custom classes behave like built-in Python types. They are called automatically by the interpreter in certain situations.
 
-### 3. NumPy (Numerical Python)
-
-In **Week 1** and **Week 4**, you learned about standard Lists (`[1, 2, 3]`) and basic operators (`+`, `*`).
-While standard lists are flexible, they are slow for heavy math. **NumPy** is an external library used for high-performance scientific computing.
-
-#### Why use NumPy over Lists?
-
-1. **Speed:** NumPy arrays are stored in contiguous memory (unlike scattered Python lists).
-2. **Element-wise Operations:** You cannot multiply a standard list by a number directly (e.g., `[1, 2] * 3` results in `[1, 2, 1, 2, 1, 2]`). NumPy handles this mathematically.
-
-**Comparison Example:**
-
-| Feature | Standard List (Week 4) | NumPy Array (Advanced) |
-| --- | --- | --- |
-| **Creation** | `a = [1, 2, 3]` | `import numpy as np`
-`a = np.array([1, 2, 3])` |
-| **Math (`a * 2`)** | `[1, 2, 3, 1, 2, 3]` (Repeats) | `[2, 4, 6]` (Calculates) |
-| **Dimensions** | List inside List | N-Dimensional Array (Matrix) |
-
-**Code Example:**
-
-```python
-import numpy as np
-
-# Creating a 2D Matrix (Similar to Week 2 "2D Lists")
-matrix = np.array([
-    [1, 2, 3],
-    [4, 5, 6]
-])
-
-# Mathematical Operations
-print(matrix + 10) 
-# Output (Adds 10 to EVERY element instantly):
-# [[11, 12, 13],
-#  [14, 15, 16]]
-
-```
-
----
-
-### 4. Lambda Functions
-
-In **Week 3**, you defined functions using `def`. **Lambda** functions are small, anonymous functions defined in a single line. They are often used for short, one-time operations.
-
-* **Syntax:** `lambda arguments : expression`
-
-**Example:**
-
-```python
-# Week 3 Style
-def add(x, y):
-    return x + y
-# Advanced Lambda Style
-add_lambda = lambda x, y : x + y
-
-print(add_lambda(3, 5)) # Output: 8
-
-```
-
-**Practical Use with `map()`:**
-Applying a function to every item in a list (similar to a loop).
-
-```python
-nums = [1, 2, 3, 4]
-squared = list(map(lambda x: x**2, nums))
-print(squared) # Output: [1, 4, 9, 16]
-
-```
----
-
-### 5. Generators (`yield`)
-
-In **Week 2**, you used `range(100)` or lists to iterate. If you create a list with 1 billion items, your computer might run out of memory. **Generators** produce items one by one only when asked, saving memory.
-
-* **Keyword:** Uses `yield` instead of `return`.
-* **Behavior:** The function pauses and saves its state after yielding.
-
-**Example:**
-
-```python
-def my_generator():
-    yield 1
-    yield 2
-    yield 3
-
-gen = my_generator()
-
-print(next(gen)) # Output: 1
-print(next(gen)) # Output: 2
-# Unlike 'return', the function didn't end; it paused.
-
-```
-Based on the style and depth of your existing `advanced.md` file, here is a new section on **Magic Methods (Dunder Methods)**. This includes the requested `__call__` and other essential special methods like `__init__` and `__str__`.
-
-You can append this directly to the end of your file.
-
----
-
-### 6. Magic Methods ("Dunder" Methods)
-
-In Python, methods that start and end with double underscores (e.g., `__init__`) are called **Dunder Methods** (Double UNDERscore) or **Magic Methods**. They allow your custom objects to behave like built-in Python types (like lists or numbers).
-
-#### Common Magic Methods
-
-1. **`__init__` (Constructor):** Runs automatically when a new object is created.
-2. **`__str__` (String Representation):** Runs when you pass an object to `print()`.
-3. **`__call__` (Callable Object):** Allows an **instance** of a class to be called like a function.
-4. **`__enter__` / `__exit__` (Context Manager):** Defines what happens when an object is used in a `with` statement, ensuring resources are properly managed.
-
-**Code Example:**
+### 6.1 Common Magic Methods
 
 ```python
 class SmartCounter:
-    # 1. __init__: Setup initial state
-    def __init__(self, start=0):
+    def __init__(self, start=0):       # called on object creation
         self.count = start
 
-    # 2. __call__: Makes the object 'callable' like a function
-    def __call__(self, increment=1):
+    def __str__(self):                 # called by print() and str()
+        return f"Counter({self.count})"
+
+    def __repr__(self):                # called in the REPL / debugging
+        return f"SmartCounter(start={self.count})"
+
+    def __len__(self):                 # called by len()
+        return self.count
+
+    def __call__(self, increment=1):   # makes the object callable like a function
         self.count += increment
-        print(f"Current count is now: {self.count}")
+        print(f"count is now {self.count}")
 
-    # 3. __str__: distinct text when printing the object
-    def __str__ (self):
-        return f"A SmartCounter object with value: {self.count}"
-
-# Usage
-counter = SmartCounter(10)  # Runs __init__
-
-print(counter)              
-# Output (Runs __str__): A SmartCounter object with value: 10
-
-# Calling the OBJECT variable as if it were a function
-counter(5)                  
-# Output (Runs __call__): Current count is now: 15
-
-counter(2)
-
-# Output (Runs __call__): Current count is now: 17
-
-
-
+c = SmartCounter(10)
+print(c)       # Counter(10)        — __str__
+print(len(c))  # 10                 — __len__
+c(5)           # count is now 15   — __call__
+c(2)           # count is now 17   — __call__
 ```
 
+`__call__` is useful for stateful callables — the object remembers previous values across calls. This pattern is used heavily in decorators and machine-learning model layers.
 
+### 6.2 Operator Overloading
 
-#### Why is `__call__` useful?
-
-It allows you to maintain **state** (memory of previous values) inside what looks like a simple function call. This is often used in **Decorators** (Section 2) and machine learning frameworks (like PyTorch) to define layers.
----
-
-#### Bonus: Operator Overloading (`__add__`)
-
-Remember in **Section 3 (NumPy)** how we saw `matrix + 10`? You can teach your own classes how to use math symbols using dunder methods.
-
-* `__add__` controls `+`
-* `__sub__` controls `-`
-* `__eq__` controls `==`
-
-**Example:**
+Teach your class how to respond to operators like `+`, `-`, `==`.
 
 ```python
-class Wallet:
-    def __init__(self, money):
-        self.money = money
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
-    # Teach the class how to use '+'
-    def __add__(self, other):
-        # 'other' is the second Wallet being added
-        new_amount = self.money + other.money
-        return Wallet(new_amount)
-    
+    def __add__(self, other):          # v1 + v2
+        return Vector(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):          # v1 - v2
+        return Vector(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, scalar):         # v * 3
+        return Vector(self.x * scalar, self.y * scalar)
+
+    def __eq__(self, other):           # v1 == v2
+        return self.x == other.x and self.y == other.y
+
     def __str__(self):
-        return f"${self.money}"
+        return f"Vector({self.x}, {self.y})"
 
-w1 = Wallet(50)
-w2 = Wallet(100)
-
-w3 = w1 + w2  # This triggers w1.__add__(w2)
-print(w3)     # Output: 50
-
+v1 = Vector(1, 2)
+v2 = Vector(3, 4)
+print(v1 + v2)   # Vector(4, 6)
+print(v1 * 3)    # Vector(3, 6)
+print(v1 == v2)  # False
 ```
+
+Common dunder methods for operators:
+
+| Method       | Operator | Method       | Operator |
+|--------------|----------|--------------|----------|
+| `__add__`    | `+`      | `__eq__`     | `==`     |
+| `__sub__`    | `-`      | `__lt__`     | `<`      |
+| `__mul__`    | `*`      | `__gt__`     | `>`      |
+| `__truediv__`| `/`      | `__len__`    | `len()`  |
+| `__mod__`    | `%`      | `__contains__`| `in`   |
+
 ---
 
-### 7. Context Managers (`with` statement)
+## 7. Context Managers (`with`)
 
-A **Context Manager** is an object that defines a temporary context for a block of code. It ensures that resources are properly managed, such as automatically closing a file or releasing a lock.
-
-* **Keyword:** The `with` statement is used to enter the context.
-* **Use Case:** File handling, database connections, managing locks in multithreading.
-
-**Traditional Way (Risky):**
-If an error occurs while writing to the file, the `f.close()` line might never be reached, leaving the file open.
+A context manager wraps a block of code to guarantee **setup and cleanup** happen correctly — even if an exception is raised inside the block.
 
 ```python
-f = open("my_file.txt", "w")
-f.write("Hello")
-# What if an error happens here?
-f.close() # This might not get called
+# Without context manager — risky
+f = open("data.txt", "w")
+f.write("hello")
+# if an error occurs here, f.close() never runs → file stays locked
+f.close()
+
+# With context manager — safe
+with open("data.txt", "w") as f:
+    f.write("hello")
+# file is closed automatically here, even if an exception occurred
 ```
 
-**Advanced Way (Safe and Clean):**
-The `with` statement guarantees that the file will be closed automatically, even if errors occur inside the block.
+**How it works** — two magic methods:
+
+- `__enter__`: runs when entering the `with` block; returns the resource.
+- `__exit__`: runs when leaving (even on exception); handles cleanup.
+
+**Creating a custom context manager:**
 
 ```python
-with open("my_file.txt", "w") as f:
-    f.write("Hello")
-# The file is automatically closed here
+class ManagedResource:
+    def __enter__(self):
+        print("acquiring resource")
+        return self       # value bound to the 'as' variable
 
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print("releasing resource")
+        return False      # False = don't suppress exceptions
+
+with ManagedResource() as res:
+    print("using resource")
+# acquiring resource
+# using resource
+# releasing resource
 ```
 
-**How it Works (Behind the Scenes):**
-Context managers are implemented using two magic methods:
-* **`__enter__`**: Executed when entering the `with` block. It sets up the resource.
-* **`__exit__`**: Executed when exiting the `with` block. It cleans up the resource (e.g., closes the file). This method always runs, regardless of errors.
-
-You can create your own context managers by defining a class with these two methods.
----
-### 8. Type Hinting
-
-**Type Hinting** allows you to declare the expected data types of variables, function arguments, and return values. It does not enforce types (Python remains dynamically typed), but it provides valuable information for developers and tools.
-
-* **Purpose:**
-    * **Clarity:** Makes code easier to read and understand.
-    * **Error Checking:** Static analysis tools (like Mypy) can catch type-related bugs before you run the code.
-    * **IDE Support:** Improves auto-complete and code navigation.
-
-**Syntax:**
-
-* `variable: type`
-* `def function(argument: type) -> return_type:`
-
-**Example:**
+**Using `contextlib` for a simpler approach:**
 
 ```python
-# No type hints (Hard to know what 'name' and 'age' should be)
-def greet(name, age):
-    return f"Hello, {name}. You are {age} years old."
+from contextlib import contextmanager
 
-# With type hints (Clear and explicit)
-def greet_typed(name: str, age: int) -> str:
-    return f"Hello, {name}. You are {age} years old."
+@contextmanager
+def managed():
+    print("setup")
+    yield              # code inside 'with' block runs here
+    print("teardown")
 
-# The hints make it obvious how to use the function
-print(greet_typed("Alice", 30))
-
-# An editor or type checker could warn you about this incorrect usage
-# print(greet_typed(123, "thirty"))
+with managed():
+    print("working")
+# setup
+# working
+# teardown
 ```
-**Common Types from the `typing` module:**
-For more complex types, you can import them from the `typing` module.
 
-* `List`: A list of a specific type (e.g., `List[int]`)
-* `Dict`: A dictionary with specific key and value types (e.g., `Dict[str, float]`)
-* `Tuple`: A tuple with specific types
-* `Optional`: For a value that could be `None` (e.g., `Optional[str]`)
-
-```python
-from typing import List, Optional
-
-def process_scores(scores: List[int]) -> None:
-    for score in scores:
-        print(f"Processing score: {score}")
-
-def find_user(user_id: str) -> Optional[str]:
-    if user_id == "admin":
-        return "Administrator"
-    return None # It's valid to return None
-```
