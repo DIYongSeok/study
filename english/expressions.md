@@ -285,3 +285,25 @@
 - The bus fare just went up. (버스 요금이 방금 올랐다 - 교통수단 요금)
 - I got a parking fine yesterday. (어제 주차 벌금을 받았다.)
 - My rent is due on the first of the month. (월세는 매달 1일에 내야 한다.)
+
+> involve (포함하다, ~을 수반하다)
+- 어떤 일이 특정 요소나 행동을 포함하거나 필요로 할 때 사용
+    + This job involves a lot of traveling. (이 직업은 출장이 많이 포함된다.)
+    + The project involves working with a team. (그 프로젝트는 팀과 함께 일하는 것을 포함한다.)
+    + Does this plan involve any risks? (이 계획에 어떤 위험이 수반되나요?)
+- involve + 목적어 + in: ~을 ~에 참여시키다
+    + She involved her students in the discussion. (그녀는 학생들을 토론에 참여시켰다.)
+    + Try to involve everyone in the decision. (모든 사람을 결정에 참여시키려고 노력해.)
+- be involved in: ~에 관여하다, ~에 참여하다
+    + He was involved in the accident. (그는 그 사고에 연루되었다.)
+    + I'm deeply involved in this project. (나는 이 프로젝트에 깊이 관여하고 있다.)
+
+> relate (관련시키다, 공감하다)
+- relate to: ~와 관련이 있다 / ~에 공감하다
+    + This topic relates to what we studied last week. (이 주제는 우리가 지난주에 공부한 것과 관련이 있다.)
+    + I can really relate to what you're going through. (네가 겪고 있는 것에 정말 공감할 수 있어.)
+    + I can't relate to people who don't like music. (음악을 좋아하지 않는 사람들을 이해하기 어려워.)
+- be related to: ~와 관련되다 (상태)
+    + Stress is often related to poor sleep. (스트레스는 종종 수면 부족과 관련이 있다.)
+    + Are these two problems related to each other? (이 두 문제는 서로 관련이 있나요?)
+- ✅ Tip: involve는 "어떤 일이 ~을 포함/수반한다"는 뉘앙스, relate는 "~와 연결되거나 공감한다"는 뉘앙스.

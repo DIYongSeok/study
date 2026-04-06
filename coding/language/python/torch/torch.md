@@ -137,7 +137,7 @@ x.squeeze(0)         # remove dim 0 specifically
 m = torch.randn(2, 3)
 m.T                  # (3, 2)
 t3 = torch.randn(2, 3, 4)
-t3.permute(2, 0, 1)  # (4, 2, 3) — reorder arbitrary dimensions
+t3.permute(2, 0, 1)  # (4, 2, 3) — reorder arbitrary dimensions, t3[i, j, k] → result[k, i, j]
 
 # Concatenate & stack
 a = torch.ones(2, 3)
