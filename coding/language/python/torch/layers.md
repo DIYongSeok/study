@@ -105,7 +105,7 @@ print(out.shape)  # torch.Size([8, 16, 14, 14])
 
 ---
 
-## 5. BatchNorm
+## 5. [BatchNorm](https://youtu.be/LpXeOt3xmhM)
 
 Normalizes activations across the batch to stabilize training.
 
@@ -144,7 +144,7 @@ out = dropout(x)
 
 ---
 
-## 7. Embedding
+## 7. [Embedding](https://wikidocs.net/64779)
 
 Lookup table that maps integer indices to dense vectors. Used for NLP.
 
@@ -159,7 +159,7 @@ print(out.shape)  # torch.Size([3, 64])
 
 ---
 
-## 8. LSTM
+## 8. [LSTM](https://wikidocs.net/60762)
 
 Long Short-Term Memory — processes sequential data.
 

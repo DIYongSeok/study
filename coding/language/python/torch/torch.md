@@ -117,34 +117,165 @@ print(t[mask])       # tensor([6., 7., 8., 9.])
 
 ### 1.4 Shape Manipulation
 
+#### reshape
+
+Reads all elements in order, then fills them into the new shape.
+
 ```python
 t = torch.arange(12, dtype=torch.float32)
+# tensor([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10., 11.])
+# shape: (12,)
 
-t.reshape(3, 4)      # shape (3, 4)
-t.reshape(2, 2, 3)   # shape (2, 2, 3)
-t.reshape(3, -1)     # -1 infers the missing dim → (3, 4)
+t.reshape(3, 4)
+# tensor([[ 0.,  1.,  2.,  3.],
+#         [ 4.,  5.,  6.,  7.],
+#         [ 8.,  9., 10., 11.]])
+# shape: (3, 4)
 
-t.view(3, 4)         # like reshape but requires contiguous memory
+t.reshape(2, 2, 3)
+# tensor([[[ 0.,  1.,  2.],
+#          [ 3.,  4.,  5.]],
+#         [[ 6.,  7.,  8.],
+#          [ 9., 10., 11.]]])
+# shape: (2, 2, 3)
 
-# Add/remove dimensions
-t.unsqueeze(0)       # (12,) → (1, 12)
-t.unsqueeze(1)       # (12,) → (12, 1)
-x = t.reshape(1, 12)
-x.squeeze()          # remove all size-1 dims → (12,)
-x.squeeze(0)         # remove dim 0 specifically
+t.reshape(3, -1)     # -1 infers the missing dim: 12/3 = 4 → (3, 4)
+t.view(3, 4)         # same result, but requires contiguous memory
+```
 
-# Transpose & permute
-m = torch.randn(2, 3)
-m.T                  # (3, 2)
-t3 = torch.randn(2, 3, 4)
-t3.permute(2, 0, 1)  # (4, 2, 3) — reorder arbitrary dimensions, t3[i, j, k] → result[k, i, j]
+#### view vs reshape — contiguous memory
 
-# Concatenate & stack
-a = torch.ones(2, 3)
-b = torch.zeros(2, 3)
-torch.cat([a, b], dim=0)    # (4, 3)  — row-wise
-torch.cat([a, b], dim=1)    # (2, 6)  — column-wise
-torch.stack([a, b], dim=0)  # (2, 2, 3) — new dimension
+Both produce the same shape, but they work differently under the hood.
+
+**Contiguous** means tensor elements are stored in one unbroken block of memory, in row-major order (left-to-right, top-to-bottom).
+
+```python
+t = torch.arange(12, dtype=torch.float32)   # freshly created → contiguous
+t.is_contiguous()   # True
+
+t.view(3, 4)        # works fine — just changes how the block is interpreted
+t.reshape(3, 4)     # also works fine
+```
+
+Operations like `.transpose()` or `.permute()` do **not** move data in memory — they just change the stride (the step size used to navigate the data). The result is **non-contiguous**.
+
+```python
+m = torch.tensor([[1., 2., 3.],
+                  [4., 5., 6.]])
+# Memory layout: [1, 2, 3, 4, 5, 6]  (row by row)
+
+t2 = m.T             # transpose — shape (3, 2)
+t2.is_contiguous()   # False ← data is still [1,2,3,4,5,6] but strides are reversed
+
+t2.view(6)           # RuntimeError: view size is not compatible with contiguous memory
+t2.reshape(6)        # works — reshape makes a copy when needed
+```
+
+To use `.view()` on a non-contiguous tensor, call `.contiguous()` first:
+
+```python
+t2.contiguous().view(6)
+# tensor([1., 4., 2., 5., 3., 6.])  ← copies data into a new contiguous block, then views it
+```
+
+**Summary:**
+
+| | `view` | `reshape` |
+|---|---|---|
+| Requires contiguous | Yes — errors otherwise | No — copies if needed |
+| Copies data | Never | Only when necessary |
+| Use when | You want zero-copy guarantee | You just want the new shape |
+
+```python
+# Rule of thumb:
+# - use reshape when you just want the shape and don't care about memory
+# - use view when you explicitly want to confirm no copy was made
+```
+
+---
+
+#### unsqueeze / squeeze
+
+`unsqueeze` adds a size-1 dimension. `squeeze` removes it.
+
+```python
+t = torch.arange(4, dtype=torch.float32)
+# tensor([0., 1., 2., 3.])
+# shape: (4,)
+
+t.unsqueeze(0)
+# tensor([[0., 1., 2., 3.]])
+# shape: (1, 4)  ← new dim at position 0 (adds a "row" wrapper)
+
+t.unsqueeze(1)
+# tensor([[0.],
+#         [1.],
+#         [2.],
+#         [3.]])
+# shape: (4, 1)  ← new dim at position 1 (adds a "column" wrapper)
+
+x = t.unsqueeze(0)   # shape (1, 4)
+x.squeeze()
+# tensor([0., 1., 2., 3.])
+# shape: (4,)  ← size-1 dims removed
+```
+
+---
+
+#### transpose / permute
+
+`T` and `transpose` swap two axes. `permute` reorders all axes at once.
+
+```python
+m = torch.tensor([[1., 2., 3.],
+                  [4., 5., 6.]])
+# shape: (2, 3)
+
+m.T
+# tensor([[1., 4.],
+#         [2., 5.],
+#         [3., 6.]])
+# shape: (3, 2)  ← rows become columns
+
+t3 = torch.arange(24, dtype=torch.float32).reshape(2, 3, 4)
+# shape: (2, 3, 4)  — think: (batch, height, width)
+
+t3.permute(2, 0, 1)
+# shape: (4, 2, 3)  — dim2 → dim0, dim0 → dim1, dim1 → dim2
+# t3[i, j, k] is now at result[k, i, j]
+```
+
+---
+
+#### cat / stack
+
+`cat` joins tensors along an **existing** axis. `stack` creates a **new** axis.
+
+```python
+a = torch.tensor([[1., 2., 3.],
+                  [4., 5., 6.]])   # shape (2, 3)
+
+b = torch.tensor([[7., 8., 9.],
+                  [0., 1., 2.]])   # shape (2, 3)
+
+torch.cat([a, b], dim=0)
+# tensor([[1., 2., 3.],
+#         [4., 5., 6.],
+#         [7., 8., 9.],
+#         [0., 1., 2.]])
+# shape: (4, 3)  ← stacked row-wise
+
+torch.cat([a, b], dim=1)
+# tensor([[1., 2., 3., 7., 8., 9.],
+#         [4., 5., 6., 0., 1., 2.]])
+# shape: (2, 6)  ← stacked column-wise
+
+torch.stack([a, b], dim=0)
+# tensor([[[1., 2., 3.],
+#          [4., 5., 6.]],
+#         [[7., 8., 9.],
+#          [0., 1., 2.]]])
+# shape: (2, 2, 3)  ← new dim at position 0 wraps both tensors
 ```
 
 ---
@@ -301,7 +432,7 @@ total_params = sum(p.numel() for p in model.parameters())
 trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 ```
 
-### 4.2 Common Layers
+### 4.2 [Common Layers](./layers.md)
 
 ```python
 nn.Linear(in_features, out_features)           # fully connected: y = xW^T + b
