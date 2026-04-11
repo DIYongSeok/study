@@ -464,7 +464,7 @@ model = nn.Sequential(
 )
 ```
 
-### 4.3 Activation Functions
+### 4.3 [Activation Functions](./activation_functions.md)
 
 ```python
 import torch.nn.functional as F
@@ -485,7 +485,7 @@ F.softmax(x, dim=1)
 F.gelu(x)
 ```
 
-### 4.4 Loss Functions
+### 4.4 [Loss Functions](./loss_functions.md)
 
 ```python
 # Classification

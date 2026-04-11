@@ -486,6 +486,81 @@ loss = criterion(predictions, targets)
 | `nn.L1Loss` | Regression (robust) | `(N,)` or `(N, *)` | same shape |
 | `nn.SmoothL1Loss` | Regression / detection | `(N,)` or `(N, *)` | same shape |
 
+---
+
+### Formulas
+
+#### CrossEntropyLoss
+```
+L = -log( exp(x[y]) / Σ exp(x[j]) )
+  = -x[y] + log( Σ exp(x[j]) )
+
+x    : logits vector for one sample  (e.g. [2.0, 1.0, 0.5])
+y    : correct class index           (e.g. 0)
+x[y] : logit of the correct class
+Σ    : sum over all classes
+```
+
+#### BCELoss
+```
+L = -[ y·log(p) + (1-y)·log(1-p) ]
+
+p : predicted probability (after sigmoid), range (0, 1)
+y : true label, 0 or 1
+
+y=1 → L = -log(p)      high p → small loss, low p → large loss
+y=0 → L = -log(1-p)    low p  → small loss, high p → large loss
+```
+
+#### BCEWithLogitsLoss
+```
+L = -[ y·log(σ(x)) + (1-y)·log(1-σ(x)) ]
+
+x    : raw logit (before sigmoid)
+σ(x) : sigmoid(x) = 1 / (1 + exp(-x))
+
+Same as BCELoss but sigmoid is applied internally
+```
+
+#### NLLLoss
+```
+L = -log_prob[y]
+
+log_prob : output of log_softmax  (e.g. [-0.46, -1.46, -1.96])
+y        : correct class index
+→ just picks the log-probability at the correct class and negates it
+```
+
+#### MSELoss
+```
+L = (1/N) · Σ (ŷᵢ - yᵢ)²
+
+ŷ : predicted value
+y : true value
+→ average of squared differences
+```
+
+#### L1Loss
+```
+L = (1/N) · Σ |ŷᵢ - yᵢ|
+
+→ average of absolute differences
+→ less sensitive to outliers than MSE (no squaring)
+```
+
+#### SmoothL1Loss (Huber)
+```
+       | 0.5 · (ŷ - y)²        if |ŷ - y| < β   ← MSE region (smooth near 0)
+Lᵢ =  |
+       | β · (|ŷ - y| - 0.5β)  otherwise         ← L1 region (linear for large errors)
+
+β = 1.0 by default
+→ squared for small errors (stable gradient near 0)
+→ linear for large errors  (not dominated by outliers)
+```
+
+---
+
 **Key rules:**
 - `CrossEntropyLoss` → raw logits, **no Softmax beforehand**
 - `BCELoss` → apply Sigmoid yourself first
