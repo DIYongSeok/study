@@ -321,6 +321,116 @@ After each episode, look at every action taken. If an action led to above-averag
 
 ---
 
+#### Why $\log$?
+
+We want to move $\theta$ to make good actions more probable, so naively the gradient should be $\nabla_\theta \pi_\theta(a|s)$, not $\nabla_\theta \log \pi_\theta(a|s)$.
+
+The log appears because of a mathematical trick:
+
+$$\nabla_\theta \pi_\theta(a|s) = \pi_\theta(a|s) \cdot \nabla_\theta \log \pi_\theta(a|s)$$
+
+Rewriting the policy gradient expectation in terms of sampled trajectories requires dividing by $\pi_\theta(a|s)$ — and that cancels one $\pi$ factor, leaving only the $\log$ gradient:
+
+$$\mathbb{E}_\pi[f] = \sum_a \pi_\theta(a|s)\, f(a) \quad\Rightarrow\quad \nabla_\theta \mathbb{E}[f] = \mathbb{E}\!\left[\nabla_\theta \log \pi_\theta(a|s) \cdot f(a)\right]$$
+
+**Practical benefit:** $\log \pi$ is numerically stable (avoids multiplying many small probabilities together), and its gradient $\nabla_\theta \log \pi$ is simply computable through autograd.
+
+---
+
+#### Why $\mathbb{E}_\pi[\,\cdot\,]$?
+
+A single episode is noisy — one trajectory might get lucky or unlucky regardless of the policy. $\mathbb{E}_\pi$ says: average the gradient over many trajectories all sampled under the current policy $\pi$.
+
+```
+Episode 1:  s→FORWARD(+5)  →  gradient = [-1.65, +3.35, -1.65]
+Episode 2:  s→LEFT   (-3)  →  gradient = [+0.99, -2.01, +0.99]  (bad action sampled)
+Episode 3:  s→FORWARD(+5)  →  gradient = [-1.65, +3.35, -1.65]
+Episode 4:  s→RIGHT  (+1)  →  gradient = [-0.33, -0.33, +0.67]
+                                          ─────────────────────
+Average  𝔼π[gradient]     ≈  [-0.66, +0.84, -0.01]   ← stable signal
+```
+
+A single noisy sample points roughly in the right direction. Averaging many samples makes the signal reliable enough to step on.
+
+---
+
+#### Concrete numerical example
+
+**Setup:** robot choosing between LEFT / FORWARD / RIGHT. Policy parameterized by $\theta$ via softmax.
+
+**Step 1 — Initial $\theta$ and policy**
+
+```
+θ = [0,  0,  0]
+π = softmax(θ) = [0.33, 0.33, 0.33]
+```
+
+**Step 2 — Sample FORWARD, get reward**
+
+```
+sampled action: FORWARD
+reward r = +5,   V(s) = 0   (baseline)
+A(s, FORWARD) = 5 - 0 = +5
+```
+
+**Step 3 — Compute $\nabla_\theta \log \pi(\text{FORWARD}|s)$**
+
+For softmax, the gradient has a closed form:
+
+$$\frac{\partial}{\partial \theta_j} \log \pi(a|s) = \mathbf{1}[j = a] - \pi(j|s)$$
+
+```
+∂/∂θ_L  =  0 - 0.33  =  -0.33   ← not chosen: push down
+∂/∂θ_F  =  1 - 0.33  =  +0.67   ← chosen action: push up
+∂/∂θ_R  =  0 - 0.33  =  -0.33   ← not chosen: push down
+
+∇θ log π(FORWARD|s) = [-0.33, +0.67, -0.33]
+```
+
+**Step 4 — Scale by Advantage**
+
+```
+gradient = [-0.33, +0.67, -0.33] × 5
+         = [-1.65, +3.35, -1.65]
+```
+
+**Step 5 — Update $\theta$** (learning rate $\alpha = 0.1$)
+
+```
+θ_new = [0, 0, 0] + 0.1 × [-1.65, +3.35, -1.65]
+      = [-0.165, +0.335, -0.165]
+```
+
+**Step 6 — New policy**
+
+```
+e^{-0.165} ≈ 0.848,   e^{+0.335} ≈ 1.398,   e^{-0.165} ≈ 0.848
+sum = 3.094
+
+π_new = [0.848/3.094,  1.398/3.094,  0.848/3.094]
+      = [  0.27,          0.45,          0.27    ]
+```
+
+```
+         LEFT    FORWARD   RIGHT
+before: [0.33,   0.33,    0.33]
+after:  [0.27,   0.45,    0.27]   ← FORWARD ↑, others ↓
+```
+
+**If the action had been bad ($A = -3$):**
+
+```
+gradient = [-0.33, +0.67, -0.33] × (-3)
+         = [+0.99, -2.01, +0.99]
+
+θ_new = [+0.099, -0.201, +0.099]
+π_new ≈ [0.37,   0.26,   0.37]   ← FORWARD ↓, others ↑
+```
+
+> The sign of $A$ completely flips the update — good actions get reinforced, bad actions get suppressed.
+
+---
+
 ## 5. RL Paradigms
 
 Three main strategies exist for solving RL problems, differing in what they learn and how they derive behavior.
