@@ -515,6 +515,32 @@ Uses a neural network to approximate $Q(s,a)$ for **discrete** action spaces. Th
 
 **Limitation:** Cannot handle continuous action spaces — $\arg\max_a Q(s,a)$ over a continuous range requires solving an optimization problem at every step.
 
+```python
+import torch
+import torch.nn as nn
+
+class QNetwork(nn.Module):
+    def __init__(self, obs_dim, act_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim, 128), nn.ReLU(),
+            nn.Linear(128, 128),     nn.ReLU(),
+            nn.Linear(128, act_dim),
+        )
+
+    def forward(self, obs):
+        return self.net(obs)  # (batch, act_dim) — one Q-value per action
+
+# CartPole: 4 observations, 2 actions (push left / push right)
+q_net     = QNetwork(obs_dim=4, act_dim=2)
+target_net = QNetwork(obs_dim=4, act_dim=2)
+target_net.load_state_dict(q_net.state_dict())  # identical weights at start
+
+obs      = torch.randn(32, 4)           # mini-batch of 32 observations
+q_values = q_net(obs)                   # (32, 2)
+action   = q_values.argmax(dim=1)      # greedy action per sample
+```
+
 ---
 
 ### 9.2 Proximal Policy Optimization (PPO)
@@ -548,6 +574,49 @@ $\mathcal{L}^{\text{value}}$ trains the critic; $H(\pi)$ is an entropy bonus tha
 
 **Best for:** Physics-based character animation, robotic locomotion, RLHF (reinforcement learning from human feedback in LLMs).
 
+```python
+import torch
+import torch.nn as nn
+
+class PPOActor(nn.Module):
+    def __init__(self, obs_dim, act_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim, 64), nn.Tanh(),
+            nn.Linear(64, 64),      nn.Tanh(),
+        )
+        self.mean    = nn.Linear(64, act_dim)
+        self.log_std = nn.Parameter(torch.zeros(act_dim))  # learnable std
+
+    def forward(self, obs):
+        x    = self.net(obs)
+        mean = self.mean(x)
+        std  = self.log_std.exp().expand_as(mean)
+        return torch.distributions.Normal(mean, std)
+
+class PPOCritic(nn.Module):
+    def __init__(self, obs_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim, 64), nn.Tanh(),
+            nn.Linear(64, 64),      nn.Tanh(),
+            nn.Linear(64, 1),
+        )
+
+    def forward(self, obs):
+        return self.net(obs).squeeze(-1)  # scalar V(s) per state
+
+# HalfCheetah: 17-dim observation, 6 joint actions
+actor  = PPOActor(obs_dim=17, act_dim=6)
+critic = PPOCritic(obs_dim=17)
+
+obs      = torch.randn(4096, 17)   # one PPO rollout
+dist     = actor(obs)
+action   = dist.sample()           # stochastic action
+log_prob = dist.log_prob(action).sum(-1)  # (4096,) — used for PPO ratio r_t(θ)
+value    = critic(obs)                    # (4096,) — V(s) for advantage
+```
+
 ---
 
 ### 9.3 Soft Actor-Critic (SAC)
@@ -569,6 +638,56 @@ $$J(\pi) = \mathbb{E}\!\left[\sum_{t} \gamma^t \Bigl(r_t + \alpha\,\mathcal{H}\b
 - The entropy term means the agent prefers to remain uncertain until it has strong evidence — it won't collapse to a single action prematurely.
 
 **Best for:** Robotic manipulation, dexterous hand control, continuous control where data is expensive.
+
+```python
+import torch
+import torch.nn as nn
+
+class SACActor(nn.Module):
+    """Squashed Gaussian policy — outputs actions bounded to (−1, 1)."""
+    def __init__(self, obs_dim, act_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim, 256), nn.ReLU(),
+            nn.Linear(256, 256),     nn.ReLU(),
+        )
+        self.mean    = nn.Linear(256, act_dim)
+        self.log_std = nn.Linear(256, act_dim)
+
+    def forward(self, obs):
+        x       = self.net(obs)
+        mean    = self.mean(x)
+        log_std = self.log_std(x).clamp(-20, 2)
+        std     = log_std.exp()
+        dist    = torch.distributions.Normal(mean, std)
+        z       = dist.rsample()                            # reparameterization trick
+        action  = torch.tanh(z)                            # squash to (−1, 1)
+        # correct log_prob for the tanh squashing
+        log_prob = (dist.log_prob(z) - torch.log(1 - action.pow(2) + 1e-6)).sum(-1)
+        return action, log_prob
+
+class SACQNetwork(nn.Module):
+    """Critic: takes (obs, action) concatenated, outputs scalar Q-value."""
+    def __init__(self, obs_dim, act_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim + act_dim, 256), nn.ReLU(),
+            nn.Linear(256, 256),               nn.ReLU(),
+            nn.Linear(256, 1),
+        )
+
+    def forward(self, obs, action):
+        return self.net(torch.cat([obs, action], dim=-1)).squeeze(-1)
+
+# Twin critics — take the min to prevent Q-value overestimation
+actor = SACActor(obs_dim=17, act_dim=6)
+q1    = SACQNetwork(obs_dim=17, act_dim=6)
+q2    = SACQNetwork(obs_dim=17, act_dim=6)
+
+obs              = torch.randn(256, 17)
+action, log_prob = actor(obs)
+q_value          = torch.min(q1(obs, action), q2(obs, action))  # conservative estimate
+```
 
 ---
 
@@ -595,6 +714,48 @@ Deterministic policy for **continuous** control. Fixes two key failure modes in 
 | PPO | Both | On | Clipped policy update |
 | SAC | Continuous | Off | Entropy maximization |
 | TD3 | Continuous | Off | Twin critics + delayed actor update |
+
+```python
+import torch
+import torch.nn as nn
+
+class TD3Actor(nn.Module):
+    """Deterministic policy: maps obs directly to a single action."""
+    def __init__(self, obs_dim, act_dim, act_limit=1.0):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim, 256), nn.ReLU(),
+            nn.Linear(256, 256),     nn.ReLU(),
+            nn.Linear(256, act_dim), nn.Tanh(),   # output bounded to (−1, 1)
+        )
+        self.act_limit = act_limit
+
+    def forward(self, obs):
+        return self.net(obs) * self.act_limit
+
+class TD3QNetwork(nn.Module):
+    def __init__(self, obs_dim, act_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim + act_dim, 256), nn.ReLU(),
+            nn.Linear(256, 256),               nn.ReLU(),
+            nn.Linear(256, 1),
+        )
+
+    def forward(self, obs, action):
+        return self.net(torch.cat([obs, action], dim=-1)).squeeze(-1)
+
+actor = TD3Actor(obs_dim=17, act_dim=6)
+q1    = TD3QNetwork(obs_dim=17, act_dim=6)
+q2    = TD3QNetwork(obs_dim=17, act_dim=6)
+
+obs    = torch.randn(256, 17)
+action = actor(obs)                                         # deterministic
+# target policy smoothing: add clipped noise before computing TD target
+noise         = (torch.randn_like(action) * 0.2).clamp(-0.5, 0.5)
+action_noisy  = (action + noise).clamp(-1.0, 1.0)
+q_target      = torch.min(q1(obs, action_noisy), q2(obs, action_noisy))
+```
 
 ---
 
@@ -795,6 +956,50 @@ Both actor and critic are fully connected networks with Tanh activations, which 
 | **Critic** | obs → 1024 → 512 → 1 | Scalar state value $V(s)$ |
 
 The actor outputs a mean and a learnable log-standard-deviation. The standard deviation starts small (log_std initialized to −2) so that early training produces small, cautious joint movements rather than wild torques that immediately destabilize the character.
+
+```python
+import torch
+import torch.nn as nn
+
+class DeepMimicActor(nn.Module):
+    def __init__(self, obs_dim, act_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim, 1024), nn.Tanh(),
+            nn.Linear(1024, 512),     nn.Tanh(),
+        )
+        self.mean    = nn.Linear(512, act_dim)
+        # log_std = −2 → std ≈ 0.13: small initial movements, prevents immediate falls
+        self.log_std = nn.Parameter(torch.full((act_dim,), -2.0))
+
+    def forward(self, obs):
+        x    = self.net(obs)
+        mean = self.mean(x)
+        std  = self.log_std.exp().expand_as(mean)
+        return torch.distributions.Normal(mean, std)
+
+class DeepMimicCritic(nn.Module):
+    def __init__(self, obs_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(obs_dim, 1024), nn.Tanh(),
+            nn.Linear(1024, 512),     nn.Tanh(),
+            nn.Linear(512, 1),
+        )
+
+    def forward(self, obs):
+        return self.net(obs).squeeze(-1)  # scalar V(s)
+
+# obs = joint pos/vel + end-effector pos + phase φ  (197-dim for a full humanoid)
+# act_dim = number of PD target joint angles (28 for a full humanoid)
+actor  = DeepMimicActor(obs_dim=197, act_dim=28)
+critic = DeepMimicCritic(obs_dim=197)
+
+obs           = torch.randn(4096, 197)
+dist          = actor(obs)
+target_angles = dist.sample()      # PD controller targets → simulator applies torques
+value         = critic(obs)        # V(s) for GAE advantage computation
+```
 
 ---
 

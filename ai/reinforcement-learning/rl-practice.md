@@ -506,8 +506,8 @@ When this value stops increasing, training has converged.
 
 The TD error is $\delta = r + \gamma \max_{a'} Q(s', a') - Q(s, a)$ — how wrong the current Q-estimate was.
 
-| Training Stage | Mean |δ| | Meaning |
-|----------------|---------|---------|
+| Training Stage | Mean \|δ\| | Meaning |
+|----------------|------------|---------|
 | Early | Large (~50) | Q-values far from true values |
 | Mid | Moderate (~10) | Rapid learning, values adjusting |
 | Late | Small (~1) | Q-values nearly converged |
