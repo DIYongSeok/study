@@ -140,7 +140,7 @@ $$\|\mathbf{x}\|_\infty = \max_i |x_i| \qquad (\text{L}\infty\text{ norm — lar
 |------|----------------|
 | L2 ($\|\cdot\|_2$) | Weight decay, gradient clipping, Euclidean distance |
 | L1 ($\|\cdot\|_1$) | Sparse regularization (Lasso) |
-| L$\infty$ | Adversarial robustness bounds |
+| $L^\infty$ | Adversarial robustness bounds |
 
 ```python
 x = np.array([3.0, 4.0])
@@ -905,17 +905,55 @@ Matrix derivatives are the engine of backpropagation. Every gradient update in a
 
 ### 12.1 Layout Convention
 
-There are two layout conventions. This document uses the **denominator layout** (also called Hessian layout), which is most common in ML:
+**This document uses denominator layout**, because it makes gradient descent work without any transposing: if $\mathbf{w}$ has shape $(n,)$ then $\partial L/\partial\mathbf{w}$ also has shape $(n,)$, so the update $\mathbf{w} \leftarrow \mathbf{w} - \eta\,\nabla_\mathbf{w} L$ is shape-consistent. PyTorch and NumPy follow this convention.
 
-| Derivative | Numerator shape | Denominator shape | Result shape |
-|------------|----------------|-------------------|-------------|
-| $\partial y / \partial x$ | scalar | scalar | scalar |
-| $\partial y / \partial \mathbf{x}$ | scalar | $(n,)$ | $(n,)$ column vector |
-| $\partial \mathbf{y} / \partial x$ | $(m,)$ | scalar | $(m,)$ column vector |
-| $\partial \mathbf{y} / \partial \mathbf{x}$ | $(m,)$ | $(n,)$ | $(n \times m)$ Jacobian |
-| $\partial y / \partial X$ | scalar | $(m \times n)$ | $(m \times n)$ matrix |
+#### The shape table
 
-> **Rule of thumb:** the result has the same shape as the denominator (what you differentiate with respect to).
+| Derivative | Numerator shape | Denominator shape | Result shape | Name |
+|------------|----------------|-------------------|--------------|------|
+| $\partial y / \partial x$ | scalar | scalar | scalar | ordinary derivative |
+| $\partial y / \partial \mathbf{x}$ | scalar | $(n,)$ | $(n,)$ | gradient vector |
+| $\partial \mathbf{y} / \partial x$ | $(m,)$ | scalar | $(m,)$ | tangent vector |
+| $\partial \mathbf{y} / \partial \mathbf{x}$ | $(m,)$ | $(n,)$ | $(n \times m)$ | Jacobian matrix |
+| $\partial y / \partial X$ | scalar | $(m \times n)$ | $(m \times n)$ | matrix gradient |
+
+> **Rule of thumb (denominator layout):** the result always has the **same shape as the denominator** — the thing you differentiate with respect to.
+
+#### Row-by-row intuition with examples
+
+**Row 1 — scalar / scalar:** ordinary calculus.
+
+$$\frac{\partial}{\partial x}(x^2) = 2x \qquad \text{scalar in, scalar out}$$
+
+**Row 2 — scalar / vector:** the most common case in ML — loss $L$ differentiated w.r.t. a weight vector $\mathbf{w} \in \mathbb{R}^n$.
+
+$$\frac{\partial L}{\partial \mathbf{w}} = \begin{bmatrix}\partial L/\partial w_1 \\ \vdots \\ \partial L/\partial w_n\end{bmatrix} \in \mathbb{R}^n$$
+
+One entry per weight, telling you how much $L$ changes if you nudge that weight. Shape matches $\mathbf{w}$, so the gradient descent step $\mathbf{w} \leftarrow \mathbf{w} - \eta\,\nabla L$ is always valid.
+
+**Row 3 — vector / scalar:** a vector-valued quantity differentiated w.r.t. a scalar — e.g., position $\mathbf{p}(t) \in \mathbb{R}^3$ differentiated w.r.t. time $t$.
+
+$$\frac{\partial \mathbf{p}}{\partial t} = \begin{bmatrix}\dot{p}_x \\ \dot{p}_y \\ \dot{p}_z\end{bmatrix} \in \mathbb{R}^3 \qquad \text{(velocity vector)}$$
+
+**Row 4 — vector / vector:** produces the **Jacobian** — a matrix whose $(i,j)$ entry is $\partial y_j / \partial x_i$.
+
+$$\mathbf{y} \in \mathbb{R}^m,\quad \mathbf{x} \in \mathbb{R}^n \quad\Rightarrow\quad J = \frac{\partial \mathbf{y}}{\partial \mathbf{x}} \in \mathbb{R}^{n \times m}$$
+
+In a neural network layer $\mathbf{y} = W\mathbf{x}$, the Jacobian tells you how each output dimension responds to each input dimension. Used in the chain rule during backprop.
+
+**Row 5 — scalar / matrix:** loss $L$ differentiated w.r.t. a weight matrix $W \in \mathbb{R}^{m \times n}$.
+
+$$\frac{\partial L}{\partial W} \in \mathbb{R}^{m \times n}, \qquad \left[\frac{\partial L}{\partial W}\right]_{ij} = \frac{\partial L}{\partial W_{ij}}$$
+
+Entry $(i,j)$ says how much $L$ changes if you nudge weight $W_{ij}$. The gradient has exactly the same shape as $W$ — so `param.grad` in PyTorch always matches `param`.
+
+#### Why this matters for backpropagation
+
+Every layer in a neural network is a composition of functions. Backprop applies the chain rule repeatedly:
+
+$$\frac{\partial L}{\partial \mathbf{x}} = \frac{\partial \mathbf{y}}{\partial \mathbf{x}} \cdot \frac{\partial L}{\partial \mathbf{y}} = J^\top \frac{\partial L}{\partial \mathbf{y}}$$
+
+The Jacobian $J \in \mathbb{R}^{n \times m}$ routes gradients from output space back to input space. Understanding its shape tells you why the transpose appears — it flips the direction of the gradient flow.
 
 ---
 

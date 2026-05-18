@@ -177,7 +177,7 @@ print(f"CV Accuracy: {scores.mean():.3f} ± {scores.std():.3f}")
 
 | Metric | Formula | Sensitivity |
 |--------|---------|-------------|
-| MAE | $\frac{1}{N}\sum|y_i - \hat{y}_i|$ | Robust to outliers |
+| MAE | $$\frac{1}{N}\sum_{i=1}^{N}\lvert y_i - \hat{y}_i\rvert$$ | Robust to outliers |
 | MSE | $\frac{1}{N}\sum(y_i - \hat{y}_i)^2$ | Penalizes large errors heavily |
 | RMSE | $\sqrt{\text{MSE}}$ | Same units as $y$ |
 | R² | $1 - \text{SSE}/\text{SST}$ | Fraction of variance explained |
@@ -221,23 +221,91 @@ $$\hat{y} = \mathbf{w}^\top \mathbf{x} + b = \sum_{j=1}^d w_j x_j + b$$
 | $b \in \mathbb{R}$ | Bias (intercept) |
 | $\hat{y}$ | Predicted output |
 
+**Matrix form for $N$ samples:** absorb the bias into $\mathbf{w}$ by appending a column of ones to $X$, giving $X \in \mathbb{R}^{N \times (d+1)}$:
+
+$$\hat{\mathbf{y}} = X\mathbf{w}$$
+
+---
+
 **Loss — Mean Squared Error:**
 
-$$\mathcal{L} = \frac{1}{N}\sum_{i=1}^N (y_i - \hat{y}_i)^2$$
+$$\mathcal{L}(\mathbf{w}) = \frac{1}{N}\sum_{i=1}^N (y_i - \hat{y}_i)^2 = \frac{1}{N}\lVert \mathbf{y} - X\mathbf{w} \rVert^2$$
+
+---
 
 **Closed-form solution (Normal Equation):**
 
 $$\hat{\mathbf{w}} = (X^\top X)^{-1} X^\top \mathbf{y}$$
 
-Works for small $d$; for large $d$, use gradient descent.
+Works when $d$ is small and $X^\top X$ is invertible. For large $d$, use gradient descent instead (inverting an $d \times d$ matrix costs $O(d^3)$).
 
-**Gradient:**
+**Why does this give the minimum?** Three steps:
+
+*Step 1 — Take the gradient and set it to zero.*
+
+Expand the loss:
+$$\mathcal{L} = \frac{1}{N}\bigl(\mathbf{y}^\top\mathbf{y} - 2\mathbf{w}^\top X^\top \mathbf{y} + \mathbf{w}^\top X^\top X\mathbf{w}\bigr)$$
+
+Differentiate with respect to $\mathbf{w}$:
+$$\frac{\partial \mathcal{L}}{\partial \mathbf{w}} = \frac{2}{N}\bigl(X^\top X\mathbf{w} - X^\top \mathbf{y}\bigr) = \mathbf{0}$$
+
+This gives the **Normal Equations**:
+
+$$X^\top X\,\hat{\mathbf{w}} = X^\top \mathbf{y}$$
+
+*Step 2 — Solve.* If $X^\top X$ is invertible (columns of $X$ are linearly independent — no duplicate or perfectly correlated features):
+
+$$\hat{\mathbf{w}} = (X^\top X)^{-1} X^\top \mathbf{y}$$
+
+*Step 3 — Confirm it is a minimum, not a saddle point.*
+
+Compute the Hessian of $\mathcal{L}$:
+
+$$H = \frac{\partial^2 \mathcal{L}}{\partial \mathbf{w}^2} = \frac{2}{N} X^\top X$$
+
+For any non-zero vector $\mathbf{v}$:
+
+$$\mathbf{v}^\top (X^\top X)\,\mathbf{v} = \lVert X\mathbf{v} \rVert^2 \geq 0$$
+
+So $X^\top X$ is always **positive semi-definite**. When $X$ has full column rank, $\lVert X\mathbf{v} \rVert^2 > 0$ for all $\mathbf{v} \neq \mathbf{0}$, making $H$ **positive definite** — the loss surface is strictly convex (a bowl with a single bottom). Any critical point of a strictly convex function is the unique global minimum. Therefore $\hat{\mathbf{w}}$ is guaranteed to minimize $\mathcal{L}$.
+
+**Geometric interpretation:** $X\hat{\mathbf{w}}$ is the **orthogonal projection** of $\mathbf{y}$ onto the column space of $X$. The residual $\mathbf{y} - X\hat{\mathbf{w}}$ is perpendicular to every column of $X$:
+
+$$X^\top(\mathbf{y} - X\hat{\mathbf{w}}) = \mathbf{0}$$
+
+That is exactly the Normal Equation — hence the name.
+
+---
+
+**Gradient (used by gradient descent when closed form is too costly):**
 
 $$\frac{\partial \mathcal{L}}{\partial \mathbf{w}} = -\frac{2}{N} X^\top (\mathbf{y} - X\mathbf{w})$$
 
-**Ridge Regression (L2):** adds $\lambda\|\mathbf{w}\|_2^2$ to the loss → closed form: $(X^\top X + \lambda I)^{-1} X^\top \mathbf{y}$
+Update rule: $\mathbf{w} \leftarrow \mathbf{w} - \eta \,\dfrac{\partial \mathcal{L}}{\partial \mathbf{w}}$
 
-**Lasso Regression (L1):** adds $\lambda\|\mathbf{w}\|_1$ → sparse solutions (features selected out)
+---
+
+**Regularization**
+
+Both variants add a penalty term to shrink weights and prevent overfitting.
+
+**Ridge (L2):** $\mathcal{L} = \dfrac{1}{N}\lVert\mathbf{y} - X\mathbf{w}\rVert^2 + \lambda\lVert\mathbf{w}\rVert_2^2$
+
+Closed form: $\hat{\mathbf{w}} = (X^\top X + \lambda I)^{-1} X^\top \mathbf{y}$
+
+The $\lambda I$ shift makes the matrix always invertible — even when $X$ doesn't have full rank — and shrinks all weights uniformly toward zero.
+
+**Lasso (L1):** $\mathcal{L} = \dfrac{1}{N}\lVert\mathbf{y} - X\mathbf{w}\rVert^2 + \lambda\lVert\mathbf{w}\rVert_1$
+
+No closed form — the $\lvert w_j \rvert$ terms are non-differentiable at zero, so coordinate descent or subgradient methods are required. Produces **sparse** solutions: some weights become exactly zero, performing automatic feature selection.
+
+| | Ridge (L2) | Lasso (L1) |
+|---|---|---|
+| Penalty | $\lambda\lVert\mathbf{w}\rVert_2^2$ | $\lambda\lVert\mathbf{w}\rVert_1$ |
+| Effect on weights | Shrinks all toward zero | Zeros out some completely |
+| Solution | Closed form | Iterative only |
+| Best when | Many small useful features | Sparse signal, feature selection needed |
+| Invertibility | Always invertible (even rank-deficient $X$) | N/A |
 
 ```python
 import torch
