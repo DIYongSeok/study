@@ -741,7 +741,7 @@ $$\text{rank}(A) + \dim(\text{null}(A)) = n \quad \text{(number of columns)}$$
 
 The more dimensions $A$ collapses (large null space), the fewer independent directions survive (low rank).
 
-| rank$(A)$ | $\dim(\text{null}(A))$ | Meaning |
+| rank(A) | $\dim(\text{null}(A))$ | Meaning |
 |-----------|------------------------|---------|
 | $n$ (full) | $0$ | Trivial null space — only $\mathbf{x}=\mathbf{0}$ maps to $\mathbf{0}$ — $A$ is invertible |
 | $n-1$ | $1$ | One direction collapses — $A$ is singular |
