@@ -573,7 +573,7 @@ $$\text{rank}(A) + \dim(\text{null}(A)) = n \quad \text{(number of columns)}$$
 
 The more dimensions $A$ collapses (large null space), the fewer independent directions survive (low rank).
 
-| rank$(A)$ | $\dim(\text{null}(A))$ | Meaning |
+| rank(A) | $\dim(\text{null}(A))$ | Meaning |
 |-----------|------------------------|---------|
 | $n$ (full) | $0$ | Trivial null space — only $\mathbf{x}=\mathbf{0}$ maps to $\mathbf{0}$ — $A$ is invertible |
 | $n-1$ | $1$ | One direction collapses — $A$ is singular |
@@ -768,9 +768,9 @@ Entry $(i,j)$ says how much $L$ changes if you nudge weight $W_{ij}$. The gradie
 
 Every layer in a neural network is a composition of functions. Backprop applies the chain rule repeatedly:
 
-$$\frac{\partial L}{\partial \mathbf{x}} = \frac{\partial \mathbf{y}}{\partial \mathbf{x}} \cdot \frac{\partial L}{\partial \mathbf{y}} = J^\top \frac{\partial L}{\partial \mathbf{y}}$$
+$$\frac{\partial L}{\partial \mathbf{x}} = \frac{\partial \mathbf{y}}{\partial \mathbf{x}} \cdot \frac{\partial L}{\partial \mathbf{y}} = J \cdot \frac{\partial L}{\partial \mathbf{y}}$$
 
-The Jacobian $J \in \mathbb{R}^{n \times m}$ routes gradients from output space back to input space. Understanding its shape tells you why the transpose appears — it flips the direction of the gradient flow.
+The Jacobian $J \in \mathbb{R}^{n \times m}$ routes gradients from output space back to input space. Shapes check out: $(n \times m)(m,) = (n,)$ ✓. For a linear layer $\mathbf{y} = W\mathbf{x}$, $J = W^\top$, so this becomes the familiar $W^\top \frac{\partial L}{\partial \mathbf{y}}$.
 
 ---
 
@@ -878,17 +878,19 @@ The negative sign means: step in the opposite direction to reduce loss.
 
 When both input and output are vectors, the derivative is a **Jacobian matrix**.
 
-$$\frac{\partial \mathbf{y}}{\partial \mathbf{x}} = J \in \mathbb{R}^{n \times m}, \qquad J_{ji} = \frac{\partial y_j}{\partial x_i}$$
+$$\frac{\partial \mathbf{y}}{\partial \mathbf{x}} = J \in \mathbb{R}^{n \times m}, \qquad J_{ij} = \frac{\partial y_j}{\partial x_i}$$
+
+Row $i$ = input index, column $j$ = output index (denominator layout).
 
 ---
 
-**Example 6 — Linear layer: $\mathbf{y} = W\mathbf{x}$**
+**Example 6 — Linear layer: $\mathbf{y} = W\mathbf{x}$, $W \in \mathbb{R}^{m \times n}$**
 
-$$y_i = \sum_j W_{ij} x_j \quad \Rightarrow \quad \frac{\partial y_i}{\partial x_j} = W_{ij}$$
+$$y_j = \sum_k W_{jk} x_k \quad \Rightarrow \quad \frac{\partial y_j}{\partial x_i} = W_{ji}$$
 
-$$J = \frac{\partial \mathbf{y}}{\partial \mathbf{x}} = W$$
+$$J_{ij} = W_{ji} \quad \Rightarrow \quad J = W^\top \in \mathbb{R}^{n \times m}$$
 
-The Jacobian of a linear layer is simply the weight matrix $W$ itself.
+**Verify backprop:** $\dfrac{\partial \mathcal{L}}{\partial \mathbf{x}} = J \cdot \dfrac{\partial \mathcal{L}}{\partial \mathbf{y}} = W^\top \dfrac{\partial \mathcal{L}}{\partial \mathbf{y}}$ — the familiar backprop formula. ✓
 
 ---
 
