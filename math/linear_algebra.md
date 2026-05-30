@@ -914,7 +914,7 @@ Matrix derivatives are the engine of backpropagation. Every gradient update in a
 | $\partial y / \partial x$ | scalar | scalar | scalar | ordinary derivative |
 | $\partial y / \partial \mathbf{x}$ | scalar | $(n,)$ | $(n,)$ | gradient vector |
 | $\partial \mathbf{y} / \partial x$ | $(m,)$ | scalar | $(m,)$ | tangent vector |
-| $\partial \mathbf{y} / \partial \mathbf{x}$ | $(m,)$ | $(n,)$ | $(n \times m)$ | Jacobian matrix |
+| $\partial \mathbf{y} / \partial \mathbf{x}$ | $(m,)$ | $(n,)$ | $(m \times n)$ | Jacobian matrix |
 | $\partial y / \partial X$ | scalar | $(m \times n)$ | $(m \times n)$ | matrix gradient |
 
 > **Rule of thumb (denominator layout):** the result always has the **same shape as the denominator** — the thing you differentiate with respect to.
