@@ -1,4 +1,4 @@
-# Linear Algebra for AI
+﻿# Linear Algebra for AI
 
 Linear algebra is the mathematical backbone of AI. Neural networks, attention mechanisms, PCA, SVD, and optimization all reduce to matrix and vector operations.
 
@@ -47,9 +47,9 @@ Linear algebra is the mathematical backbone of AI. Neural networks, attention me
     - 11.3 [Hessian Matrix](#113-hessian-matrix)
 12. [Matrix Derivatives](#12-matrix-derivatives)
     - 12.1 [Layout Convention](#121-layout-convention)
-    - 12.2 [Scalar by Vector](#122-scalar-by-vector--partial-y--partial-mathbfx)
-    - 12.3 [Scalar by Matrix](#123-scalar-by-matrix--partial-y--partial-w)
-    - 12.4 [Vector by Vector — Jacobian](#124-vector-by-vector--jacobian-partial-mathbfy--partial-mathbfx)
+    - 12.2 [Scalar by Vector](#122-scalar-by-vector)
+    - 12.3 [Scalar by Matrix](#123-scalar-by-matrix)
+    - 12.4 [Vector by Vector — Jacobian](#124-vector-by-vector--jacobian)
     - 12.5 [Chain Rule in Matrix Form](#125-chain-rule-in-matrix-form)
     - 12.6 [Common Reference Table](#126-common-matrix-derivative-reference)
 13. [AI Applications](#13-ai-applications)
@@ -75,12 +75,7 @@ $$\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix} \in \ma
 
 **In AI:** an input to a neural network is a vector — e.g., a 784-dim vector for a 28×28 image, or a 512-dim embedding for a word.
 
-```python
-import numpy as np
 
-x = np.array([1.0, 2.0, 3.0])   # shape (3,) — 1D vector
-x = x.reshape(-1, 1)             # shape (3,1) — column vector
-```
 
 ### 1.2 Vector Operations
 
@@ -90,14 +85,7 @@ $$\mathbf{a} + \mathbf{b} = \begin{bmatrix} a_1 + b_1 \\ a_2 + b_2 \end{bmatrix}
 
 **Geometric meaning:** addition moves along one vector then another; scalar multiplication stretches or shrinks.
 
-```python
-a = np.array([1.0, 2.0])
-b = np.array([3.0, 4.0])
 
-a + b        # [4., 6.]
-2 * a        # [2., 4.]
-a - b        # [-2., -2.]
-```
 
 ### 1.3 Dot Product
 
@@ -118,13 +106,7 @@ $$\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^\top \mathbf{b} = \sum_{i=1}^n a_i b_
 
 **In AI:** the dot product measures **similarity**. Attention scores, logits, and cosine similarity all use it.
 
-```python
-a = np.array([1.0, 2.0, 3.0])
-b = np.array([4.0, 5.0, 6.0])
 
-np.dot(a, b)      # 1×4 + 2×5 + 3×6 = 32.0
-a @ b             # same — preferred in practice
-```
 
 ### 1.4 Norms
 
@@ -142,16 +124,7 @@ $$\|\mathbf{x}\|_\infty = \max_i |x_i| \qquad (\text{L}\infty\text{ norm — lar
 | L1 ($\|\cdot\|_1$) | Sparse regularization (Lasso) |
 | $L^\infty$ | Adversarial robustness bounds |
 
-```python
-x = np.array([3.0, 4.0])
 
-np.linalg.norm(x)      # L2: sqrt(9+16) = 5.0
-np.linalg.norm(x, 1)   # L1: 3+4 = 7.0
-np.linalg.norm(x, np.inf)  # Linf: max(3,4) = 4.0
-
-# Normalize to unit vector
-x_unit = x / np.linalg.norm(x)   # [0.6, 0.8]
-```
 
 ---
 
@@ -175,14 +148,7 @@ $$A + B: \quad (A+B)_{ij} = a_{ij} + b_{ij} \qquad \text{(same shape required)}$
 
 $$(A^\top)_{ij} = a_{ji} \qquad \text{(swap row and column indices)}$$
 
-```python
-A = np.array([[1, 2], [3, 4]])
-B = np.array([[5, 6], [7, 8]])
 
-A + B          # [[6,8],[10,12]]
-A.T            # [[1,3],[2,4]]   — transpose
-2 * A          # [[2,4],[6,8]]   — scalar multiply
-```
 
 ### 2.3 Matrix Multiplication
 
@@ -192,19 +158,9 @@ $$c_{ij} = \sum_{k=1}^n a_{ik} b_{kj} = \text{(row } i \text{ of } A) \cdot \tex
 
 **Shape rule:** inner dimensions must match — $(m \times \mathbf{n})(\mathbf{n} \times p) = (m \times p)$
 
-```
-A: (3 × 4)
-B: (4 × 5)
-C = AB: (3 × 5)   ← 4 matches 4 ✓
-```
 
-```python
-A = np.random.randn(3, 4)
-B = np.random.randn(4, 5)
 
-C = A @ B          # (3, 5)
-C = np.matmul(A, B)  # same
-```
+
 
 **Matrix-vector multiply** is the core of a neural network layer:
 
@@ -226,12 +182,7 @@ $$D = \begin{bmatrix} d_1 & 0 & 0 \\ 0 & d_2 & 0 \\ 0 & 0 & d_3 \end{bmatrix}, \
 
 **Orthogonal matrix:** $Q^\top Q = QQ^\top = I$, i.e., $Q^{-1} = Q^\top$. Preserves lengths and angles — pure rotation/reflection.
 
-```python
-np.eye(3)                          # 3×3 identity
-np.diag([1.0, 2.0, 3.0])          # diagonal matrix
-np.allclose(A, A.T)               # check symmetric
-np.allclose(Q.T @ Q, np.eye(n))   # check orthogonal
-```
+
 
 ### 2.5 Symmetric Matrix
 
@@ -262,19 +213,7 @@ $$A = \begin{bmatrix} 4 & 2 & 1 \\ 2 & 5 & 3 \\ 1 & 3 & 6 \end{bmatrix} \quad \l
 | Attention score matrix | $QK^\top$ is symmetric when $Q = K$ (self-attention) |
 | Graph Laplacian $L$ | Encodes undirected graph structure |
 
-```python
-A = np.array([[4., 2., 1.],
-              [2., 5., 3.],
-              [1., 3., 6.]])
 
-np.allclose(A, A.T)        # True — symmetric
-
-# Symmetric matrix → use eigh (not eig): faster, guaranteed real, sorted
-eigenvalues, eigenvectors = np.linalg.eigh(A)
-
-# Verify orthogonality of eigenvectors
-np.allclose(eigenvectors.T @ eigenvectors, np.eye(3))  # True
-```
 
 > **Key insight:** symmetric matrices are the "nicest" matrices in linear algebra — they have a complete set of real, orthogonal eigenvectors and are always diagonalizable.
 
@@ -298,15 +237,7 @@ $$T(\mathbf{x}) = A\mathbf{x}$$
 
 $$R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$
 
-```python
-theta = np.pi / 4   # 45 degrees
 
-R = np.array([[np.cos(theta), -np.sin(theta)],
-              [np.sin(theta),  np.cos(theta)]])
-
-x = np.array([1.0, 0.0])   # unit vector pointing right
-R @ x                       # [0.707, 0.707] — rotated 45°
-```
 
 ### 3.2 Composition
 
@@ -342,15 +273,7 @@ $A \in \mathbb{R}^{n \times n}$ is invertible if and only if:
 
 $$AA^{-1} = A^{-1}A = I$$
 
-```python
-A = np.array([[2.0, 1.0], [5.0, 3.0]])
 
-np.linalg.det(A)      # 1.0   ← nonzero → invertible
-A_inv = np.linalg.inv(A)
-
-A @ A_inv             # ≈ identity
-np.linalg.solve(A, b) # preferred over inv — more numerically stable
-```
 
 > **In practice:** never compute $A^{-1}$ explicitly. Use `np.linalg.solve(A, b)` — it is faster and numerically stable.
 
@@ -370,15 +293,7 @@ $$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}, \qquad \det(A) = ad - bc$$
 
 **Geometric meaning:** $|\det(A)|$ is the factor by which $A$ scales areas (2D) or volumes (3D).
 
-```
-Unit square:  area = 1
-After A:      area = |det(A)|
 
-det(A) = 2   →  area doubled
-det(A) = 0.5 →  area halved
-det(A) = 0   →  area = 0  (collapsed to a line or point)
-det(A) < 0   →  orientation flipped (mirror image)
-```
 
 **Concrete 2D example:**
 
@@ -406,27 +321,9 @@ Column 2 is exactly twice column 1 — the matrix collapses 2D space onto a line
 
 $$\det(A) = \prod_{i=1}^n \lambda_i$$
 
-The determinant is the **product of all eigenvalues**. If any eigenvalue is zero, the determinant is zero — meaning the matrix crushes at least one direction flat.
+The determinant is the **product of all eigenvalues**. If any eigenvalue is zero, the determinant is zero — meaning the matrix crushes at least one direction flat. (See §6.1 for how eigenvalues are found via $\det(A - \lambda I) = 0$.)
 
-**Finding eigenvalues via determinant** — the characteristic equation:
 
-$$\det(A - \lambda I) = 0$$
-
-$$A = \begin{bmatrix} 3 & 1 \\ 0 & 2 \end{bmatrix} \quad \Rightarrow \quad \det\begin{bmatrix} 3-\lambda & 1 \\ 0 & 2-\lambda \end{bmatrix} = (3-\lambda)(2-\lambda) = 0 \quad \Rightarrow \quad \lambda = 3,\; 2$$
-
-```python
-A = np.array([[3.0, 1.0], [0.0, 2.0]])
-
-np.linalg.det(A)          # 6.0 = 3 × 2
-
-# det = product of eigenvalues
-eigenvalues = np.linalg.eigvals(A)
-np.prod(eigenvalues)      # 6.0 ✓
-
-# Singular matrix
-B = np.array([[1.0, 2.0], [2.0, 4.0]])
-np.linalg.det(B)          # 0.0 — not invertible
-```
 
 > **One-line summary:** the determinant measures how much a matrix scales volume. Zero determinant = the matrix destroys information by collapsing space.
 
@@ -465,18 +362,7 @@ $$A\mathbf{u} = \begin{bmatrix}3\\2\end{bmatrix} \neq \lambda\begin{bmatrix}1\\1
 
 $$\det(A - \lambda I) = 0$$
 
-```python
-A = np.array([[3.0, 1.0], [0.0, 2.0]])
 
-eigenvalues, eigenvectors = np.linalg.eig(A)
-# eigenvalues: [3., 2.]
-# eigenvectors: columns — eigenvectors[:,0] corresponds to eigenvalue 3
-
-# Verify: A @ v = λ * v
-v   = eigenvectors[:, 0]
-lam = eigenvalues[0]
-np.allclose(A @ v, lam * v)   # True
-```
 
 ### 6.2 Why Eigenvectors Matter
 
@@ -500,12 +386,6 @@ If $|\lambda| > 1$: repeated application explodes exponentially. If $|\lambda| <
 | **Graph NNs** | Eigenvectors of the graph Laplacian encode graph frequency structure |
 | **PageRank** | Dominant eigenvector of the web link matrix = page importance scores |
 
-**4. Connection to Determinant:**
-
-$$\det(A) = \prod_{i=1}^n \lambda_i$$
-
-If any eigenvalue is zero → $\det(A) = 0$ → matrix is singular and not invertible.
-
 ### 6.3 Eigendecomposition
 
 For a diagonalizable matrix $A$ with $n$ independent eigenvectors:
@@ -520,25 +400,13 @@ $$A = V \Lambda V^{-1}$$
 
 **Geometric reading:**
 
-```
-A x = V Λ V⁻¹ x
 
-Step 1:  V⁻¹ x  — express x in eigenvector coordinates
-Step 2:  Λ      — scale each component by its eigenvalue (no mixing)
-Step 3:  V      — convert back to original coordinates
-```
 
 For **symmetric** $A$: eigenvectors are always orthogonal, so $V^{-1} = V^\top$:
 
 $$A = V \Lambda V^\top \qquad \text{(spectral decomposition)}$$
 
-```python
-A = np.array([[4.0, 2.0], [2.0, 3.0]])
-lam, V = np.linalg.eigh(A)   # eigh for symmetric — real, sorted eigenvalues
 
-np.allclose(A, V @ np.diag(lam) @ V.T)   # True
-np.allclose(np.linalg.det(A), np.prod(lam))  # det = product of eigenvalues ✓
-```
 
 ---
 
@@ -562,24 +430,11 @@ Every linear transformation $A$ can be decomposed into three steps:
 
 $$A\mathbf{x} = U\Sigma V^\top \mathbf{x}$$
 
-```
-Step 1:  V^T x  — rotate/reflect the input
-Step 2:  Σ      — scale each dimension by σ_i
-Step 3:  U      — rotate/reflect the output
-```
+
 
 The singular values $\sigma_i$ tell you how much $A$ stretches space along each direction. Large $\sigma_i$ = important direction; small $\sigma_i \approx 0$ = negligible direction.
 
-```python
-A = np.random.randn(5, 3)
 
-U, S, Vt = np.linalg.svd(A, full_matrices=False)
-# U: (5,3), S: (3,), Vt: (3,3)
-
-# Reconstruct
-A_reconstructed = U @ np.diag(S) @ Vt
-np.allclose(A, A_reconstructed)   # True
-```
 
 ### 7.3 Low-Rank Approximation
 
@@ -593,15 +448,7 @@ $$A \approx A_k = \sum_{i=1}^{k} \sigma_i \mathbf{u}_i \mathbf{v}_i^\top = U_k \
 | $\mathbf{u}_i \mathbf{v}_i^\top$ | Rank-1 matrix — outer product of two vectors |
 | $k \ll \min(m,n)$ | Keep only the most important components |
 
-```python
-U, S, Vt = np.linalg.svd(A, full_matrices=False)
 
-k = 2
-A_k = U[:, :k] @ np.diag(S[:k]) @ Vt[:k, :]   # rank-k approximation
-
-# Compression ratio
-print(f"Original: {A.shape}  →  Stored: {U[:,:k].size + k + Vt[:k].size}")
-```
 
 ### 7.4 Why SVD Matters in AI
 
@@ -663,15 +510,7 @@ No vector is a combination of the others. Together they span all of $\mathbb{R}^
 
 **How to check:** put vectors as columns of $A$ — they are independent if and only if $\det(A) \neq 0$, or equivalently $\text{rank}(A) = k$.
 
-```python
-v1 = np.array([1., 0., 0.])
-v2 = np.array([0., 1., 0.])
-v3 = np.array([2., 3., 0.])   # dependent: v3 = 2v1 + 3v2
 
-A = np.column_stack([v1, v2, v3])
-np.linalg.matrix_rank(A)   # 2 — only 2 independent vectors, not 3
-np.linalg.det(A)            # 0.0 — singular → dependent
-```
 
 **In AI:** redundant features (linearly dependent columns) make the model overparameterized and the matrix singular. PCA removes redundancy by finding independent directions.
 
@@ -706,14 +545,7 @@ $$\dim(\mathbb{R}^n) = n$$
 
 $$\text{rank}(A) = \dim(\text{column space of } A)$$
 
-```python
-# Dimension of column space = rank
-A = np.array([[1., 2., 3.],
-              [4., 5., 6.],
-              [7., 8., 9.]])   # rank-deficient: row3 = row1 + row2
 
-np.linalg.matrix_rank(A)   # 2 — only 2D column space, not 3D
-```
 
 ---
 
@@ -755,16 +587,7 @@ Column 2 = $2 \times$ Column 1 → rank = 1. The null space is all $\mathbf{x}$ 
 
 $$\text{null}(A) = \left\{ t \begin{bmatrix} -2 \\ 1 \end{bmatrix} \mid t \in \mathbb{R} \right\} \quad \text{(a line through the origin)}$$
 
-```python
-A = np.array([[1., 2.], [2., 4.]])
 
-np.linalg.matrix_rank(A)   # 1
-
-# Null space via SVD: right singular vectors with σ ≈ 0
-U, S, Vt = np.linalg.svd(A)
-null_space = Vt[S < 1e-10]   # rows of Vt where singular value ≈ 0
-# [[-0.894,  0.447]] ≈ direction [-2, 1] normalized
-```
 
 **In AI:** if a weight matrix $W$ has a large null space, many input directions are completely ignored — the layer has low effective rank. LoRA exploits this: large pretrained weight matrices tend to be approximately low-rank, so you only need to learn a small rank update $\Delta W = AB$.
 
@@ -829,13 +652,7 @@ Equivalently: all eigenvalues are strictly positive.
 - **Kernel matrices** in SVMs must be PSD
 - Adam optimizer uses a diagonal approximation of the PD Hessian
 
-```python
-A = np.array([[4.0, 2.0], [2.0, 3.0]])
 
-eigenvalues = np.linalg.eigvalsh(A)
-is_pd  = np.all(eigenvalues > 0)    # True if positive definite
-is_psd = np.all(eigenvalues >= 0)   # True if positive semi-definite
-```
 
 ---
 
@@ -870,17 +687,17 @@ $$\nabla_\mathbf{x} f = 2\mathbf{x}$$
 
 For a vector-valued function $\mathbf{f}: \mathbb{R}^n \to \mathbb{R}^m$, the Jacobian contains all partial derivatives:
 
-$$J = \frac{\partial \mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix} \partial f_1/\partial x_1 & \cdots & \partial f_1/\partial x_n \\ \vdots & \ddots & \vdots \\ \partial f_m/\partial x_1 & \cdots & \partial f_m/\partial x_n \end{bmatrix} \in \mathbb{R}^{m \times n}$$
+$$J = \frac{\partial \mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix} \partial f_1/\partial x_1 & \cdots & \partial f_m/\partial x_1 \\ \vdots & \ddots & \vdots \\ \partial f_1/\partial x_n & \cdots & \partial f_m/\partial x_n \end{bmatrix} \in \mathbb{R}^{n \times m}$$
 
 | Term | Meaning |
 |------|---------|
-| $J_{ij}$ | How output $i$ changes when input $j$ changes |
-| $J \in \mathbb{R}^{m \times n}$ | $m$ outputs, $n$ inputs |
+| $J_{ij}$ | How output $j$ changes when input $i$ changes |
+| $J \in \mathbb{R}^{n \times m}$ | denominator shape ($\mathbf{x}$) × numerator shape ($\mathbf{f}$) — denominator layout |
 | $\det(J)$ | Local volume scaling factor (used in normalizing flows) |
 
-**In AI:** backpropagation computes Jacobian-vector products efficiently using the chain rule:
+**In AI:** backpropagation computes Jacobian-vector products via the chain rule (see §12.4 for full derivation):
 
-$$\frac{\partial \mathcal{L}}{\partial \mathbf{x}} = J^\top \frac{\partial \mathcal{L}}{\partial \mathbf{f}}$$
+$$\frac{\partial \mathcal{L}}{\partial \mathbf{x}} = J \cdot \frac{\partial \mathcal{L}}{\partial \mathbf{f}}$$
 
 ### 11.3 Hessian Matrix
 
@@ -957,7 +774,7 @@ The Jacobian $J \in \mathbb{R}^{n \times m}$ routes gradients from output space 
 
 ---
 
-### 12.2 Scalar by Vector — $\partial y / \partial \mathbf{x}$
+### 12.2 Scalar by Vector
 
 The most common case: loss function output w.r.t. input vector.
 
@@ -989,11 +806,7 @@ $$\frac{\partial y}{\partial x_i} = 2x_i \quad \Rightarrow \quad \frac{\partial 
 
 $$y = 1 + 4 + 9 = 14, \qquad \frac{\partial y}{\partial \mathbf{x}} = \begin{bmatrix}2\\4\\6\end{bmatrix}$$
 
-```python
-x = np.array([1., 2., 3.])
-y = x @ x                    # 14.0
-grad = 2 * x                 # [2., 4., 6.]
-```
+
 
 ---
 
@@ -1013,7 +826,7 @@ $$\frac{\partial y}{\partial \mathbf{x}} = 2A\mathbf{x} = 2\begin{bmatrix}2&1\\1
 
 ---
 
-### 12.3 Scalar by Matrix — $\partial y / \partial W$
+### 12.3 Scalar by Matrix
 
 Used every time we update neural network weights.
 
@@ -1057,20 +870,11 @@ $$\frac{\partial \mathcal{L}}{\partial W} = -2\begin{bmatrix}1\\2\end{bmatrix}\b
 
 The negative sign means: step in the opposite direction to reduce loss.
 
-```python
-W = np.eye(2)
-x = np.array([2., 1.])
-y = np.array([3., 3.])
 
-e    = y - W @ x                     # residual: [1., 2.]
-grad = -2 * np.outer(e, x)           # [[-4,-2],[-8,-4]]
-
-W_new = W - 0.1 * grad               # gradient descent step
-```
 
 ---
 
-### 12.4 Vector by Vector — Jacobian $\partial \mathbf{y} / \partial \mathbf{x}$
+### 12.4 Vector by Vector — Jacobian
 
 When both input and output are vectors, the derivative is a **Jacobian matrix**.
 
@@ -1124,12 +928,7 @@ $$= \begin{bmatrix}0.665&0&0\\0&0.245&0\\0&0&0.090\end{bmatrix} - \begin{bmatrix
 
 $$= \begin{bmatrix}0.223&-0.163&-0.060\\-0.163&0.185&-0.022\\-0.060&-0.022&0.082\end{bmatrix}$$
 
-```python
-z = np.array([2., 1., 0.])
-p = np.exp(z) / np.exp(z).sum()     # [0.665, 0.245, 0.090]
 
-J = np.diag(p) - np.outer(p, p)    # (3,3) Jacobian of softmax
-```
 
 ---
 
@@ -1165,24 +964,7 @@ $$\frac{\partial \mathcal{L}}{\partial \mathbf{x}} = W^\top \frac{\partial \math
 
 $$W = \begin{bmatrix}1&2\\3&4\end{bmatrix}, \quad \mathbf{x} = \begin{bmatrix}1\\1\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}5\\8\end{bmatrix}$$
 
-```python
-W = np.array([[1., 2.], [3., 4.]])
-x = np.array([1., 1.])
-y = np.array([5., 8.])
 
-# Forward
-h = W @ x                           # [3., 7.]
-L = np.sum((y - h)**2)              # (5-3)² + (8-7)² = 5.0
-
-# Backward
-e         = y - h                   # [2., 1.]
-dL_dh     = -2 * e                  # [-4., -2.]
-dL_dW     = np.outer(dL_dh, x)     # [[-4,-4],[-2,-2]]
-dL_dx     = W.T @ dL_dh             # [-4*1+(-2)*3, -4*2+(-2)*4] = [-10, -16]
-
-# Gradient descent on W
-W_new = W - 0.01 * dL_dW
-```
 
 ---
 
@@ -1190,30 +972,7 @@ W_new = W - 0.01 * dL_dW
 
 $$\mathbf{z} = W\mathbf{x}, \quad \mathbf{h} = \text{ReLU}(\mathbf{z}), \quad \mathcal{L} = \|\mathbf{y} - \mathbf{h}\|_2^2$$
 
-```python
-W = np.array([[1., -1.], [2., 3.]])
-x = np.array([1., 2.])
-y = np.array([1., 5.])
 
-# Forward
-z = W @ x                           # [-1., 8.]
-h = np.maximum(0, z)                # [ 0., 8.]  ← ReLU
-L = np.sum((y - h)**2)              # (1-0)² + (5-8)² = 10.0
-
-# Backward
-e         = y - h                   # [1., -3.]
-dL_dh     = -2 * e                  # [-2., 6.]
-
-# ReLU Jacobian: pass gradient only where z > 0
-relu_mask = (z > 0).astype(float)  # [0., 1.]
-dL_dz     = dL_dh * relu_mask      # [-2.*0, 6.*1] = [0., 6.]
-
-# Gradient w.r.t. W
-dL_dW     = np.outer(dL_dz, x)     # [[0,0],[6,12]]
-
-# Gradient w.r.t. x (pass to previous layer)
-dL_dx     = W.T @ dL_dz            # [0*1+6*2, 0*(-1)+6*3] = [12., 18.]
-```
 
 ---
 
@@ -1254,13 +1013,7 @@ $$H^{(l)} = \sigma(H^{(l-1)} W^{(l)\top} + \mathbf{b}^{(l)\top}), \quad H \in \m
 | $\mathbf{h}^{(l-1)}$ | $d_\text{in}$ | Input from previous layer |
 | $\mathbf{h}^{(l)}$ | $d_\text{out}$ | Output to next layer |
 
-```python
-W = np.random.randn(256, 512)   # (out, in)
-b = np.zeros(256)
-x = np.random.randn(512)
 
-h = np.maximum(0, W @ x + b)   # ReLU activation
-```
 
 ### 13.2 Attention Mechanism
 
@@ -1278,19 +1031,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\r
 
 $$QK^\top \in \mathbb{R}^{n \times m}: \quad (QK^\top)_{ij} = \mathbf{q}_i^\top \mathbf{k}_j \quad \text{(similarity of query } i \text{ to key } j\text{)}$$
 
-```python
-import torch
-import torch.nn.functional as F
 
-d_k = 64
-Q = torch.randn(10, d_k)    # 10 queries
-K = torch.randn(20, d_k)    # 20 keys
-V = torch.randn(20, 128)    # 20 values, dim 128
-
-scores  = Q @ K.T / d_k**0.5     # (10, 20) similarity matrix
-weights = F.softmax(scores, dim=-1)  # (10, 20) attention weights
-output  = weights @ V             # (10, 128) weighted sum of values
-```
 
 ### 13.3 PCA
 
@@ -1309,18 +1050,7 @@ $$\text{3. Project: } Z = \tilde{X} V_k = U_k \Sigma_k \quad \text{(top-}k\text{
 | $\sigma_i^2$ | Variance explained by component $i$ |
 | $k$ | Number of dimensions to keep |
 
-```python
-X = np.random.randn(100, 50)     # 100 samples, 50 features
 
-X_centered = X - X.mean(axis=0)
-U, S, Vt = np.linalg.svd(X_centered, full_matrices=False)
-
-k = 10
-Z = X_centered @ Vt[:k].T       # (100, 10) — projected to 10 dims
-
-variance_explained = S[:k]**2 / (S**2).sum()
-print(f"Variance explained by top {k} PCs: {variance_explained.sum():.2%}")
-```
 
 **In AI:**
 - Reduce input dimensionality before training
