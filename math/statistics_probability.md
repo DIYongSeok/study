@@ -4,109 +4,67 @@ Probability theory is the language of uncertainty. Every AI model — from a cla
 
 ## Table of Contents
 
-1. [Probability vs Statistics](#1-probability-vs-statistics)
-2. [Probability Basics](#2-probability-basics)
-   - 2.1 [Sample Space & Events](#21-sample-space--events)
-   - 2.2 [Axioms of Probability](#22-axioms-of-probability)
-   - 2.3 [Conditional Probability](#23-conditional-probability)
-   - 2.4 [Independence](#24-independence)
-   - 2.5 [Bayes' Theorem](#25-bayes-theorem)
-3. [Random Variables](#3-random-variables)
-   - 3.1 [Discrete vs Continuous](#31-discrete-vs-continuous)
-   - 3.2 [PMF, PDF, CDF](#32-pmf-pdf-cdf)
-   - 3.3 [Joint, Marginal, Conditional Distributions](#33-joint-marginal-conditional-distributions)
-4. [Expectation & Variance](#4-expectation--variance)
-   - 4.1 [Expected Value](#41-expected-value)
-   - 4.2 [Variance & Standard Deviation](#42-variance--standard-deviation)
-   - 4.3 [Covariance & Correlation](#43-covariance--correlation)
-5. [Key Distributions](#5-key-distributions)
-   - 5.1 [Bernoulli, Binomial, Multinoulli, Multinomial](#51-bernoulli-binomial-multinoulli-multinomial)
-   - 5.2 [Gaussian (Normal)](#52-gaussian-normal)
-   - 5.3 [Multivariate Gaussian](#53-multivariate-gaussian)
-   - 5.4 [Categorical & Softmax](#54-categorical--softmax)
-   - 5.5 [Poisson Distribution](#55-poisson-distribution)
-   - 5.6 [Gamma Distribution](#56-gamma-distribution)
-   - 5.7 [Beta & Dirichlet Distributions](#57-beta--dirichlet-distributions)
-6. [Information Theory](#6-information-theory)
-   - 6.1 [Entropy](#61-entropy)
-   - 6.2 [Cross-Entropy](#62-cross-entropy)
-   - 6.3 [KL Divergence & Total Variation Distance](#63-kl-divergence--total-variation-distance)
-   - 6.4 [Mutual Information](#64-mutual-information)
-7. [Estimation](#7-estimation)
-   - 7.1 [Bias — Definition](#71-bias--definition)
-   - 7.2 [Biased vs Unbiased Estimation](#72-biased-vs-unbiased-estimation)
-   - 7.3 [Sample Variance & the N−1 Correction](#73-sample-variance--the-n1-correction)
-   - 7.4 [Is Unbiased Always Better?](#74-is-unbiased-always-better)
-   - 7.5 [Bias, Variance, MSE — and their Relationship](#75-bias-variance-mse--and-their-relationship)
-   - 7.6 [MLE vs Sample Variance in the Gaussian](#76-mle-vs-sample-variance-in-the-gaussian)
-   - 7.7 [Maximum Likelihood Estimation (MLE)](#77-maximum-likelihood-estimation-mle)
-   - 7.8 [Maximum A Posteriori (MAP)](#78-maximum-a-posteriori-map)
-   - 7.9 [Conjugate Prior](#79-conjugate-prior)
-8. [Variation & Model Fit](#8-variation--model-fit)
-   - 8.1 [Total, Explained, Unexplained Variation](#81-total-explained-unexplained-variation)
-   - 8.2 [Coefficient of Determination R²](#82-coefficient-of-determination-r)
-9. [Hypothesis Testing](#9-hypothesis-testing)
-   - 9.1 [P-value](#91-p-value)
-   - 9.2 [Confidence Interval](#92-confidence-interval)
-   - 9.3 [Likelihood-Ratio Test](#93-likelihood-ratio-test)
-10. [Sampling & Monte Carlo](#10-sampling--monte-carlo)
-    - 10.1 [Monte Carlo Estimation](#101-monte-carlo-estimation)
-    - 10.2 [Importance Sampling](#102-importance-sampling)
-11. [Key Theorems](#11-key-theorems)
-    - 11.1 [Law of Large Numbers](#111-law-of-large-numbers)
-    - 11.2 [Central Limit Theorem](#112-central-limit-theorem)
-12. [AI Applications](#12-ai-applications)
-    - 12.1 [Loss Functions as Likelihoods](#121-loss-functions-as-likelihoods)
-    - 12.2 [Bayesian Deep Learning](#122-bayesian-deep-learning)
-    - 12.3 [Variational Autoencoders (VAE)](#123-variational-autoencoders-vae)
-    - 12.4 [Diffusion Models](#124-diffusion-models)
+1. [Probability Basics](#1-probability-basics)
+   - 1.1 [Sample Space & Events](#11-sample-space--events)
+   - 1.2 [Axioms of Probability](#12-axioms-of-probability)
+   - 1.3 [Conditional Probability](#13-conditional-probability)
+   - 1.4 [Independence](#14-independence)
+   - 1.5 [Bayes' Theorem](#15-bayes-theorem)
+2. [Random Variables](#2-random-variables)
+   - 2.1 [Discrete vs Continuous](#21-discrete-vs-continuous)
+   - 2.2 [PMF, PDF, CDF](#22-pmf-pdf-cdf)
+   - 2.3 [Joint, Marginal, Conditional Distributions](#23-joint-marginal-conditional-distributions)
+3. [Expectation & Variance](#3-expectation--variance)
+   - 3.1 [Expected Value](#31-expected-value)
+   - 3.2 [Variance & Standard Deviation](#32-variance--standard-deviation)
+   - 3.3 [Covariance & Correlation](#33-covariance--correlation)
+4. [Key Distributions](#4-key-distributions)
+   - 4.1 [Bernoulli, Binomial, Multinoulli, Multinomial](#41-bernoulli-binomial-multinoulli-multinomial)
+   - 4.2 [Gaussian (Normal)](#42-gaussian-normal)
+   - 4.3 [Multivariate Gaussian](#43-multivariate-gaussian)
+   - 4.4 [Categorical & Softmax](#44-categorical--softmax)
+   - 4.5 [Poisson Distribution](#45-poisson-distribution)
+   - 4.6 [Gamma Distribution](#46-gamma-distribution)
+   - 4.7 [Beta & Dirichlet Distributions](#47-beta--dirichlet-distributions)
+5. [Information Theory](#5-information-theory)
+   - 5.1 [Entropy](#51-entropy)
+   - 5.2 [Cross-Entropy](#52-cross-entropy)
+   - 5.3 [KL Divergence & Total Variation Distance](#53-kl-divergence--total-variation-distance)
+   - 5.4 [Mutual Information](#54-mutual-information)
+6. [Estimation](#6-estimation)
+   - 6.1 [Bias — Definition](#61-bias--definition)
+   - 6.2 [Biased vs Unbiased Estimation](#62-biased-vs-unbiased-estimation)
+   - 6.3 [Sample Variance & the N−1 Correction](#63-sample-variance--the-n1-correction)
+   - 6.4 [Is Unbiased Always Better?](#64-is-unbiased-always-better)
+   - 6.5 [Bias, Variance, MSE — and their Relationship](#65-bias-variance-mse--and-their-relationship)
+   - 6.6 [MLE vs Sample Variance in the Gaussian](#66-mle-vs-sample-variance-in-the-gaussian)
+   - 6.7 [Maximum Likelihood Estimation (MLE)](#67-maximum-likelihood-estimation-mle)
+   - 6.8 [Maximum A Posteriori (MAP)](#68-maximum-a-posteriori-map)
+   - 6.9 [Conjugate Prior](#69-conjugate-prior)
+7. [Variation & Model Fit](#7-variation--model-fit)
+   - 7.1 [Total, Explained, Unexplained Variation](#71-total-explained-unexplained-variation)
+   - 7.2 [Coefficient of Determination R²](#72-coefficient-of-determination-r)
+8. [Hypothesis Testing](#8-hypothesis-testing)
+   - 8.1 [P-value](#81-p-value)
+   - 8.2 [Confidence Interval](#82-confidence-interval)
+   - 8.3 [Likelihood-Ratio Test](#83-likelihood-ratio-test)
+9. [Sampling & Monte Carlo](#9-sampling--monte-carlo)
+    - 9.1 [Monte Carlo Estimation](#91-monte-carlo-estimation)
+    - 9.2 [Importance Sampling](#92-importance-sampling)
+10. [Key Theorems](#10-key-theorems)
+    - 10.1 [Law of Large Numbers](#101-law-of-large-numbers)
+    - 10.2 [Central Limit Theorem](#102-central-limit-theorem)
+11. [AI Applications](#11-ai-applications)
+    - 11.1 [Loss Functions as Likelihoods](#111-loss-functions-as-likelihoods)
+    - 11.2 [Bayesian Deep Learning](#112-bayesian-deep-learning)
+    - 11.3 [Variational Autoencoders (VAE)](#113-variational-autoencoders-vae)
+    - 11.4 [Diffusion Models](#114-diffusion-models)
 
 ---
 
-## 1. Probability vs Statistics
+## 1. Probability Basics
 
-These two fields are deeply related but answer different questions.
-
-| | **Probability** | **Statistics** |
-|---|---|---|
-| **Direction** | Model → Data | Data → Model |
-| **Question** | "Given a model, what data will I see?" | "Given data, what model generated it?" |
-| **Known** | The distribution $p(x \mid \theta)$ | The observations $\{x_1, \ldots, x_N\}$ |
-| **Goal** | Compute $P(\text{event})$, expectations | Estimate $\theta$, test hypotheses |
-| **Example** | Fair coin: $P(\text{5 heads in 10 flips}) = ?$ | I flipped 7 heads — is the coin fair? |
-
-**Probability is deductive:** we reason forward from known rules.
-
-$$\text{Model} \xrightarrow{\text{probability}} \text{Data}$$
-
-> "If the die is fair, the probability of rolling a 6 is 1/6."
-
-**Statistics is inductive:** we reason backward from observed data.
-
-$$\text{Data} \xrightarrow{\text{statistics}} \text{Model}$$
-
-> "I rolled the die 100 times and got 6 exactly 25 times. Is it loaded?"
-
-**Why the distinction matters in AI:**
-
-- **Training a model** is statistics: you observe data $\mathcal{D}$ and estimate parameters $\hat{\theta}$.
-- **Running a model** is probability: you use the learned $\hat{\theta}$ to compute $p(y \mid x, \hat{\theta})$.
-- **Bayesian methods** blend both: start with a prior (probability), observe data (statistics), and update to a posterior (probability).
-
-```
-                 ┌─────────────┐
-    prior P(θ)   │             │  posterior P(θ│D)
-   ────────────→ │  Bayes Rule │ ──────────────→
-    data D       │             │
-                 └─────────────┘
-   (statistics supplies D; probability computes the posterior)
-```
-
----
-
-## 2. Probability Basics
-
-### 2.1 Sample Space & Events
+### 1.1 Sample Space & Events
 
 | Term | Symbol | Meaning |
 |------|--------|---------|
@@ -126,7 +84,7 @@ $$\Omega = \{1, 2, 3, 4, 5, 6\}, \quad A = \{\text{even}\} = \{2, 4, 6\}, \quad 
 | Intersection | $A \cap B$ | $A$ and $B$ (both occur) |
 | Complement | $A^c$ | $A$ does not occur |
 
-### 2.2 Axioms of Probability
+### 1.2 Axioms of Probability
 
 All of probability theory follows from three axioms (Kolmogorov):
 
@@ -142,7 +100,7 @@ $$P(A^c) = 1 - P(A)$$
 
 $$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$
 
-### 2.3 Conditional Probability
+### 1.3 Conditional Probability
 
 The probability of $A$ given that $B$ has occurred:
 
@@ -164,7 +122,7 @@ $$P(A_1, A_2, \ldots, A_n) = P(A_1)\,P(A_2 \mid A_1)\,P(A_3 \mid A_1, A_2)\cdots
 
 $$P(A) = \sum_i P(A \mid B_i)\,P(B_i) \quad \text{where } B_i \text{ partition } \Omega$$
 
-### 2.4 Independence
+### 1.4 Independence
 
 $A$ and $B$ are **independent** if knowing one gives no information about the other:
 
@@ -176,7 +134,7 @@ $$P(A \cap B \mid C) = P(A \mid C)\,P(B \mid C)$$
 
 **In AI:** the Naive Bayes classifier assumes all features are conditionally independent given the class label — a strong but often effective assumption.
 
-### 2.5 Bayes' Theorem
+### 1.5 Bayes' Theorem
 
 The most important formula in probabilistic AI:
 
@@ -209,16 +167,16 @@ print(f"P(disease | positive) = {p_disease_given_pos:.3f}")  # ~0.167
 
 ---
 
-## 3. Random Variables
+## 2. Random Variables
 
-### 3.1 Discrete vs Continuous
+### 2.1 Discrete vs Continuous
 
 | Type | Values | Described by |
 |------|--------|-------------|
 | **Discrete** | Countable (integers) | Probability Mass Function (PMF) |
 | **Continuous** | Uncountable (real numbers) | Probability Density Function (PDF) |
 
-### 3.2 PMF, PDF, CDF
+### 2.2 PMF, PDF, CDF
 
 **PMF** (discrete): $p(x) = P(X = x)$, must satisfy $\sum_x p(x) = 1$
 
@@ -244,7 +202,7 @@ print(X.pdf(0))    # density at 0 = 1/√(2π) ≈ 0.399
 print(X.cdf(0))    # P(X≤0) = 0.5
 ```
 
-### 3.3 Joint, Marginal, Conditional Distributions
+### 2.3 Joint, Marginal, Conditional Distributions
 
 **Joint distribution:** $p(x, y)$ — probability of $X = x$ AND $Y = y$ simultaneously.
 
@@ -266,9 +224,9 @@ $$p(y \mid x) = \frac{p(x, y)}{p(x)}$$
 
 ---
 
-## 4. Expectation & Variance
+## 3. Expectation & Variance
 
-### 4.1 Expected Value
+### 3.1 Expected Value
 
 The **expected value** (mean) is the probability-weighted average of all outcomes:
 
@@ -290,7 +248,7 @@ $$\mathbb{E}[X] = \mathbb{E}_Y\!\left[\mathbb{E}[X \mid Y]\right]$$
 
 > **In AI:** the policy gradient $\mathbb{E}_\pi[\nabla_\theta \log\pi_\theta \cdot A]$ is an expectation estimated by averaging over sampled trajectories.
 
-### 4.2 Variance & Standard Deviation
+### 3.2 Variance & Standard Deviation
 
 Variance measures how spread out the distribution is around the mean:
 
@@ -315,7 +273,7 @@ print(x.var())     # 4.0
 print(x.std())     # 2.0
 ```
 
-### 4.3 Covariance & Correlation
+### 3.3 Covariance & Correlation
 
 **Covariance** measures how two variables move together:
 
@@ -348,9 +306,9 @@ corr = np.corrcoef(X.T)       # (3, 3) correlation matrix
 
 ---
 
-## 5. Key Distributions
+## 4. Key Distributions
 
-### 5.1 Bernoulli, Binomial, Multinoulli, Multinomial
+### 4.1 Bernoulli, Binomial, Multinoulli, Multinomial
 
 **Bernoulli($p$):** single binary trial — coin flip, click / no-click.
 
@@ -402,7 +360,7 @@ counts = np.random.multinomial(n=10, pvals=p)
 # e.g. [1, 4, 3, 2] — counts for each category
 ```
 
-### 5.2 Gaussian (Normal)
+### 4.2 Gaussian (Normal)
 
 The most important distribution in AI and statistics:
 
@@ -440,7 +398,7 @@ z.cdf(1.96)     # 0.975 — 95% of mass below 1.96
 z.ppf(0.975)    # 1.96  — inverse CDF (quantile function)
 ```
 
-### 5.3 Multivariate Gaussian
+### 4.3 Multivariate Gaussian
 
 Extends the Gaussian to $n$-dimensional vectors:
 
@@ -461,7 +419,7 @@ cov  = np.array([[1.0, 0.8],
 samples = np.random.multivariate_normal(mean, cov, size=1000)
 ```
 
-### 5.4 Categorical & Softmax
+### 4.4 Categorical & Softmax
 
 **Categorical($\mathbf{p}$):** generalization of Bernoulli to $K$ classes.
 
@@ -486,7 +444,7 @@ probs  = F.softmax(logits, dim=0)
 # tensor([0.659, 0.242, 0.099])
 ```
 
-### 5.5 Poisson Distribution
+### 4.5 Poisson Distribution
 
 **Poisson($\lambda$):** counts the number of events occurring in a fixed interval of time or space, when events happen at a constant average rate $\lambda$ and independently.
 
@@ -535,7 +493,7 @@ print(counts.var())    # ≈ 3.0  (mean ≈ variance)
 
 $$\text{Binom}(n, p) \xrightarrow{n \to \infty,\, np = \lambda} \text{Poisson}(\lambda)$$
 
-### 5.6 Gamma Distribution
+### 4.6 Gamma Distribution
 
 **Gamma($\alpha, \beta$):** models the waiting time until $\alpha$ events occur, where events arrive at rate $\beta$.
 
@@ -577,7 +535,7 @@ print(X.var())     # alpha/beta^2 = 2.0
 print(X.pdf(1.0))  # density at x=1
 ```
 
-### 5.7 Beta & Dirichlet Distributions
+### 4.7 Beta & Dirichlet Distributions
 
 **Beta($\alpha, \beta$):** distribution over probabilities $p \in [0, 1]$.
 
@@ -666,9 +624,9 @@ samples = np.random.dirichlet(alpha_dir, size=5)
 
 ---
 
-## 6. Information Theory
+## 5. Information Theory
 
-### 6.1 Entropy
+### 5.1 Entropy
 
 Entropy $H$ measures the **average uncertainty** (or information content) of a distribution:
 
@@ -698,7 +656,7 @@ entropy([1.0, 0.0])           # 0.0 nats — no uncertainty
 entropy([0.25, 0.25, 0.25, 0.25])  # 1.386 nats — maximum for 4 classes
 ```
 
-### 6.2 Cross-Entropy
+### 5.2 Cross-Entropy
 
 Cross-entropy measures the average number of bits needed to encode samples from $p$ using a code designed for $q$:
 
@@ -731,7 +689,7 @@ target = torch.tensor([0])                  # true class = 0
 loss = F.cross_entropy(logits, target)     # = -log(softmax(2.0)) ≈ 0.407
 ```
 
-### 6.3 KL Divergence & Total Variation Distance
+### 5.3 KL Divergence & Total Variation Distance
 
 **KL Divergence** measures how different distribution $q$ is from the true distribution $p$:
 
@@ -812,7 +770,7 @@ def kl_to_standard_normal(mu, log_var):
     return -0.5 * torch.sum(1 + log_var - mu**2 - log_var.exp())
 ```
 
-### 6.4 Mutual Information
+### 5.4 Mutual Information
 
 Mutual information measures how much knowing $X$ reduces uncertainty about $Y$:
 
@@ -828,9 +786,9 @@ $$I(X; Y) = D_{\text{KL}}(p(X,Y) \| p(X)p(Y)) = H(X) - H(X \mid Y) = H(Y) - H(Y 
 
 ---
 
-## 7. Estimation
+## 6. Estimation
 
-### 7.1 Bias — Definition
+### 6.1 Bias — Definition
 
 The **bias** of an estimator $\hat{\theta}$ for a true parameter $\theta$ is the systematic error in expectation:
 
@@ -851,7 +809,7 @@ $$\text{Bias}(\hat{\theta}) = \mathbb{E}[\hat{\theta}] - \theta$$
 - Flip once: $\hat{\theta} = X \in \{0, 1\}$ — always wrong for any single flip, but $\mathbb{E}[\hat{\theta}] = 0.5$ → unbiased.
 - Always predict $\hat{\theta} = 0.4$ — wrong on average → biased.
 
-### 7.2 Biased vs Unbiased Estimation
+### 6.2 Biased vs Unbiased Estimation
 
 | | Unbiased | Biased |
 |---|---|---|
@@ -870,7 +828,7 @@ $$\hat{\sigma}^2_\text{MLE} = \frac{1}{N}\sum_i (X_i - \bar{X})^2 \quad \Rightar
 
 The MLE systematically underestimates the true variance. Fix: divide by $N-1$ instead.
 
-### 7.3 Sample Variance & the N−1 Correction
+### 6.3 Sample Variance & the N−1 Correction
 
 **Sample variance** (unbiased estimator of population variance):
 
@@ -923,7 +881,7 @@ print(f"E[MLE var] = {np.mean(estimates_mle):.3f}")   # ≈ 2.667 (biased low)
 print(f"E[S²]      = {np.mean(estimates_s2):.3f}")    # ≈ 4.000 (unbiased)
 ```
 
-### 7.4 Is Unbiased Always Better?
+### 6.4 Is Unbiased Always Better?
 
 **No.** Unbiased estimators can have very high variance, leading to worse performance in practice.
 
@@ -949,7 +907,7 @@ For estimating a $d$-dimensional mean vector $\boldsymbol{\mu}$ from $\mathbf{X}
 | Safety-critical | Yes — systematic error is dangerous |
 | MLE variance with small $N$ | No — use $S^2$ |
 
-### 7.5 Bias, Variance, MSE — and their Relationship
+### 6.5 Bias, Variance, MSE — and their Relationship
 
 For a predictor $\hat{f}$ trying to approximate the true function $f$:
 
@@ -993,7 +951,7 @@ $$\text{MSE}(\hat{\theta}) = \text{Var}(\hat{\theta}) + \text{Bias}(\hat{\theta}
 
 For large $N$ both are similar; for small $N$, MLE has slightly lower MSE despite being biased!
 
-### 7.6 MLE vs Sample Variance in the Gaussian
+### 6.6 MLE vs Sample Variance in the Gaussian
 
 Given i.i.d. data $X_1, \ldots, X_N \sim \mathcal{N}(\mu, \sigma^2)$:
 
@@ -1035,7 +993,7 @@ print(f"Sample variance: {sigma2_S2:.3f}")    # closer to 4 on average
 | MLE variance | $\frac{1}{N}\sum(x_i-\bar{x})^2$ | $-\sigma^2/N$ | Optimization objectives |
 | Sample variance | $\frac{1}{N-1}\sum(x_i-\bar{x})^2$ | 0 | Statistical inference |
 
-### 7.7 Maximum Likelihood Estimation (MLE)
+### 6.7 Maximum Likelihood Estimation (MLE)
 
 Find parameters $\theta$ that make the observed data $\mathcal{D} = \{x_1, \ldots, x_N\}$ most probable:
 
@@ -1067,7 +1025,7 @@ sigma_mle = data.std()          # 0.316 (biased — divides by N)
 - Asymptotically normal and efficient
 - May overfit (no regularization, no prior)
 
-### 7.8 Maximum A Posteriori (MAP)
+### 6.8 Maximum A Posteriori (MAP)
 
 MAP incorporates a prior belief about $\theta$:
 
@@ -1087,7 +1045,7 @@ $$\hat{\theta}_{\text{MAP}} = \arg\max_\theta \, p(\theta \mid \mathcal{D}) = \a
 
 > **Key insight:** L2 regularization is the MAP estimate under a Gaussian prior on weights. The regularization strength $\lambda = 1/\sigma^2$ encodes how strongly you believe weights should be near zero.
 
-### 7.9 Conjugate Prior
+### 6.9 Conjugate Prior
 
 A **conjugate prior** is a prior distribution that, when combined with a particular likelihood, yields a posterior of the same distributional family.
 
@@ -1146,9 +1104,9 @@ print(f"Posterior std:  {posterior.std():.3f}")   # uncertainty
 
 ---
 
-## 8. Variation & Model Fit
+## 7. Variation & Model Fit
 
-### 8.1 Total, Explained, Unexplained Variation
+### 7.1 Total, Explained, Unexplained Variation
 
 When fitting a regression model $\hat{y} = f(x)$ to data $\{(x_i, y_i)\}$:
 
@@ -1194,7 +1152,7 @@ $$\text{SSE} = (3-3.2)^2 + (5-4.8)^2 + (4-4.1)^2 + (6-5.7)^2 + (2-2.2)^2 = 0.18$
 
 $$\text{SSR} = \text{SST} - \text{SSE} = 9.82$$
 
-### 8.2 Coefficient of Determination R²
+### 7.2 Coefficient of Determination R²
 
 $R^2$ (R-squared) measures the fraction of total variation **explained** by the model:
 
@@ -1242,7 +1200,7 @@ print(r2_score(y_true, y_pred))        # 0.982
 
 ---
 
-## 9. Hypothesis Testing
+## 8. Hypothesis Testing
 
 Hypothesis testing answers: "Is the pattern I see in the data real, or could it be due to chance?"
 
@@ -1254,7 +1212,7 @@ Hypothesis testing answers: "Is the pattern I see in the data real, or could it 
 4. Compute the **p-value**
 5. Reject $H_0$ if p-value $< \alpha$ (significance level, typically 0.05)
 
-### 9.1 P-value
+### 8.1 P-value
 
 The **p-value** is the probability of observing a test statistic as extreme as (or more extreme than) the one computed from the data, **assuming $H_0$ is true**.
 
@@ -1305,7 +1263,7 @@ print(f"z = {z:.2f}, p-value = {p_value:.4f}")  # z=2.40, p=0.0164
 result = stats.binom_test(n_heads, n_flips, p0)  # exact binomial test
 ```
 
-### 9.2 Confidence Interval
+### 8.2 Confidence Interval
 
 A **confidence interval (CI)** is a range of values that contains the true parameter with a specified probability (confidence level).
 
@@ -1360,7 +1318,7 @@ print(f"95% CI = [{ci[0]:.3f}, {ci[1]:.3f}]")
 
 If the null hypothesis value $\theta_0$ falls **outside** the 95% CI, the test rejects $H_0$ at $\alpha = 0.05$.
 
-### 9.3 Likelihood-Ratio Test
+### 8.3 Likelihood-Ratio Test
 
 The **likelihood-ratio test (LRT)** compares how well two models — a null (restricted) and an alternative (full) — fit the data.
 
@@ -1433,9 +1391,9 @@ print(f"Λ = {Lambda:.2f}, p-value = {p_val:.4f}")
 
 ---
 
-## 10. Sampling & Monte Carlo
+## 9. Sampling & Monte Carlo
 
-### 10.1 Monte Carlo Estimation
+### 9.1 Monte Carlo Estimation
 
 Estimate an expectation by averaging over random samples:
 
@@ -1452,7 +1410,7 @@ x = np.random.uniform(0, np.pi, N)
 estimate = np.sin(x).mean()   # ≈ 2/π ≈ 0.6366
 ```
 
-### 10.2 Importance Sampling
+### 9.2 Importance Sampling
 
 Sample from a convenient distribution $q$ instead of the hard-to-sample $p$:
 
@@ -1467,9 +1425,9 @@ $$\mathbb{E}_{x \sim p}[f(x)] = \mathbb{E}_{x \sim q}\!\left[\frac{p(x)}{q(x)} f
 
 ---
 
-## 11. Key Theorems
+## 10. Key Theorems
 
-### 11.1 Law of Large Numbers
+### 10.1 Law of Large Numbers
 
 As sample size $N \to \infty$, the sample mean converges to the true mean:
 
@@ -1497,7 +1455,7 @@ for N in [10, 100, 1000, 10000]:
 # N=10000  sample mean ≈ 5.0003
 ```
 
-### 11.2 Central Limit Theorem
+### 10.2 Central Limit Theorem
 
 The sum (or mean) of $N$ independent random variables converges to a **Gaussian**, regardless of the original distribution:
 
@@ -1532,9 +1490,9 @@ for N in [1, 5, 30]:
 
 ---
 
-## 12. AI Applications
+## 11. AI Applications
 
-### 12.1 Loss Functions as Likelihoods
+### 11.1 Loss Functions as Likelihoods
 
 Every standard loss function is the negative log-likelihood of a specific distribution:
 
@@ -1552,7 +1510,7 @@ $$\log p(y \mid x, \theta) = -\frac{(y - \hat{y})^2}{2\sigma^2} - \text{const}$$
 
 $$\hat{\theta}_\text{MLE} = \arg\max_\theta \sum_i \log p(y_i \mid x_i, \theta) = \arg\min_\theta \sum_i (y_i - \hat{y}_i)^2$$
 
-### 12.2 Bayesian Deep Learning
+### 11.2 Bayesian Deep Learning
 
 Standard neural networks output a point estimate $\hat{y}$. Bayesian neural networks output a **distribution** $p(y \mid x, \mathcal{D})$, capturing uncertainty.
 
@@ -1577,7 +1535,7 @@ mean = predictions.mean(0)     # expected prediction
 var  = predictions.var(0)      # epistemic uncertainty
 ```
 
-### 12.3 Variational Autoencoders (VAE)
+### 11.3 Variational Autoencoders (VAE)
 
 VAEs learn a latent representation $\mathbf{z}$ by maximizing the **Evidence Lower Bound (ELBO)**:
 
@@ -1611,7 +1569,7 @@ class VAE(torch.nn.Module):
         return recon + kl
 ```
 
-### 12.4 Diffusion Models
+### 11.4 Diffusion Models
 
 Diffusion models (DDPM, Stable Diffusion) learn to reverse a gradual noising process.
 
