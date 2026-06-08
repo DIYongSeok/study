@@ -897,7 +897,7 @@ A fixed learning rate is often suboptimal. Schedules adjust $\eta$ during traini
 | Schedule | Formula / Behavior | Used for |
 |----------|--------------------|---------|
 | Step decay | Multiply by $\gamma$ every $k$ epochs | CV |
-| Cosine annealing | $\eta_t = \eta_\min + \frac{1}{2}(\eta_\max - \eta_\min)(1+\cos\frac{\pi t}{T})$ | General |
+| Cosine annealing | $\eta_t = \eta_{\min} + \frac{1}{2}(\eta_{\max} - \eta_{\min})(1+\cos\frac{\pi t}{T})$ | General |
 | Warmup + cosine | Linear warmup, then cosine decay | Transformers |
 | Reduce on plateau | Halve $\eta$ when val loss stops improving | Adaptive |
 | OneCycleLR | Fast increase then gradual decrease | Super-convergence |

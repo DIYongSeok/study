@@ -188,20 +188,6 @@ print(f"P(disease | positive) = {p_disease_given_pos:.3f}")  # ~0.167
 
 $$F(x) = \sum_{t \leq x} p(t) \quad \text{(discrete)}, \qquad F(x) = \int_{-\infty}^{x} f(t)\,dt \quad \text{(continuous)}$$
 
-```python
-from scipy import stats
-
-# Discrete: Binomial
-X = stats.binom(n=10, p=0.3)
-print(X.pmf(3))    # P(X=3)
-print(X.cdf(3))    # P(X≤3)
-
-# Continuous: Gaussian
-X = stats.norm(loc=0, scale=1)
-print(X.pdf(0))    # density at 0 = 1/√(2π) ≈ 0.399
-print(X.cdf(0))    # P(X≤0) = 0.5
-```
-
 ### 2.3 Joint, Marginal, Conditional Distributions
 
 **Joint distribution:** $p(x, y)$ — probability of $X = x$ AND $Y = y$ simultaneously.
@@ -263,16 +249,6 @@ $$\text{Std}(X) = \sqrt{\text{Var}(X)}$$
 | $\text{Var}(aX) = a^2\,\text{Var}(X)$ | Scaling multiplies variance by $a^2$ |
 | $\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y)$ | Only if $X \perp Y$ |
 
-```python
-import numpy as np
-
-x = np.array([2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
-
-print(x.mean())    # 5.0
-print(x.var())     # 4.0
-print(x.std())     # 2.0
-```
-
 ### 3.3 Covariance & Correlation
 
 **Covariance** measures how two variables move together:
@@ -296,13 +272,6 @@ $$\Sigma = \text{Cov}(\mathbf{x}) = \mathbb{E}\!\left[(\mathbf{x} - \boldsymbol{
 $$\Sigma_{ij} = \text{Cov}(x_i, x_j), \qquad \Sigma_{ii} = \text{Var}(x_i)$$
 
 The covariance matrix is always **symmetric** and **positive semi-definite**.
-
-```python
-X = np.random.randn(100, 3)   # 100 samples, 3 features
-
-cov = np.cov(X.T)             # (3, 3) covariance matrix
-corr = np.corrcoef(X.T)       # (3, 3) correlation matrix
-```
 
 ---
 
@@ -351,15 +320,6 @@ $$\mathbb{E}[X_k] = np_k, \quad \text{Var}(X_k) = np_k(1-p_k)$$
 - Multinomial: word counts in a document (bag-of-words)
 - Softmax outputs a Multinoulli parameter vector $\mathbf{p}$
 
-```python
-import numpy as np
-
-# Multinomial: roll K=4 sided die n=10 times
-p = [0.1, 0.4, 0.3, 0.2]  # probabilities for each face
-counts = np.random.multinomial(n=10, pvals=p)
-# e.g. [1, 4, 3, 2] — counts for each category
-```
-
 ### 4.2 Gaussian (Normal)
 
 The most important distribution in AI and statistics:
@@ -386,18 +346,6 @@ $$P(\mu - 3\sigma \leq X \leq \mu + 3\sigma) \approx 99.7\%$$
 - Closed-form KL divergence and marginals
 - Weight initialization, noise in diffusion models, VAE latent space
 
-```python
-import numpy as np
-from scipy import stats
-
-x = np.random.normal(loc=0.0, scale=1.0, size=1000)
-
-z = stats.norm(0, 1)
-z.pdf(0)        # 0.3989
-z.cdf(1.96)     # 0.975 — 95% of mass below 1.96
-z.ppf(0.975)    # 1.96  — inverse CDF (quantile function)
-```
-
 ### 4.3 Multivariate Gaussian
 
 Extends the Gaussian to $n$-dimensional vectors:
@@ -410,14 +358,6 @@ $$\mathcal{N}(\boldsymbol{\mu}, \Sigma): \quad f(\mathbf{x}) = \frac{1}{(2\pi)^{
 | $\Sigma$ | $(n \times n)$ | Covariance matrix — encodes spread and correlations |
 | $\Sigma^{-1}$ | $(n \times n)$ | Precision matrix |
 | $(\mathbf{x}-\boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x}-\boldsymbol{\mu})$ | scalar | Mahalanobis distance |
-
-```python
-mean = np.array([0.0, 0.0])
-cov  = np.array([[1.0, 0.8],
-                 [0.8, 1.0]])    # correlated: X and Y tend to move together
-
-samples = np.random.multivariate_normal(mean, cov, size=1000)
-```
 
 ### 4.4 Categorical & Softmax
 
@@ -434,15 +374,6 @@ $$\text{softmax}(\mathbf{z})_k = \frac{e^{z_k}}{\sum_{j=1}^K e^{z_j}}$$
 | Output range | $(0, 1)$ for each $k$ |
 | Output sum | $\sum_k \text{softmax}(\mathbf{z})_k = 1$ |
 | Temperature scaling | $\text{softmax}(\mathbf{z}/T)$: $T \to 0$ → one-hot; $T \to \infty$ → uniform |
-
-```python
-import torch
-import torch.nn.functional as F
-
-logits = torch.tensor([2.0, 1.0, 0.1])
-probs  = F.softmax(logits, dim=0)
-# tensor([0.659, 0.242, 0.099])
-```
 
 ### 4.5 Poisson Distribution
 
@@ -489,7 +420,7 @@ print(counts.mean())   # ≈ 3.0
 print(counts.var())    # ≈ 3.0  (mean ≈ variance)
 ```
 
-**Limit relationship:** Binomial$(n, p)$ with large $n$, small $p$, and $np = \lambda$ converges to Poisson$(\lambda)$.
+**Limit relationship:** $\text{Binomial}(n, p)$ with large $n$, small $p$, and $np = \lambda$ converges to $\text{Poisson}(\lambda)$.
 
 $$\text{Binom}(n, p) \xrightarrow{n \to \infty,\, np = \lambda} \text{Poisson}(\lambda)$$
 
@@ -523,17 +454,6 @@ $$\Gamma(\alpha) = \int_0^\infty t^{\alpha-1} e^{-t}\,dt, \quad \Gamma(n) = (n-1
 - Gamma is the **conjugate prior** for the Poisson rate $\lambda$ and Gaussian precision $1/\sigma^2$
 - Chi-squared distribution (a Gamma special case) appears in hypothesis testing
 - Bayesian neural networks use Gamma priors on precision parameters
-
-```python
-from scipy import stats
-
-# Gamma(alpha=2, beta=1): waiting time for 2 events at rate 1
-X = stats.gamma(a=2, scale=1.0)   # scipy uses scale = 1/β
-
-print(X.mean())    # alpha/beta = 2.0
-print(X.var())     # alpha/beta^2 = 2.0
-print(X.pdf(1.0))  # density at x=1
-```
 
 ### 4.7 Beta & Dirichlet Distributions
 
@@ -601,27 +521,6 @@ $$\text{Posterior: } \mathbf{p} \mid \mathbf{c} \sim \text{Dir}(\boldsymbol{\alp
 | Bayesian language models | Dirichlet-Multinomial over word distributions |
 | Reinforcement learning | Beta/Dirichlet priors over action probabilities |
 
-```python
-import numpy as np
-from scipy import stats
-
-# Beta: prior over coin bias
-alpha, beta = 2, 5  # believe coin shows heads ~2/7 of the time
-X = stats.beta(alpha, beta)
-print(X.mean())    # 2/7 ≈ 0.286
-print(X.std())     # spread of uncertainty
-
-# After observing 3 heads, 7 tails
-alpha_post = alpha + 3   # = 5
-beta_post  = beta  + 7   # = 12
-print(alpha_post / (alpha_post + beta_post))  # posterior mean ≈ 0.294
-
-# Dirichlet: prior over 3-class probabilities
-alpha_dir = np.array([1.0, 1.0, 1.0])   # uniform
-samples = np.random.dirichlet(alpha_dir, size=5)
-# Each row sums to 1: [[0.3, 0.5, 0.2], [0.1, 0.6, 0.3], ...]
-```
-
 ---
 
 ## 5. Information Theory
@@ -642,19 +541,6 @@ $$H(X) = -\sum_x p(x) \log p(x) = \mathbb{E}[-\log p(X)]$$
 
 $$H(\text{fair}) = -0.5\log 0.5 - 0.5\log 0.5 = 1 \text{ bit}$$
 $$H(\text{biased, } p=0.9) = -0.9\log 0.9 - 0.1\log 0.1 \approx 0.47 \text{ bits}$$
-
-```python
-import numpy as np
-
-def entropy(p):
-    p = np.array(p)
-    return -np.sum(p * np.log(p + 1e-12))
-
-entropy([0.5, 0.5])           # 0.693 (nats) = 1.0 bit
-entropy([0.9, 0.1])           # 0.325 nats
-entropy([1.0, 0.0])           # 0.0 nats — no uncertainty
-entropy([0.25, 0.25, 0.25, 0.25])  # 1.386 nats — maximum for 4 classes
-```
 
 ### 5.2 Cross-Entropy
 
@@ -678,16 +564,6 @@ For a one-hot label (true class $c$), this simplifies to:
 $$\mathcal{L} = -\log \hat{p}_c$$
 
 > Minimizing cross-entropy = maximizing log-likelihood of the true class.
-
-```python
-import torch
-import torch.nn.functional as F
-
-logits = torch.tensor([[2.0, 1.0, 0.1]])   # model output (unnormalized)
-target = torch.tensor([0])                  # true class = 0
-
-loss = F.cross_entropy(logits, target)     # = -log(softmax(2.0)) ≈ 0.407
-```
 
 ### 5.3 KL Divergence & Total Variation Distance
 
@@ -746,29 +622,6 @@ $$\text{TV}(p, q) = \max_{A \subseteq \Omega} |P(A) - Q(A)|$$
 **Pinsker's inequality** connects KL and TV:
 
 $$\text{TV}(p, q) \leq \sqrt{\frac{1}{2} D_{\text{KL}}(p \| q)}$$
-
-```python
-import numpy as np
-
-def tv_distance(p, q):
-    p, q = np.array(p), np.array(q)
-    return 0.5 * np.sum(np.abs(p - q))
-
-def kl_divergence(p, q):
-    p, q = np.array(p) + 1e-12, np.array(q) + 1e-12
-    return np.sum(p * np.log(p / q))
-
-p = [0.5, 0.3, 0.2]
-q = [0.4, 0.4, 0.2]
-
-print(tv_distance(p, q))    # 0.1
-print(kl_divergence(p, q))  # ~0.038
-
-# VAE regularization: KL(N(μ,σ²) || N(0,1))
-import torch
-def kl_to_standard_normal(mu, log_var):
-    return -0.5 * torch.sum(1 + log_var - mu**2 - log_var.exp())
-```
 
 ### 5.4 Mutual Information
 
@@ -1013,13 +866,6 @@ Given data $\{x_i\}$, the MLE estimates are:
 
 $$\hat{\mu} = \frac{1}{N}\sum_i x_i, \qquad \hat{\sigma}^2 = \frac{1}{N}\sum_i (x_i - \hat{\mu})^2$$
 
-```python
-data = np.array([2.1, 2.5, 3.0, 2.8, 2.3])
-
-mu_mle    = data.mean()         # 2.54
-sigma_mle = data.std()          # 0.316 (biased — divides by N)
-```
-
 **Properties of MLE:**
 - Consistent: $\hat{\theta}_\text{MLE} \to \theta$ as $N \to \infty$
 - Asymptotically normal and efficient
@@ -1059,12 +905,12 @@ If prior and posterior belong to the same family → the prior is **conjugate** 
 
 | Likelihood | Conjugate Prior | Posterior |
 |-----------|----------------|-----------|
-| Bernoulli$(p)$ | Beta$(\alpha, \beta)$ | Beta$(\alpha + k,\; \beta + n - k)$ |
-| Binomial$(n, p)$ | Beta$(\alpha, \beta)$ | Beta$(\alpha + k,\; \beta + n - k)$ |
-| Multinomial$(n, \mathbf{p})$ | Dirichlet$(\boldsymbol{\alpha})$ | Dirichlet$(\boldsymbol{\alpha} + \mathbf{c})$ |
-| Poisson$(\lambda)$ | Gamma$(\alpha, \beta)$ | Gamma$(\alpha + \sum x_i,\; \beta + n)$ |
-| Gaussian$(\mu, \sigma^2)$ known $\sigma^2$ | Gaussian$(\mu_0, \sigma_0^2)$ | Gaussian (updated $\mu$ and $\sigma^2$) |
-| Gaussian$(\mu, \sigma^2)$ known $\mu$ | Gamma on precision | Gamma (updated) |
+| $\text{Bernoulli}(p)$ | $\text{Beta}(\alpha, \beta)$ | $\text{Beta}(\alpha + k,\; \beta + n - k)$ |
+| $\text{Binomial}(n, p)$ | $\text{Beta}(\alpha, \beta)$ | $\text{Beta}(\alpha + k,\; \beta + n - k)$ |
+| $\text{Multinomial}(n, \mathbf{p})$ | $\text{Dirichlet}(\boldsymbol{\alpha})$ | $\text{Dirichlet}(\boldsymbol{\alpha} + \mathbf{c})$ |
+| $\text{Poisson}(\lambda)$ | $\text{Gamma}(\alpha, \beta)$ | $\text{Gamma}(\alpha + \sum x_i,\; \beta + n)$ |
+| $\mathcal{N}(\mu, \sigma^2)$, known $\sigma^2$ | $\mathcal{N}(\mu_0, \sigma_0^2)$ | $\mathcal{N}(\mu_n, \sigma_n^2)$ (updated $\mu$) |
+| $\mathcal{N}(\mu, \sigma^2)$, known $\mu$ | $\text{Gamma}(\alpha, \beta)$ on precision $1/\sigma^2$ | $\text{Gamma}(\alpha + n/2,\; \beta + \frac{1}{2}\sum(x_i-\mu)^2)$ |
 
 **Detailed example — Beta-Bernoulli:**
 
@@ -1081,26 +927,6 @@ If instead we observe 30 heads, 70 tails:
 $$\text{Posterior} \sim \text{Beta}(32, 75), \quad \mathbb{E}[p \mid \text{data}] = \frac{32}{107} \approx 0.30 \quad \leftarrow \text{data dominates}$$
 
 **Intuition:** $\alpha$ and $\beta$ act as pseudo-counts — as if you had seen $\alpha$ heads and $\beta$ tails before the real experiment. With more data, the posterior is dominated by the data; with little data, the prior dominates.
-
-```python
-import numpy as np
-from scipy import stats
-
-# Prior: Beta(2, 5)
-alpha_prior, beta_prior = 2, 5
-
-# Observe 3H, 7T
-k, n = 3, 10
-alpha_post = alpha_prior + k            # 5
-beta_post  = beta_prior  + (n - k)     # 12
-
-prior     = stats.beta(alpha_prior, beta_prior)
-posterior = stats.beta(alpha_post, beta_post)
-
-print(f"Prior mean:     {prior.mean():.3f}")      # 0.286
-print(f"Posterior mean: {posterior.mean():.3f}")  # 0.294 (pulled by data)
-print(f"Posterior std:  {posterior.std():.3f}")   # uncertainty
-```
 
 ---
 
@@ -1177,25 +1003,6 @@ $$\bar{R}^2 = 1 - \frac{\text{SSE}/(N-p-1)}{\text{SST}/(N-1)}$$
 
 where $p$ is the number of predictors. Penalizes extra parameters that don't improve fit.
 
-```python
-import numpy as np
-from sklearn.metrics import r2_score
-
-y_true = np.array([3.0, 5.0, 4.0, 6.0, 2.0])
-y_pred = np.array([3.2, 4.8, 4.1, 5.7, 2.2])
-
-y_mean = y_true.mean()
-ss_tot = np.sum((y_true - y_mean)**2)   # 10.0
-ss_res = np.sum((y_true - y_pred)**2)   # 0.18
-ss_reg = ss_tot - ss_res                # 9.82
-
-r2 = 1 - ss_res / ss_tot               # 0.982
-print(f"R² = {r2:.3f}")
-
-# sklearn shortcut
-print(r2_score(y_true, y_pred))        # 0.982
-```
-
 **In deep learning:** $R^2$ is less commonly used (it's for regression), but the decomposition underlies the intuition behind loss functions and why we care about explained variance in latent representations.
 
 ---
@@ -1243,26 +1050,6 @@ $$\text{p-value} = 2 \cdot P(Z \geq 2.4) \approx 0.016 < 0.05 \quad \Rightarrow 
 | Reject $H_0$ | **Type I error** (false positive, rate = $\alpha$) | Correct (power = $1-\beta$) |
 | Fail to reject $H_0$ | Correct | **Type II error** (false negative, rate = $\beta$) |
 
-```python
-from scipy import stats
-import numpy as np
-
-# One-sample z-test: is this coin fair?
-n_flips = 100
-n_heads = 62
-p0 = 0.5  # null hypothesis
-
-p_hat = n_heads / n_flips
-se    = np.sqrt(p0 * (1 - p0) / n_flips)
-z     = (p_hat - p0) / se
-
-p_value = 2 * (1 - stats.norm.cdf(abs(z)))  # two-tailed
-print(f"z = {z:.2f}, p-value = {p_value:.4f}")  # z=2.40, p=0.0164
-
-# Using scipy directly
-result = stats.binom_test(n_heads, n_flips, p0)  # exact binomial test
-```
-
 ### 8.2 Confidence Interval
 
 A **confidence interval (CI)** is a range of values that contains the true parameter with a specified probability (confidence level).
@@ -1271,7 +1058,7 @@ $$\bar{X} \pm z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{N}}$$
 
 For 95% CI: $z_{0.025} = 1.96$
 
-$$\text{95% CI: } \left[\bar{X} - 1.96\frac{\sigma}{\sqrt{N}},\; \bar{X} + 1.96\frac{\sigma}{\sqrt{N}}\right]$$
+$$\text{95\% CI: } \left[\bar{X} - 1.96\frac{\sigma}{\sqrt{N}},\; \bar{X} + 1.96\frac{\sigma}{\sqrt{N}}\right]$$
 
 **Critical interpretation:**
 
@@ -1293,7 +1080,7 @@ $$\text{Width} = 2 \cdot z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{N}}$$
 
 $N = 25$ measurements, $\bar{X} = 5.2$, known $\sigma = 1.0$
 
-$$\text{95% CI} = 5.2 \pm 1.96 \cdot \frac{1.0}{\sqrt{25}} = 5.2 \pm 0.392 = [4.808, 5.592]$$
+$$\text{95\% CI} = 5.2 \pm 1.96 \cdot \frac{1.0}{\sqrt{25}} = 5.2 \pm 0.392 = [4.808,\; 5.592]$$
 
 When $\sigma$ is unknown, use $t$-distribution with $N-1$ degrees of freedom:
 
@@ -1355,34 +1142,6 @@ where $k$ = number of extra parameters in the full model (degrees of freedom dif
 $$\Lambda = -2(-490 - (-500)) = 20$$
 
 $$\chi^2_{10, 0.05} = 18.3 \quad \Rightarrow \quad 20 > 18.3 \quad \Rightarrow \text{larger model significantly better}$$
-
-```python
-from scipy import stats
-import numpy as np
-
-# Simulate: test if two groups have the same mean
-np.random.seed(42)
-group1 = np.random.normal(5.0, 1.0, 30)
-group2 = np.random.normal(5.5, 1.0, 30)
-
-# Log-likelihood under H0: shared mean
-mu0 = np.concatenate([group1, group2]).mean()
-sigma = 1.0
-ll_null = np.sum(stats.norm.logpdf(group1, mu0, sigma)) + \
-          np.sum(stats.norm.logpdf(group2, mu0, sigma))
-
-# Log-likelihood under H1: separate means
-mu1 = group1.mean()
-mu2 = group2.mean()
-ll_alt  = np.sum(stats.norm.logpdf(group1, mu1, sigma)) + \
-          np.sum(stats.norm.logpdf(group2, mu2, sigma))
-
-Lambda = -2 * (ll_null - ll_alt)   # test statistic
-p_val  = 1 - stats.chi2.cdf(Lambda, df=1)   # df = 1 extra parameter
-
-print(f"Λ = {Lambda:.2f}, p-value = {p_val:.4f}")
-# If p < 0.05: groups have significantly different means
-```
 
 **Why LRT matters in AI:**
 - Model selection: compare deep vs shallow networks formally
