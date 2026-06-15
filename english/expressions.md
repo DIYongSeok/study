@@ -298,6 +298,26 @@
     + He was involved in the accident. (그는 그 사고에 연루되었다.)
     + I'm deeply involved in this project. (나는 이 프로젝트에 깊이 관여하고 있다.)
 
+> consist / comprise / compose (구성하다)
+- 세 단어 모두 "~로 구성되다/구성하다"는 뜻이지만, **주어와 방향이 다름**
+- consist of: 전체가 주어, 부분이 목적어 (수동태 없음, always active)
+    + The team consists of 10 members. (팀은 10명으로 구성된다.)
+    + Water consists of hydrogen and oxygen. (물은 수소와 산소로 구성된다.)
+    + ❌ is consisted of (X) → consist는 수동태 불가
+- comprise: 전체가 주어, 부분이 목적어 (= consist of와 같은 방향)
+    + The USA comprises 50 states. (미국은 50개 주로 구성된다.)
+    + The album comprises 12 songs. (그 앨범은 12곡으로 구성된다.)
+    + ⚠️ "be comprised of"는 엄밀히 틀린 표현이지만 실생활에서 매우 자주 쓰임
+- compose: 부분이 주어, 전체가 목적어 (부분 → 전체 방향)
+    + Ten members compose the team. (10명이 팀을 구성한다.)
+    + ✅ be composed of: 훨씬 더 자주 쓰이는 수동 형태
+    + The committee is composed of experts. (위원회는 전문가들로 구성되어 있다.)
+    + The atmosphere is composed of several gases. (대기는 여러 가지 기체로 구성되어 있다.)
+- ✅ 정리:
+    + consist of = be composed of (가장 안전하고 자연스러운 표현)
+    + comprise = 전체 → 부분 방향 (격식체, 능동형)
+    + compose = 부분 → 전체 방향, 주로 "be composed of"로 사용
+
 > relate (관련시키다, 공감하다)
 - relate to: ~와 관련이 있다 / ~에 공감하다
     + This topic relates to what we studied last week. (이 주제는 우리가 지난주에 공부한 것과 관련이 있다.)
