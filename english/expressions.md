@@ -298,6 +298,29 @@
     + He was involved in the accident. (그는 그 사고에 연루되었다.)
     + I'm deeply involved in this project. (나는 이 프로젝트에 깊이 관여하고 있다.)
 
+> contact (연락하다/연락)
+- contact는 **동사/명사 둘 다** 가능, 전치사 사용에 주의
+- 동사: contact + 사람 (전치사 없이 바로 목적어)
+    + I'll contact you tomorrow. (내일 연락할게.)
+    + Please contact me if you have any questions. (질문 있으면 연락하세요.)
+    + ❌ contact to you / contact with you (X) → 전치사 붙이면 틀림
+- 명사 관용 표현:
+    + get in contact with: ~와 연락을 취하다 (연락을 처음 시작할 때)
+        * I'll get in contact with him this week. (이번 주에 그에게 연락해볼게.)
+    + be in contact with: ~와 연락을 유지하다 (현재 연락 중인 상태)
+        * I'm still in contact with my old classmates. (나는 아직도 옛 반 친구들과 연락하고 지내.)
+    + keep in contact with (= stay in contact with): 연락을 계속 유지하다
+        * Let's keep in contact after you move. (이사 간 후에도 계속 연락하자.)
+    + lose contact with: ~와 연락이 끊기다
+        * I lost contact with him after graduation. (졸업 후 그와 연락이 끊겼어.)
+    + make contact with: ~와 접촉/연락하다 (공식적인 뉘앙스)
+        * We made contact with the supplier last week. (지난주에 공급업체와 연락을 취했다.)
+- ✅ 정리:
+    + 동사로 쓸 땐: **contact + 사람** (전치사 없이)
+    + 명사로 쓸 땐: **get/be/keep/lose/make + in contact with**
+    + "get in touch with"도 완전히 같은 의미로 쓸 수 있음
+        * I'll get in touch with him. = I'll contact him.
+
 > consist / comprise / compose (구성하다)
 - 세 단어 모두 "~로 구성되다/구성하다"는 뜻이지만, **주어와 방향이 다름**
 - consist of: 전체가 주어, 부분이 목적어 (수동태 없음, always active)
