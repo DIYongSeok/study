@@ -647,7 +647,7 @@ Equivalently: all eigenvalues are strictly positive.
 | Indefinite | Neither | Mixed signs |
 
 **Why AI cares:**
-- The **Hessian** of the loss being PD means the loss is convex — guaranteed unique minimum
+- The **Hessian** of the loss being PD at a critical point → strict local minimum; PD everywhere → convex with a unique minimum ([multivariable_calculus.md](multivariable_calculus.md) §7–8)
 - **Covariance matrices** are always PSD — eigenvalues represent variance along each direction
 - **Kernel matrices** in SVMs must be PSD
 - Adam optimizer uses a diagonal approximation of the PD Hessian
@@ -658,23 +658,19 @@ Equivalently: all eigenvalues are strictly positive.
 
 ## 11. Gradients & Jacobians
 
+> **Scope:** this section defines the gradient, Jacobian, and Hessian as linear-algebra *objects* — their shapes and the identities used in §12. The *calculus* — why the gradient is the steepest-ascent direction, directional derivatives, the chain rule as function composition, Taylor expansion, and optimization — lives in [multivariable_calculus.md](multivariable_calculus.md) §2–9.
+
 ### 11.1 Gradient as a Vector
 
 For a scalar function $f: \mathbb{R}^n \to \mathbb{R}$, the gradient is the vector of partial derivatives:
 
 $$\nabla_{\mathbf{x}} f = \begin{bmatrix} \partial f / \partial x_1 \\ \partial f / \partial x_2 \\ \vdots \\ \partial f / \partial x_n \end{bmatrix} \in \mathbb{R}^n$$
 
-The gradient points in the direction of **steepest increase**. Gradient descent steps opposite to it:
+It points in the direction of **steepest increase** (derived in [multivariable_calculus.md](multivariable_calculus.md) §3.2); gradient descent steps opposite to it:
 
 $$\mathbf{x} \leftarrow \mathbf{x} - \alpha \nabla_\mathbf{x} f(\mathbf{x})$$
 
-**Example — L2 loss:**
-
-$$f(\mathbf{x}) = \|\mathbf{x}\|_2^2 = x_1^2 + x_2^2 + \cdots + x_n^2$$
-
-$$\nabla_\mathbf{x} f = 2\mathbf{x}$$
-
-**Common gradient rules:**
+**Common gradient identities** (used throughout §12):
 
 | Function | Gradient |
 |----------|----------|
@@ -685,44 +681,46 @@ $$\nabla_\mathbf{x} f = 2\mathbf{x}$$
 
 ### 11.2 Jacobian Matrix
 
-For a vector-valued function $\mathbf{f}: \mathbb{R}^n \to \mathbb{R}^m$, the Jacobian contains all partial derivatives:
+For a vector-valued function $\mathbf{f}: \mathbb{R}^n \to \mathbb{R}^m$, the Jacobian contains all first partials. **This document uses denominator layout** — shape $n \times m$, with $J_{ij} = \partial f_j / \partial x_i$:
 
 $$J = \frac{\partial \mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix} \partial f_1/\partial x_1 & \cdots & \partial f_m/\partial x_1 \\ \vdots & \ddots & \vdots \\ \partial f_1/\partial x_n & \cdots & \partial f_m/\partial x_n \end{bmatrix} \in \mathbb{R}^{n \times m}$$
 
 | Term | Meaning |
 |------|---------|
 | $J_{ij}$ | How output $j$ changes when input $i$ changes |
-| $J \in \mathbb{R}^{n \times m}$ | denominator shape ($\mathbf{x}$) × numerator shape ($\mathbf{f}$) — denominator layout |
-| $\det(J)$ | Local volume scaling factor (used in normalizing flows) |
+| $J \in \mathbb{R}^{n \times m}$ | denominator shape ($\mathbf{x}$) × numerator shape ($\mathbf{f}$) |
+| $\det(J)$ | Local volume scaling factor — see [multivariable_calculus.md](multivariable_calculus.md) §6.3 |
 
-**In AI:** backpropagation computes Jacobian-vector products via the chain rule (see §12.4 for full derivation):
+> **Convention bridge:** [multivariable_calculus.md](multivariable_calculus.md) §6 uses **numerator layout** ($m \times n$, the math/robotics standard, where row $i$ is $\nabla f_i^\top$ and $J$ reads directly as the local linear map). This ML section uses **denominator layout** ($n \times m$) so gradients match parameter shapes for the update step. The two are transposes; each doc is internally consistent.
+
+**In AI:** backpropagation computes Jacobian-vector products via the chain rule (see §12.4):
 
 $$\frac{\partial \mathcal{L}}{\partial \mathbf{x}} = J \cdot \frac{\partial \mathcal{L}}{\partial \mathbf{f}}$$
 
+For the geometric picture (local linear map, inverse function theorem) and the robot manipulator Jacobian, see [multivariable_calculus.md](multivariable_calculus.md) §6.2–6.4.
+
 ### 11.3 Hessian Matrix
 
-For $f: \mathbb{R}^n \to \mathbb{R}$, the Hessian is the matrix of second derivatives:
+For $f: \mathbb{R}^n \to \mathbb{R}$, the Hessian is the matrix of second partials — equivalently the Jacobian of the gradient:
 
 $$H = \nabla^2 f = \begin{bmatrix} \partial^2 f/\partial x_1^2 & \partial^2 f/\partial x_1 \partial x_2 & \cdots \\ \partial^2 f/\partial x_2 \partial x_1 & \partial^2 f/\partial x_2^2 & \cdots \\ \vdots & & \ddots \end{bmatrix} \in \mathbb{R}^{n \times n}$$
 
-| Hessian property | Meaning for the loss landscape |
-|------------------|-------------------------------|
-| $H \succ 0$ (PD) | Local minimum — convex bowl |
-| $H$ has negative eigenvalue | Saddle point — flat or descending in some direction |
-| Large $\lambda_{\max}(H)$ | Sharp curvature — small learning rate required |
-| Small $\lambda_{\max}(H)$ | Flat landscape — can use larger learning rate |
+$H$ is **symmetric** (equality of mixed partials), so it has real eigenvalues and orthogonal eigenvectors — §2.5, §6.
 
-**In AI:** the ratio $\lambda_{\max} / \lambda_{\min}$ of the Hessian is the **condition number** — large condition number means training is slow and unstable (requires adaptive optimizers like Adam).
+- Its eigenvalues are the curvatures of $f$; their **signs classify critical points** (PD → min, ND → max, mixed → saddle). Full treatment in [multivariable_calculus.md](multivariable_calculus.md) §7–8.
+- The **condition number** $\kappa(H) = \lambda_{\max}/\lambda_{\min}$ (§7.4) governs optimizer behavior: large $\kappa$ → a narrow ravine where plain gradient descent zig-zags, motivating momentum / Adam / preconditioning.
 
 ---
 
 ## 12. Matrix Derivatives
 
-Matrix derivatives are the engine of backpropagation. Every gradient update in a neural network is a matrix derivative computed through the chain rule.
+Matrix derivatives are the engine of backpropagation. Every gradient update in a neural network is a matrix derivative computed through the chain rule. This section is the **ML-facing reference**: denominator layout, shape bookkeeping, and worked numerical examples. For the underlying calculus — partial derivatives, the multivariable chain rule, Taylor expansion, and optimization theory — see [multivariable_calculus.md](multivariable_calculus.md).
 
 ### 12.1 Layout Convention
 
 **This document uses denominator layout**, because it makes gradient descent work without any transposing: if $\mathbf{w}$ has shape $(n,)$ then $\partial L/\partial\mathbf{w}$ also has shape $(n,)$, so the update $\mathbf{w} \leftarrow \mathbf{w} - \eta\,\nabla_\mathbf{w} L$ is shape-consistent. PyTorch and NumPy follow this convention.
+
+> This is the **opposite** of the numerator layout used for the Jacobian in [multivariable_calculus.md](multivariable_calculus.md) §6. Denominator layout is the right default for ML (gradients mirror parameters); numerator layout is the right default for kinematics and analysis (the Jacobian is read directly as the local linear map $\mathbf{f}(\mathbf{x}_0) + J\Delta\mathbf{x}$). Same numbers, transposed arrangement.
 
 #### The shape table
 
@@ -936,7 +934,7 @@ $$= \begin{bmatrix}0.223&-0.163&-0.060\\-0.163&0.185&-0.022\\-0.060&-0.022&0.082
 
 ### 12.5 Chain Rule in Matrix Form
 
-Backpropagation is the chain rule applied repeatedly through layers.
+Backpropagation is the chain rule applied repeatedly through layers. For the concept — composition of maps, computational graphs, and why reverse-mode is the efficient direction for a scalar loss — see [multivariable_calculus.md](multivariable_calculus.md) §4. This section is the matrix mechanics with worked numbers.
 
 For $\mathcal{L} = f(g(\mathbf{x}))$:
 
