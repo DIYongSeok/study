@@ -262,6 +262,119 @@ $$A = \begin{bmatrix} 4 & 2 & 1 \\ 2 & 5 & 3 \\ 1 & 3 & 6 \end{bmatrix} \quad \l
 | Always diagonalizable | $A = V\Lambda V^\top$ guaranteed |
 | $\mathbf{x}^\top A \mathbf{y} = \mathbf{y}^\top A \mathbf{x}$ | Symmetric bilinear form |
 
+**Proofs of the four properties**
+
+Throughout, $A \in \mathbb{R}^{n \times n}$ and $A^\top = A$. Every proof below uses the same single trick:
+
+> compute a scalar of the form $\mathbf{a}^\top A \mathbf{b}$ in **two different ways** — once by letting $A$ act on $\mathbf{b}$, once by moving $A$ onto $\mathbf{a}$ via $A^\top = A$ — and compare.
+
+---
+
+#### Proof 1 — All eigenvalues are real
+
+**Setup.** Let $A\mathbf{v} = \lambda\mathbf{v}$, $\mathbf{v} \neq \mathbf{0}$. We allow $\lambda \in \mathbb{C}$, $\mathbf{v} \in \mathbb{C}^n$ for now.
+Let $\bar{\mathbf{v}}$ be the entrywise complex conjugate. Note that
+
+$$\bar{\mathbf{v}}^\top \mathbf{v} = \sum_i |v_i|^2 > 0$$
+
+**Step 1 — let $A$ act on $\mathbf{v}$.**
+
+$$\bar{\mathbf{v}}^\top A \mathbf{v} = \bar{\mathbf{v}}^\top (\lambda \mathbf{v}) = \lambda \,\bar{\mathbf{v}}^\top \mathbf{v}$$
+
+**Step 2 — move $A$ onto $\bar{\mathbf{v}}$.**
+$A$ is real, so conjugating $A\mathbf{v} = \lambda\mathbf{v}$ gives $A\bar{\mathbf{v}} = \bar\lambda\bar{\mathbf{v}}$. Then
+
+$$\bar{\mathbf{v}}^\top A \mathbf{v} = (A^\top \bar{\mathbf{v}})^\top \mathbf{v} = (A \bar{\mathbf{v}})^\top \mathbf{v} = (\bar\lambda \bar{\mathbf{v}})^\top \mathbf{v} = \bar\lambda \,\bar{\mathbf{v}}^\top \mathbf{v}$$
+
+**Step 3 — compare.**
+
+$$\lambda \,\bar{\mathbf{v}}^\top \mathbf{v} = \bar\lambda \,\bar{\mathbf{v}}^\top \mathbf{v} \quad\Longrightarrow\quad (\lambda - \bar\lambda)\,\underbrace{\bar{\mathbf{v}}^\top \mathbf{v}}_{>\,0} = 0 \quad\Longrightarrow\quad \lambda = \bar\lambda$$
+
+**Conclusion.** $\lambda \in \mathbb{R}$. Since $A - \lambda I$ is now a *real* singular matrix, its null space contains a real vector, so the eigenvector can be taken real as well. $\blacksquare$
+
+---
+
+#### Proof 2 — Eigenvectors for distinct eigenvalues are orthogonal
+
+**Setup.** Let $A\mathbf{v}_1 = \lambda_1 \mathbf{v}_1$ and $A\mathbf{v}_2 = \lambda_2 \mathbf{v}_2$ with $\lambda_1 \neq \lambda_2$ (both real by Proof 1).
+
+**Step 1 — let $A$ act on $\mathbf{v}_2$.**
+
+$$\mathbf{v}_1^\top A \mathbf{v}_2 = \mathbf{v}_1^\top (\lambda_2 \mathbf{v}_2) = \lambda_2 \,\mathbf{v}_1^\top \mathbf{v}_2$$
+
+**Step 2 — move $A$ onto $\mathbf{v}_1$.**
+
+$$\mathbf{v}_1^\top A \mathbf{v}_2 = \mathbf{v}_1^\top A^\top \mathbf{v}_2 = (A \mathbf{v}_1)^\top \mathbf{v}_2 = (\lambda_1 \mathbf{v}_1)^\top \mathbf{v}_2 = \lambda_1 \,\mathbf{v}_1^\top \mathbf{v}_2$$
+
+**Step 3 — compare.**
+
+$$(\lambda_1 - \lambda_2)\,\mathbf{v}_1^\top \mathbf{v}_2 = 0, \qquad \lambda_1 \neq \lambda_2 \quad\Longrightarrow\quad \mathbf{v}_1^\top \mathbf{v}_2 = 0$$
+
+**Conclusion.** $\mathbf{v}_1 \perp \mathbf{v}_2$. $\blacksquare$
+
+> **What about repeated eigenvalues?** Two eigenvectors sharing the same $\lambda$ need not be orthogonal (any vector in the eigenspace is an eigenvector). But the eigenspace is a subspace, so Gram–Schmidt (§9.3) gives it an orthonormal basis. Proof 3 shows that these bases fill out all of $\mathbb{R}^n$.
+
+---
+
+#### Proof 3 — Always diagonalizable: $A = V\Lambda V^\top$ with $V$ orthogonal (Spectral Theorem)
+
+**Strategy.** Peel off one eigenvector at a time. Induction on $n$.
+
+**Base case $n = 1$.** $A = [a]$, take $V = [1]$, $\Lambda = [a]$.
+
+**Inductive step.** Assume every symmetric $(n-1) \times (n-1)$ matrix is orthogonally diagonalizable.
+
+**Step 1 — grab one eigenpair.**
+The characteristic polynomial has a root $\lambda_1 \in \mathbb{C}$; by Proof 1 it is real, with a real unit eigenvector $\mathbf{q}_1$.
+
+**Step 2 — build an orthogonal matrix around it.**
+Extend $\mathbf{q}_1$ to an orthonormal basis of $\mathbb{R}^n$ (Gram–Schmidt) and write
+
+$$Q = \begin{bmatrix} \mathbf{q}_1 & Q_2 \end{bmatrix}, \qquad Q_2 \in \mathbb{R}^{n \times (n-1)}, \qquad Q_2^\top \mathbf{q}_1 = \mathbf{0}, \qquad Q^\top Q = I$$
+
+**Step 3 — change basis and watch the off-diagonal blocks vanish.**
+
+$$Q^\top A Q = \begin{bmatrix} \mathbf{q}_1^\top A \mathbf{q}_1 & \mathbf{q}_1^\top A Q_2 \\[4pt] Q_2^\top A \mathbf{q}_1 & Q_2^\top A Q_2 \end{bmatrix}$$
+
+- Top-left: $\mathbf{q}_1^\top A \mathbf{q}_1 = \lambda_1 \mathbf{q}_1^\top \mathbf{q}_1 = \lambda_1$
+- Bottom-left: $Q_2^\top A \mathbf{q}_1 = \lambda_1 Q_2^\top \mathbf{q}_1 = \mathbf{0}$
+- Top-right: $Q^\top A Q$ is symmetric (because $(Q^\top A Q)^\top = Q^\top A^\top Q = Q^\top A Q$), so it is the transpose of the bottom-left block, also $\mathbf{0}$
+
+$$\therefore\quad Q^\top A Q = \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & B \end{bmatrix}, \qquad B := Q_2^\top A Q_2 \;\text{ is symmetric, } (n-1) \times (n-1)$$
+
+**Step 4 — apply the induction hypothesis to $B$.**
+
+$$B = \tilde V \tilde\Lambda \tilde V^\top, \qquad \tilde V \text{ orthogonal}, \; \tilde\Lambda \text{ diagonal}$$
+
+**Step 5 — assemble.**
+
+$$V := Q \begin{bmatrix} 1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V \end{bmatrix}, \qquad \Lambda := \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde\Lambda \end{bmatrix}$$
+
+$V$ is a product of two orthogonal matrices, so $V^\top V = I$, and
+
+$$V^\top A V = \begin{bmatrix} 1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V^\top \end{bmatrix} \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & B \end{bmatrix} \begin{bmatrix} 1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V \end{bmatrix} = \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V^\top B \tilde V \end{bmatrix} = \Lambda$$
+
+**Conclusion.** Multiply by $V$ on the left and $V^\top$ on the right: $A = V \Lambda V^\top$.
+The columns of $V$ are $n$ orthonormal eigenvectors; the diagonal of $\Lambda$ holds the real eigenvalues. $\blacksquare$
+
+---
+
+#### Proof 4 — Symmetric bilinear form: $\mathbf{x}^\top A \mathbf{y} = \mathbf{y}^\top A \mathbf{x}$
+
+**($\Rightarrow$) $A$ symmetric implies the form is symmetric.**
+$\mathbf{x}^\top A \mathbf{y}$ is a $1 \times 1$ matrix, so it equals its own transpose:
+
+$$\mathbf{x}^\top A \mathbf{y} = (\mathbf{x}^\top A \mathbf{y})^\top = \mathbf{y}^\top A^\top \mathbf{x} = \mathbf{y}^\top A \mathbf{x}$$
+
+**($\Leftarrow$) The form symmetric for all $\mathbf{x}, \mathbf{y}$ implies $A$ symmetric.**
+Plug in standard basis vectors $\mathbf{x} = \mathbf{e}_i$, $\mathbf{y} = \mathbf{e}_j$:
+
+$$\mathbf{e}_i^\top A \mathbf{e}_j = a_{ij}, \qquad \mathbf{e}_j^\top A \mathbf{e}_i = a_{ji} \quad\Longrightarrow\quad a_{ij} = a_{ji}$$
+
+**Conclusion.** $A = A^\top \iff \mathbf{x}^\top A \mathbf{y} = \mathbf{y}^\top A \mathbf{x}$ for all $\mathbf{x}, \mathbf{y}$. $\blacksquare$
+
+---
+
 **Where symmetric matrices appear in AI:**
 
 | Matrix | Why symmetric |
@@ -1078,6 +1191,53 @@ Equivalently: all eigenvalues are strictly positive.
 | Positive definite (PD) | $\mathbf{x}^\top A \mathbf{x} > 0$ | All $\lambda > 0$ |
 | Positive semi-definite (PSD) | $\mathbf{x}^\top A \mathbf{x} \geq 0$ | All $\lambda \geq 0$ |
 | Indefinite | Neither | Mixed signs |
+
+**Proof — PD $\iff$ all eigenvalues are positive**
+
+Throughout, $A$ is symmetric, so by §2.5 its eigenvalues are real and $A = V\Lambda V^\top$ with $V$ orthogonal.
+
+---
+
+#### ($\Rightarrow$) PD implies every eigenvalue is positive
+
+**Setup.** Let $\lambda$ be any eigenvalue with eigenvector $\mathbf{v} \neq \mathbf{0}$, so $A\mathbf{v} = \lambda\mathbf{v}$.
+
+**Step 1 — plug the eigenvector into the quadratic form.**
+
+$$\mathbf{v}^\top A \mathbf{v} = \mathbf{v}^\top (\lambda \mathbf{v}) = \lambda\, \mathbf{v}^\top \mathbf{v} = \lambda\, \|\mathbf{v}\|^2$$
+
+**Step 2 — use the PD hypothesis.**
+$\mathbf{v} \neq \mathbf{0}$, so PD gives $\mathbf{v}^\top A \mathbf{v} > 0$. Hence
+
+$$\lambda\, \underbrace{\|\mathbf{v}\|^2}_{>\,0} > 0 \quad\Longrightarrow\quad \lambda > 0$$
+
+**Conclusion.** Every eigenvalue is strictly positive. $\blacksquare$
+
+> **Intuition:** the quadratic form $\mathbf{x}^\top A \mathbf{x}$ measures how much $A$ "stretches" $\mathbf{x}$ *along itself*. On an eigenvector, $A$ acts as pure scaling by $\lambda$, so the stretch is exactly $\lambda \|\mathbf{v}\|^2$. If that must be positive, $\lambda$ must be positive.
+
+---
+
+#### ($\Leftarrow$) All eigenvalues positive implies PD
+
+**Setup.** Assume $\lambda_1, \ldots, \lambda_n > 0$ and $A = V\Lambda V^\top$. Take any $\mathbf{x} \neq \mathbf{0}$.
+
+**Step 1 — change to the eigenvector basis.**
+Let $\mathbf{y} = V^\top \mathbf{x}$. Since $V$ is orthogonal, $\mathbf{y} \neq \mathbf{0}$ (because $\mathbf{x} = V\mathbf{y}$ and $V\mathbf{0} = \mathbf{0}$).
+
+**Step 2 — the quadratic form becomes a weighted sum of squares.**
+
+$$\mathbf{x}^\top A \mathbf{x} = \mathbf{x}^\top V \Lambda V^\top \mathbf{x} = (V^\top \mathbf{x})^\top \Lambda (V^\top \mathbf{x}) = \mathbf{y}^\top \Lambda \mathbf{y} = \sum_{i=1}^n \lambda_i\, y_i^2$$
+
+**Step 3 — every term is non-negative and at least one is positive.**
+Each $\lambda_i > 0$ and $y_i^2 \geq 0$, so every term is $\geq 0$. Since $\mathbf{y} \neq \mathbf{0}$, some $y_j \neq 0$, and that term $\lambda_j y_j^2 > 0$. Hence
+
+$$\mathbf{x}^\top A \mathbf{x} = \sum_{i=1}^n \lambda_i\, y_i^2 > 0$$
+
+**Conclusion.** $\mathbf{x}^\top A \mathbf{x} > 0$ for all $\mathbf{x} \neq \mathbf{0}$, i.e. $A$ is PD. $\blacksquare$
+
+> **PSD version:** replace every strict inequality with $\geq$. The same two arguments give $A$ is PSD $\iff$ all $\lambda_i \geq 0$.
+
+---
 
 **Why AI cares:**
 - The **Hessian** of the loss being PD means the loss is convex — guaranteed unique minimum
