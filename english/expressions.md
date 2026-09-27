@@ -350,3 +350,13 @@
     + Stress is often related to poor sleep. (스트레스는 종종 수면 부족과 관련이 있다.)
     + Are these two problems related to each other? (이 두 문제는 서로 관련이 있나요?)
 - ✅ Tip: involve는 "어떤 일이 ~을 포함/수반한다"는 뉘앙스, relate는 "~와 연결되거나 공감한다"는 뉘앙스.
+
+> all the way (끝까지, 줄곧, 완전히, 멀리서까지)
+- 거리/방향: 출발점에서 목적지까지 내내
+    + She walked all the way home in the rain. (비를 맞으며 집까지 쭉 걸어갔다.)
+    + He came all the way from Seoul to see me. (그는 서울에서 멀리까지 나를 보러 왔다.)
+- 정도: 완전히, 끝까지
+    + I read the book all the way to the end. (그 책을 끝까지 다 읽었다.)
+    + She supported him all the way. (그녀는 그를 끝까지 지지했다.)
+    + Turn the volume up all the way. (볼륨을 끝까지 올려.)
+- ✅ Tip: "내내 / 끝까지 / 멀리서까지"라는 뉘앙스로, 거리·과정·정도 어디에도 쓸 수 있음.
