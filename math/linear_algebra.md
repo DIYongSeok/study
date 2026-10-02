@@ -1,6 +1,8 @@
-﻿# Linear Algebra for AI
+﻿# Linear Algebra
 
-Linear algebra is the mathematical backbone of AI. Neural networks, attention mechanisms, PCA, SVD, and optimization all reduce to matrix and vector operations.
+The study of vectors, matrices, and linear maps. It is the language of systems of equations, geometry,
+data analysis, dynamical systems, and physics — and the mathematical backbone of modern AI, where neural
+networks, attention, PCA, SVD, and optimization all reduce to matrix and vector operations.
 
 ## Table of Contents
 
@@ -9,6 +11,7 @@ Linear algebra is the mathematical backbone of AI. Neural networks, attention me
    - 1.2 [Vector Operations](#12-vector-operations)
    - 1.3 [Dot Product](#13-dot-product)
    - 1.4 [Norms](#14-norms)
+   - 1.5 [Cross Product & Triple Product](#15-cross-product--triple-product)
 2. [Matrices](#2-matrices)
    - 2.1 [Definition & Notation](#21-definition--notation)
    - 2.2 [Matrix Operations](#22-matrix-operations)
@@ -21,9 +24,13 @@ Linear algebra is the mathematical backbone of AI. Neural networks, attention me
 4. [Systems of Linear Equations](#4-systems-of-linear-equations)
    - 4.1 [Matrix Form](#41-matrix-form)
    - 4.2 [Invertibility](#42-invertibility)
+   - 4.3 [Gaussian Elimination & Row Reduction](#43-gaussian-elimination--row-reduction)
+   - 4.4 [LU Decomposition](#44-lu-decomposition)
+   - 4.5 [Elementary Matrices & Row Equivalence](#45-elementary-matrices--row-equivalence)
 5. [Determinant](#5-determinant)
    - 5.1 [Definition & Geometric Meaning](#51-definition--geometric-meaning)
    - 5.2 [Properties](#52-properties)
+   - 5.3 [Cofactor (Laplace) Expansion](#53-cofactor-laplace-expansion)
 6. [Eigenvalues & Eigenvectors](#6-eigenvalues--eigenvectors)
    - 6.1 [Definition](#61-definition)
    - 6.2 [Why Eigenvectors Matter](#62-why-eigenvectors-matter)
@@ -37,9 +44,12 @@ Linear algebra is the mathematical backbone of AI. Neural networks, attention me
    - 8.1 [Linear Independence](#81-linear-independence)
    - 8.2 [Span, Basis & Dimension](#82-span-basis--dimension)
    - 8.3 [Rank & Null Space](#83-rank--null-space)
+   - 8.4 [The Four Fundamental Subspaces](#84-the-four-fundamental-subspaces)
 9. [Orthogonality](#9-orthogonality)
    - 9.1 [Orthogonal Vectors & Matrices](#91-orthogonal-vectors--matrices)
    - 9.2 [Projections](#92-projections)
+   - 9.3 [Gram–Schmidt Orthogonalization](#93-gramschmidt-orthogonalization)
+   - 9.4 [QR Factorization](#94-qr-factorization)
 10. [Positive Definite Matrices](#10-positive-definite-matrices)
 11. [Gradients & Jacobians](#11-gradients--jacobians)
     - 11.1 [Gradient as a Vector](#111-gradient-as-a-vector)
@@ -52,10 +62,26 @@ Linear algebra is the mathematical backbone of AI. Neural networks, attention me
     - 12.4 [Vector by Vector — Jacobian](#124-vector-by-vector--jacobian)
     - 12.5 [Chain Rule in Matrix Form](#125-chain-rule-in-matrix-form)
     - 12.6 [Common Reference Table](#126-common-matrix-derivative-reference)
-13. [AI Applications](#13-ai-applications)
-    - 13.1 [Neural Network Forward Pass](#131-neural-network-forward-pass)
-    - 13.2 [Attention Mechanism](#132-attention-mechanism)
-    - 13.3 [PCA](#133-pca)
+13. [Least Squares](#13-least-squares)
+    - 13.1 [The Overdetermined Problem](#131-the-overdetermined-problem)
+    - 13.2 [Normal Equations](#132-normal-equations)
+    - 13.3 [Solving via QR](#133-solving-via-qr)
+    - 13.4 [Polynomial Fitting & the Design Matrix](#134-polynomial-fitting--the-design-matrix)
+    - 13.5 [Regularization (Ridge / Tikhonov)](#135-regularization-ridge--tikhonov)
+    - 13.6 [Equality-Constrained Least Squares (KKT)](#136-equality-constrained-least-squares-kkt)
+    - 13.7 [Reference Table](#137-reference-table)
+14. [Linear Dynamical Systems](#14-linear-dynamical-systems)
+    - 14.1 [Discrete Systems & Matrix Powers](#141-discrete-systems--matrix-powers)
+    - 14.2 [Stability & Steady States](#142-stability--steady-states)
+    - 14.3 [Markov Chains](#143-markov-chains)
+    - 14.4 [Continuous Systems & the Matrix Exponential](#144-continuous-systems--the-matrix-exponential)
+    - 14.5 [The Graph Laplacian](#145-the-graph-laplacian)
+15. [AI Applications](#15-ai-applications)
+    - 15.1 [Neural Network Forward Pass](#151-neural-network-forward-pass)
+    - 15.2 [Attention Mechanism](#152-attention-mechanism)
+    - 15.3 [PCA](#153-pca)
+    - 15.4 [K-Means Clustering](#154-k-means-clustering)
+    - 15.5 [K-Nearest Neighbors (KNN)](#155-k-nearest-neighbors-knn)
 
 ---
 
@@ -125,6 +151,39 @@ $$\|\mathbf{x}\|_\infty = \max_i |x_i| \qquad (\text{L}\infty\text{ norm — lar
 | $L^\infty$ | Adversarial robustness bounds |
 
 
+
+### 1.5 Cross Product & Triple Product
+
+The **cross product** is defined only in $\mathbb{R}^3$. It takes two vectors and returns a
+**third vector perpendicular to both**:
+
+$$\mathbf{a} \times \mathbf{b} = \begin{bmatrix} a_2 b_3 - a_3 b_2 \\ a_3 b_1 - a_1 b_3 \\ a_1 b_2 - a_2 b_1 \end{bmatrix} = \det\begin{bmatrix} \mathbf{i} & \mathbf{j} & \mathbf{k} \\ a_1 & a_2 & a_3 \\ b_1 & b_2 & b_3 \end{bmatrix}$$
+
+| Property | Meaning |
+|----------|---------|
+| $\|\mathbf{a} \times \mathbf{b}\| = \|\mathbf{a}\|\|\mathbf{b}\|\sin\theta$ | Magnitude = area of the parallelogram spanned by $\mathbf{a},\mathbf{b}$ |
+| $\mathbf{a} \times \mathbf{b} \perp \mathbf{a}$ and $\perp \mathbf{b}$ | Direction given by the right-hand rule |
+| $\mathbf{a} \times \mathbf{b} = -(\mathbf{b} \times \mathbf{a})$ | Anticommutative |
+| $\mathbf{a} \times \mathbf{b} = \mathbf{0}$ | $\mathbf{a}, \mathbf{b}$ are parallel (linearly dependent) |
+
+**Scalar triple product** — combines a dot and a cross product into one scalar:
+
+$$\mathbf{a} \cdot (\mathbf{b} \times \mathbf{c}) = \det\begin{bmatrix} a_1 & a_2 & a_3 \\ b_1 & b_2 & b_3 \\ c_1 & c_2 & c_3 \end{bmatrix}$$
+
+| Value | Geometric meaning |
+|-------|-------------------|
+| $\lvert \mathbf{a} \cdot (\mathbf{b} \times \mathbf{c}) \rvert$ | Volume of the parallelepiped spanned by $\mathbf{a}, \mathbf{b}, \mathbf{c}$ |
+| $\mathbf{a} \cdot (\mathbf{b} \times \mathbf{c}) = 0$ | The three vectors are **coplanar** — linearly dependent (§8.1) |
+| Sign | Orientation (handedness) of the ordered triple |
+
+**Concrete example:**
+
+$$\mathbf{a} = \begin{bmatrix}1\\0\\0\end{bmatrix},\ \mathbf{b} = \begin{bmatrix}0\\1\\0\end{bmatrix},\ \mathbf{c} = \begin{bmatrix}0\\0\\1\end{bmatrix} \ \Rightarrow\ \mathbf{b}\times\mathbf{c} = \begin{bmatrix}1\\0\\0\end{bmatrix},\quad \mathbf{a}\cdot(\mathbf{b}\times\mathbf{c}) = 1$$
+
+Unit cube → volume 1. Replacing $\mathbf{c}$ by $\mathbf{a}+\mathbf{b}$ gives triple product $0$ (the three vectors now lie in a plane).
+
+**Uses:** surface normals in graphics, torque and angular momentum in physics ($\boldsymbol{\tau} = \mathbf{r}\times\mathbf{F}$),
+and a cheap linear-independence / coplanarity test for three vectors in $\mathbb{R}^3$.
 
 ---
 
@@ -203,6 +262,119 @@ $$A = \begin{bmatrix} 4 & 2 & 1 \\ 2 & 5 & 3 \\ 1 & 3 & 6 \end{bmatrix} \quad \l
 | Always diagonalizable | $A = V\Lambda V^\top$ guaranteed |
 | $\mathbf{x}^\top A \mathbf{y} = \mathbf{y}^\top A \mathbf{x}$ | Symmetric bilinear form |
 
+**Proofs of the four properties**
+
+Throughout, $A \in \mathbb{R}^{n \times n}$ and $A^\top = A$. Every proof below uses the same single trick:
+
+> compute a scalar of the form $\mathbf{a}^\top A \mathbf{b}$ in **two different ways** — once by letting $A$ act on $\mathbf{b}$, once by moving $A$ onto $\mathbf{a}$ via $A^\top = A$ — and compare.
+
+---
+
+#### Proof 1 — All eigenvalues are real
+
+**Setup.** Let $A\mathbf{v} = \lambda\mathbf{v}$, $\mathbf{v} \neq \mathbf{0}$. We allow $\lambda \in \mathbb{C}$, $\mathbf{v} \in \mathbb{C}^n$ for now.
+Let $\bar{\mathbf{v}}$ be the entrywise complex conjugate. Note that
+
+$$\bar{\mathbf{v}}^\top \mathbf{v} = \sum_i |v_i|^2 > 0$$
+
+**Step 1 — let $A$ act on $\mathbf{v}$.**
+
+$$\bar{\mathbf{v}}^\top A \mathbf{v} = \bar{\mathbf{v}}^\top (\lambda \mathbf{v}) = \lambda \,\bar{\mathbf{v}}^\top \mathbf{v}$$
+
+**Step 2 — move $A$ onto $\bar{\mathbf{v}}$.**
+$A$ is real, so conjugating $A\mathbf{v} = \lambda\mathbf{v}$ gives $A\bar{\mathbf{v}} = \bar\lambda\bar{\mathbf{v}}$. Then
+
+$$\bar{\mathbf{v}}^\top A \mathbf{v} = (A^\top \bar{\mathbf{v}})^\top \mathbf{v} = (A \bar{\mathbf{v}})^\top \mathbf{v} = (\bar\lambda \bar{\mathbf{v}})^\top \mathbf{v} = \bar\lambda \,\bar{\mathbf{v}}^\top \mathbf{v}$$
+
+**Step 3 — compare.**
+
+$$\lambda \,\bar{\mathbf{v}}^\top \mathbf{v} = \bar\lambda \,\bar{\mathbf{v}}^\top \mathbf{v} \quad\Longrightarrow\quad (\lambda - \bar\lambda)\,\underbrace{\bar{\mathbf{v}}^\top \mathbf{v}}_{>\,0} = 0 \quad\Longrightarrow\quad \lambda = \bar\lambda$$
+
+**Conclusion.** $\lambda \in \mathbb{R}$. Since $A - \lambda I$ is now a *real* singular matrix, its null space contains a real vector, so the eigenvector can be taken real as well. $\blacksquare$
+
+---
+
+#### Proof 2 — Eigenvectors for distinct eigenvalues are orthogonal
+
+**Setup.** Let $A\mathbf{v}_1 = \lambda_1 \mathbf{v}_1$ and $A\mathbf{v}_2 = \lambda_2 \mathbf{v}_2$ with $\lambda_1 \neq \lambda_2$ (both real by Proof 1).
+
+**Step 1 — let $A$ act on $\mathbf{v}_2$.**
+
+$$\mathbf{v}_1^\top A \mathbf{v}_2 = \mathbf{v}_1^\top (\lambda_2 \mathbf{v}_2) = \lambda_2 \,\mathbf{v}_1^\top \mathbf{v}_2$$
+
+**Step 2 — move $A$ onto $\mathbf{v}_1$.**
+
+$$\mathbf{v}_1^\top A \mathbf{v}_2 = \mathbf{v}_1^\top A^\top \mathbf{v}_2 = (A \mathbf{v}_1)^\top \mathbf{v}_2 = (\lambda_1 \mathbf{v}_1)^\top \mathbf{v}_2 = \lambda_1 \,\mathbf{v}_1^\top \mathbf{v}_2$$
+
+**Step 3 — compare.**
+
+$$(\lambda_1 - \lambda_2)\,\mathbf{v}_1^\top \mathbf{v}_2 = 0, \qquad \lambda_1 \neq \lambda_2 \quad\Longrightarrow\quad \mathbf{v}_1^\top \mathbf{v}_2 = 0$$
+
+**Conclusion.** $\mathbf{v}_1 \perp \mathbf{v}_2$. $\blacksquare$
+
+> **What about repeated eigenvalues?** Two eigenvectors sharing the same $\lambda$ need not be orthogonal (any vector in the eigenspace is an eigenvector). But the eigenspace is a subspace, so Gram–Schmidt (§9.3) gives it an orthonormal basis. Proof 3 shows that these bases fill out all of $\mathbb{R}^n$.
+
+---
+
+#### Proof 3 — Always diagonalizable: $A = V\Lambda V^\top$ with $V$ orthogonal (Spectral Theorem)
+
+**Strategy.** Peel off one eigenvector at a time. Induction on $n$.
+
+**Base case $n = 1$.** $A = [a]$, take $V = [1]$, $\Lambda = [a]$.
+
+**Inductive step.** Assume every symmetric $(n-1) \times (n-1)$ matrix is orthogonally diagonalizable.
+
+**Step 1 — grab one eigenpair.**
+The characteristic polynomial has a root $\lambda_1 \in \mathbb{C}$; by Proof 1 it is real, with a real unit eigenvector $\mathbf{q}_1$.
+
+**Step 2 — build an orthogonal matrix around it.**
+Extend $\mathbf{q}_1$ to an orthonormal basis of $\mathbb{R}^n$ (Gram–Schmidt) and write
+
+$$Q = \begin{bmatrix} \mathbf{q}_1 & Q_2 \end{bmatrix}, \qquad Q_2 \in \mathbb{R}^{n \times (n-1)}, \qquad Q_2^\top \mathbf{q}_1 = \mathbf{0}, \qquad Q^\top Q = I$$
+
+**Step 3 — change basis and watch the off-diagonal blocks vanish.**
+
+$$Q^\top A Q = \begin{bmatrix} \mathbf{q}_1^\top A \mathbf{q}_1 & \mathbf{q}_1^\top A Q_2 \\[4pt] Q_2^\top A \mathbf{q}_1 & Q_2^\top A Q_2 \end{bmatrix}$$
+
+- Top-left: $\mathbf{q}_1^\top A \mathbf{q}_1 = \lambda_1 \mathbf{q}_1^\top \mathbf{q}_1 = \lambda_1$
+- Bottom-left: $Q_2^\top A \mathbf{q}_1 = \lambda_1 Q_2^\top \mathbf{q}_1 = \mathbf{0}$
+- Top-right: $Q^\top A Q$ is symmetric (because $(Q^\top A Q)^\top = Q^\top A^\top Q = Q^\top A Q$), so it is the transpose of the bottom-left block, also $\mathbf{0}$
+
+$$\therefore\quad Q^\top A Q = \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & B \end{bmatrix}, \qquad B := Q_2^\top A Q_2 \;\text{ is symmetric, } (n-1) \times (n-1)$$
+
+**Step 4 — apply the induction hypothesis to $B$.**
+
+$$B = \tilde V \tilde\Lambda \tilde V^\top, \qquad \tilde V \text{ orthogonal}, \; \tilde\Lambda \text{ diagonal}$$
+
+**Step 5 — assemble.**
+
+$$V := Q \begin{bmatrix} 1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V \end{bmatrix}, \qquad \Lambda := \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde\Lambda \end{bmatrix}$$
+
+$V$ is a product of two orthogonal matrices, so $V^\top V = I$, and
+
+$$V^\top A V = \begin{bmatrix} 1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V^\top \end{bmatrix} \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & B \end{bmatrix} \begin{bmatrix} 1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V \end{bmatrix} = \begin{bmatrix} \lambda_1 & \mathbf{0}^\top \\ \mathbf{0} & \tilde V^\top B \tilde V \end{bmatrix} = \Lambda$$
+
+**Conclusion.** Multiply by $V$ on the left and $V^\top$ on the right: $A = V \Lambda V^\top$.
+The columns of $V$ are $n$ orthonormal eigenvectors; the diagonal of $\Lambda$ holds the real eigenvalues. $\blacksquare$
+
+---
+
+#### Proof 4 — Symmetric bilinear form: $\mathbf{x}^\top A \mathbf{y} = \mathbf{y}^\top A \mathbf{x}$
+
+**($\Rightarrow$) $A$ symmetric implies the form is symmetric.**
+$\mathbf{x}^\top A \mathbf{y}$ is a $1 \times 1$ matrix, so it equals its own transpose:
+
+$$\mathbf{x}^\top A \mathbf{y} = (\mathbf{x}^\top A \mathbf{y})^\top = \mathbf{y}^\top A^\top \mathbf{x} = \mathbf{y}^\top A \mathbf{x}$$
+
+**($\Leftarrow$) The form symmetric for all $\mathbf{x}, \mathbf{y}$ implies $A$ symmetric.**
+Plug in standard basis vectors $\mathbf{x} = \mathbf{e}_i$, $\mathbf{y} = \mathbf{e}_j$:
+
+$$\mathbf{e}_i^\top A \mathbf{e}_j = a_{ij}, \qquad \mathbf{e}_j^\top A \mathbf{e}_i = a_{ji} \quad\Longrightarrow\quad a_{ij} = a_{ji}$$
+
+**Conclusion.** $A = A^\top \iff \mathbf{x}^\top A \mathbf{y} = \mathbf{y}^\top A \mathbf{x}$ for all $\mathbf{x}, \mathbf{y}$. $\blacksquare$
+
+---
+
 **Where symmetric matrices appear in AI:**
 
 | Matrix | Why symmetric |
@@ -277,6 +449,162 @@ $$AA^{-1} = A^{-1}A = I$$
 
 > **In practice:** never compute $A^{-1}$ explicitly. Use `np.linalg.solve(A, b)` — it is faster and numerically stable.
 
+### 4.3 Gaussian Elimination & Row Reduction
+
+The systematic way to solve $A\mathbf{x} = \mathbf{b}$ by hand and the foundation of most direct solvers.
+It uses three **elementary row operations**, none of which change the solution set:
+
+| Operation | Notation |
+|-----------|----------|
+| Swap two rows | $R_i \leftrightarrow R_j$ |
+| Scale a row by a nonzero constant | $R_i \leftarrow cR_i$ |
+| Add a multiple of one row to another | $R_i \leftarrow R_i + cR_j$ |
+
+**Forward elimination → Row Echelon Form (REF).** Working left to right, use the pivot in each row to
+zero out every entry below it. The result is "staircase" (upper triangular for a square full-rank system):
+
+$$\left[\begin{array}{ccc|c} 2 & 1 & -1 & 8 \\ -3 & -1 & 2 & -11 \\ -2 & 1 & 2 & -3 \end{array}\right]
+\longrightarrow
+\left[\begin{array}{ccc|c} 2 & 1 & -1 & 8 \\ 0 & \tfrac12 & \tfrac12 & 1 \\ 0 & 0 & -1 & 1 \end{array}\right]$$
+
+**Back substitution.** Solve the triangular system bottom-up: $x_3 = -1$, then
+$\tfrac12 x_2 + \tfrac12(-1) = 1 \Rightarrow x_2 = 3$, then $2x_1 + 3 - (-1) = 8 \Rightarrow x_1 = 2$.
+
+**Gauss–Jordan → Reduced Row Echelon Form (RREF).** Keep going: make every pivot $=1$ and clear entries
+**above** each pivot too. RREF is **unique** for a given matrix.
+
+$$R = \operatorname{rref}(A): \quad \text{each pivot is 1 and is the only nonzero entry in its column}$$
+
+| Term | Meaning |
+|------|---------|
+| **Pivot column** | A column containing a leading 1 in the RREF |
+| **Free column** | A non-pivot column — its variable is a free parameter |
+| $\operatorname{rank}(A)$ | Number of pivots (§8.3) |
+| Consistent system | RREF has no row $[\,0\ \cdots\ 0 \mid c\,]$ with $c \neq 0$ |
+
+**Partial pivoting.** Before eliminating with column $k$, swap in the row whose entry in column $k$ has the
+**largest absolute value**. Required when the natural pivot is $0$ (otherwise you divide by zero), and it
+keeps the multipliers $\leq 1$ so rounding errors do not blow up:
+
+$$\begin{bmatrix} 0 & 1 \\ 1 & 1 \end{bmatrix} \xrightarrow{R_1 \leftrightarrow R_2} \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \quad \text{— without the swap the first pivot is 0}$$
+
+A pivot column that comes up all-zero (below the current row) with a nonzero right-hand side signals a
+**singular** matrix — no unique solution.
+
+**Cost:** $\approx \tfrac{2}{3}n^3$ floating-point operations for forward elimination, then $n^2$ for back substitution.
+
+### 4.4 LU Decomposition
+
+Gaussian elimination, recorded as a factorization. Every step "add $-\ell_{ik}$ times row $k$ to row $i$"
+is left-multiplication by a lower-triangular elementary matrix (§4.5). Collecting them:
+
+$$A = LU$$
+
+| Factor | Structure | Contents |
+|--------|-----------|----------|
+| $L$ | Unit lower triangular ($1$s on the diagonal) | The elimination multipliers $\ell_{ik} = a_{ik}^{(k)}/a_{kk}^{(k)}$ |
+| $U$ | Upper triangular | The row-echelon form produced by forward elimination |
+
+With partial pivoting the row swaps are gathered into a permutation matrix $P$:
+
+$$PA = LU$$
+
+**Why factor instead of just solving?** Once you have $L$ and $U$, each new right-hand side costs only
+$O(n^2)$ instead of $O(n^3)$:
+
+$$A\mathbf{x} = \mathbf{b} \;\Longleftrightarrow\; L\mathbf{y} = P\mathbf{b}\ \text{(forward sub)},\quad U\mathbf{x} = \mathbf{y}\ \text{(back sub)}$$
+
+This is exactly how `scipy.linalg.lu_factor` / `lu_solve` and `np.linalg.solve` work internally, and how you
+build $A^{-1}$ column by column by solving $A\mathbf{x}_k = \mathbf{e}_k$ for each standard basis vector.
+
+**Worked example — factor, then solve.**
+
+$$A = \begin{bmatrix} 2 & 1 & 1 \\ 4 & 3 & 3 \\ 8 & 7 & 9 \end{bmatrix}$$
+
+*Eliminate column 1* ($\ell_{21} = 4/2 = 2$, $\ell_{31} = 8/2 = 4$):
+
+$$R_2 \leftarrow R_2 - 2R_1,\quad R_3 \leftarrow R_3 - 4R_1 \quad\Rightarrow\quad
+\begin{bmatrix} 2 & 1 & 1 \\ 0 & 1 & 1 \\ 0 & 3 & 5 \end{bmatrix}$$
+
+*Eliminate column 2* ($\ell_{32} = 3/1 = 3$): $R_3 \leftarrow R_3 - 3R_2 \Rightarrow$ last row becomes $[0, 0, 2]$.
+
+$$L = \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 4 & 3 & 1 \end{bmatrix}, \qquad
+U = \begin{bmatrix} 2 & 1 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 2 \end{bmatrix}$$
+
+The multipliers drop straight into $L$ below the diagonal. Check: row 3 of $LU$ is
+$4[2,1,1] + 3[0,1,1] + [0,0,2] = [8,7,9]$ ✓.
+
+*Solve $A\mathbf{x} = \mathbf{b}$ with $\mathbf{b} = [1, 1, 3]^\top$.* Forward-substitute $L\mathbf{y} = \mathbf{b}$:
+
+$$y_1 = 1,\quad y_2 = 1 - 2(1) = -1,\quad y_3 = 3 - 4(1) - 3(-1) = 2$$
+
+Back-substitute $U\mathbf{x} = \mathbf{y}$:
+
+$$x_3 = \tfrac{2}{2} = 1,\quad x_2 = -1 - 1 = -2,\quad x_1 = \tfrac{1 - (-2) - 1}{2} = 1 \;\Rightarrow\; \mathbf{x} = \begin{bmatrix} 1 \\ -2 \\ 1 \end{bmatrix}$$
+
+And $\det(A) = \prod_i U_{ii} = 2 \cdot 1 \cdot 2 = 4$ (no row swaps → $+$ sign).
+
+**With pivoting — $PA = LU$.**
+
+$$A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}: \quad |3| > |1| \text{ in column 1, so swap rows.}\quad
+P = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}$$
+
+$$PA = \begin{bmatrix} 3 & 4 \\ 1 & 2 \end{bmatrix}, \quad \ell_{21} = \tfrac{1}{3} \;\Rightarrow\;
+L = \begin{bmatrix} 1 & 0 \\ \tfrac13 & 1 \end{bmatrix},\quad U = \begin{bmatrix} 3 & 4 \\ 0 & \tfrac23 \end{bmatrix}$$
+
+**Cholesky — $A = LL^\top$ for symmetric positive definite $A$.**
+
+$$A = \begin{bmatrix} 4 & 2 \\ 2 & 3 \end{bmatrix} \quad (\text{leading minors } 4 > 0,\ \det = 8 > 0 \Rightarrow \text{SPD})$$
+
+$$\ell_{11} = \sqrt{4} = 2,\quad \ell_{21} = \tfrac{2}{\ell_{11}} = 1,\quad \ell_{22} = \sqrt{3 - \ell_{21}^2} = \sqrt{2}$$
+
+$$L = \begin{bmatrix} 2 & 0 \\ 1 & \sqrt{2} \end{bmatrix}, \qquad
+LL^\top = \begin{bmatrix} 4 & 2 \\ 2 & 1 + 2 \end{bmatrix} = A \ \checkmark$$
+
+**Related factorizations:**
+
+| Matrix type | Factorization | Note |
+|-------------|---------------|------|
+| General square | $PA = LU$ | Partial pivoting for stability |
+| Symmetric positive definite | $A = LL^\top$ (**Cholesky**) | Half the cost, no pivoting needed (§10) |
+| Symmetric indefinite | $A = LDL^\top$ | $D$ block-diagonal |
+| $\det(A)$ | $\pm\prod_i U_{ii}$ | Sign from the number of row swaps |
+
+### 4.5 Elementary Matrices & Row Equivalence
+
+Each elementary row operation **is** left-multiplication by an **elementary matrix** $E$ — the identity with
+one small modification:
+
+| Operation | Elementary matrix $E$ | $E^{-1}$ |
+|-----------|----------------------|----------|
+| Swap rows $i, j$ | $I$ with rows $i, j$ swapped (a permutation) | itself |
+| Scale row $i$ by $c \neq 0$ | $I$ with $E_{ii} = c$ | scale by $1/c$ |
+| Add $c\cdot$(row $j$) to row $i$ | $I$ with $E_{ij} = c$ | same with $-c$ |
+
+Every elementary matrix is invertible, and its inverse is elementary of the same type. Running row reduction
+is therefore
+
+$$E_k E_{k-1} \cdots E_1 A = R, \qquad \text{so } EA = R \text{ with } E = E_k \cdots E_1 \text{ invertible.}$$
+
+**Row equivalence.** $A$ and $B$ are **row equivalent** when any of these equivalent conditions holds:
+
+- $B = EA$ for some invertible $E$;
+- $A$ and $B$ have the **same RREF**;
+- $A$ and $B$ have the **same row space** (§8.4).
+
+> Equal rank is **necessary but not sufficient**: $\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}$ and
+> $\begin{bmatrix}1&0&0\\0&1&1\end{bmatrix}$ both have rank 2 but different RREFs, so they are **not** row equivalent.
+
+The same idea on columns gives $AF = C$ with $F$ invertible (column operations); combining both,
+$EAF = \begin{bmatrix} I_r & 0 \\ 0 & 0 \end{bmatrix}$ — the **rank normal form** of any matrix.
+
+**Example.** $A = \begin{bmatrix} 1 & 2 \\ 2 & 4 \end{bmatrix}$ has rank 1. Row-reduce with
+$E = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}$ ($R_2 \leftarrow R_2 - 2R_1$), then clear the second column with
+$F = \begin{bmatrix} 1 & -2 \\ 0 & 1 \end{bmatrix}$ ($C_2 \leftarrow C_2 - 2C_1$):
+
+$$EA = \begin{bmatrix} 1 & 2 \\ 0 & 0 \end{bmatrix}, \qquad
+EAF = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} I_1 & 0 \\ 0 & 0 \end{bmatrix}$$
+
 ---
 
 ## 5. Determinant
@@ -326,6 +654,42 @@ The determinant is the **product of all eigenvalues**. If any eigenvalue is zero
 
 
 > **One-line summary:** the determinant measures how much a matrix scales volume. Zero determinant = the matrix destroys information by collapsing space.
+
+### 5.3 Cofactor (Laplace) Expansion
+
+How to compute $\det(A)$ for a general $n \times n$ matrix — by recursion on size.
+
+| Term | Definition |
+|------|------------|
+| **Minor** $M_{ij}$ | $\det$ of the $(n{-}1)\times(n{-}1)$ matrix left after deleting row $i$ and column $j$ |
+| **Cofactor** $C_{ij}$ | $(-1)^{i+j} M_{ij}$ — the minor with a checkerboard sign |
+
+**Laplace expansion** along *any* row $i$ (or any column $j$):
+
+$$\det(A) = \sum_{j=1}^{n} a_{ij} C_{ij} = \sum_{j=1}^{n} (-1)^{i+j}\, a_{ij}\, M_{ij}$$
+
+The sign pattern:
+
+$$\begin{bmatrix} + & - & + & \cdots \\ - & + & - & \\ + & - & + & \\ \vdots & & & \ddots \end{bmatrix}$$
+
+**3×3 example — expand along the first row:**
+
+$$\det\begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 10 \end{bmatrix}
+= 1\det\begin{bmatrix}5&6\\8&10\end{bmatrix} - 2\det\begin{bmatrix}4&6\\7&10\end{bmatrix} + 3\det\begin{bmatrix}4&5\\7&8\end{bmatrix}$$
+$$= 1(50-48) - 2(40-42) + 3(32-35) = 2 + 4 - 9 = -3$$
+
+**Base case:** $\det[a] = a$ for a $1\times1$ matrix. Choosing a row or column with many zeros minimizes the work.
+
+**Cost & practice:** naive cofactor expansion is $O(n!)$ — only for tiny or symbolic matrices. For numbers,
+reduce to triangular form by elimination (§4.3) and multiply the pivots: $\det(A) = (-1)^{\#\text{swaps}}\prod_i U_{ii}$, which is $O(n^3)$.
+
+**Two consequences of the cofactor formula:**
+
+$$\text{adjugate: } \operatorname{adj}(A)_{ij} = C_{ji}, \qquad A^{-1} = \frac{1}{\det(A)}\operatorname{adj}(A)$$
+
+$$\text{Cramer's rule: } x_i = \frac{\det(A_i)}{\det(A)}, \quad A_i = A \text{ with column } i \text{ replaced by } \mathbf{b}$$
+
+Both are theoretically clean but computationally far slower than elimination — use them for proofs and $2\times2$ / $3\times3$ hand work, not code.
 
 ---
 
@@ -398,14 +762,43 @@ $$A = V \Lambda V^{-1}$$
 | $\Lambda$ | $n \times n$ diagonal | Diagonal entries are eigenvalues $\lambda_1, \ldots, \lambda_n$ |
 | $V^{-1}$ | $n \times n$ | Change of basis back to original coordinates |
 
-**Geometric reading:**
+**Geometric reading:** $V^{-1}$ rotates the world so the eigenvectors become the coordinate axes, $\Lambda$
+stretches each axis by its eigenvalue, and $V$ rotates back. In the eigenbasis, $A$ is just a diagonal
+(axis-wise) scaling.
 
+**Worked example.**
 
+$$A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$$
 
-For **symmetric** $A$: eigenvectors are always orthogonal, so $V^{-1} = V^\top$:
+*Eigenvalues* — solve $\det(A - \lambda I) = (2-\lambda)^2 - 1 = (\lambda - 1)(\lambda - 3) = 0$:
+$\lambda_1 = 3,\ \lambda_2 = 1$.
 
-$$A = V \Lambda V^\top \qquad \text{(spectral decomposition)}$$
+*Eigenvectors* — solve $(A - \lambda I)\mathbf{v} = \mathbf{0}$:
 
+$$\lambda_1 = 3:\ \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}\mathbf{v} = \mathbf{0} \Rightarrow \mathbf{v}_1 = \begin{bmatrix} 1 \\ 1 \end{bmatrix}, \qquad
+\lambda_2 = 1:\ \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}\mathbf{v} = \mathbf{0} \Rightarrow \mathbf{v}_2 = \begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+
+$$V = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix},\quad
+\Lambda = \begin{bmatrix} 3 & 0 \\ 0 & 1 \end{bmatrix},\quad
+V^{-1} = \begin{bmatrix} \tfrac12 & \tfrac12 \\ \tfrac12 & -\tfrac12 \end{bmatrix}$$
+
+Check: $V\Lambda V^{-1} = \begin{bmatrix} 3 & 1 \\ 3 & -1 \end{bmatrix}\begin{bmatrix} \tfrac12 & \tfrac12 \\ \tfrac12 & -\tfrac12 \end{bmatrix} = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$ ✓.
+Note $\det A = 2 = 3 \cdot 1 = \lambda_1 \lambda_2$ and $\operatorname{tr} A = 4 = 3 + 1$.
+
+For **symmetric** $A$ (as here): eigenvectors are always orthogonal, so normalizing them gives an orthogonal
+$Q$ with $V^{-1} = Q^\top$:
+
+$$A = Q \Lambda Q^\top \qquad \text{(spectral decomposition)}, \qquad
+Q = \tfrac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$$
+
+Equivalently, $A$ is a weighted sum of orthogonal rank-1 projectors:
+
+$$A = \sum_i \lambda_i\, \mathbf{q}_i \mathbf{q}_i^\top
+= 3 \cdot \tfrac12\begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix} + 1 \cdot \tfrac12\begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}$$
+
+For a **non-symmetric** matrix such as $\begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix}$, the eigenvalues are still
+read off (here $2, 3$) but $V = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}$ is not orthogonal, so
+$V^{-1} = \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix} \neq V^\top$.
 
 
 ---
@@ -424,16 +817,37 @@ $$A = U \Sigma V^\top, \quad A \in \mathbb{R}^{m \times n}$$
 | $\Sigma$ | $m \times n$ | Diagonal — singular values $\sigma_1 \geq \sigma_2 \geq \cdots \geq 0$ |
 | $V^\top$ | $n \times n$ | Right singular vectors — orthogonal matrix |
 
+**How to compute it:** the $\sigma_i^2$ are the eigenvalues of $A^\top A$ (or $AA^\top$), the columns of $V$
+are the eigenvectors of $A^\top A$, and then $\mathbf{u}_i = A\mathbf{v}_i / \sigma_i$.
+
+**Worked example** ($2 \times 3$, so a genuinely rectangular map):
+
+$$A = \begin{bmatrix} 1 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}$$
+
+$$AA^\top = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix} \;\Rightarrow\; \text{eigenvalues } 2, 1
+\;\Rightarrow\; \sigma_1 = \sqrt{2},\ \sigma_2 = 1, \quad U = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$$
+
+$$\mathbf{v}_1 = \frac{A^\top \mathbf{u}_1}{\sigma_1} = \tfrac{1}{\sqrt2}\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix},\quad
+\mathbf{v}_2 = \frac{A^\top \mathbf{u}_2}{\sigma_2} = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix},\quad
+\mathbf{v}_3 = \tfrac{1}{\sqrt2}\begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix} \ (\text{spans } N(A))$$
+
+$$\Sigma = \begin{bmatrix} \sqrt2 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix}, \qquad
+V = \begin{bmatrix} 1/\sqrt2 & 0 & 1/\sqrt2 \\ 0 & 1 & 0 \\ 1/\sqrt2 & 0 & -1/\sqrt2 \end{bmatrix}$$
+
+Check: $\Sigma V^\top = \begin{bmatrix} 1 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix} = A$ (since $U = I$) ✓. The third
+right singular vector has $\sigma_3 = 0$ — it is exactly the null-space direction $A$ collapses.
+
 ### 7.2 Geometric Meaning
 
-Every linear transformation $A$ can be decomposed into three steps:
+Every linear transformation $A$ can be decomposed into three steps — **rotate, scale, rotate**:
 
-$$A\mathbf{x} = U\Sigma V^\top \mathbf{x}$$
+$$A\mathbf{x} = \underbrace{U}_{\text{rotate}}\ \underbrace{\Sigma}_{\text{scale axes}}\ \underbrace{V^\top}_{\text{rotate}}\ \mathbf{x}$$
 
-
+Geometrically: $A$ maps the unit sphere to an ellipsoid. $V^\top$ picks the input axes that map to the
+ellipsoid's principal axes, $\Sigma$ stretches them to lengths $\sigma_1, \sigma_2, \ldots$, and $U$ orients
+the ellipsoid in the output space.
 
 The singular values $\sigma_i$ tell you how much $A$ stretches space along each direction. Large $\sigma_i$ = important direction; small $\sigma_i \approx 0$ = negligible direction.
-
 
 
 ### 7.3 Low-Rank Approximation
@@ -448,7 +862,22 @@ $$A \approx A_k = \sum_{i=1}^{k} \sigma_i \mathbf{u}_i \mathbf{v}_i^\top = U_k \
 | $\mathbf{u}_i \mathbf{v}_i^\top$ | Rank-1 matrix — outer product of two vectors |
 | $k \ll \min(m,n)$ | Keep only the most important components |
 
+**Worked example — a rank-1 matrix has exactly one SVD layer:**
 
+$$A = \begin{bmatrix} 2 & 2 \\ 1 & 1 \end{bmatrix}, \quad
+A^\top A = \begin{bmatrix} 5 & 5 \\ 5 & 5 \end{bmatrix} \;\Rightarrow\; \text{eigenvalues } 10, 0
+\;\Rightarrow\; \sigma_1 = \sqrt{10},\ \sigma_2 = 0$$
+
+$$\mathbf{v}_1 = \tfrac{1}{\sqrt2}\begin{bmatrix} 1 \\ 1 \end{bmatrix},\quad
+\mathbf{u}_1 = \frac{A\mathbf{v}_1}{\sigma_1} = \tfrac{1}{\sqrt5}\begin{bmatrix} 2 \\ 1 \end{bmatrix}$$
+
+$$A = \sigma_1 \mathbf{u}_1 \mathbf{v}_1^\top
+= \sqrt{10}\cdot\tfrac{1}{\sqrt5}\begin{bmatrix} 2 \\ 1 \end{bmatrix}\cdot\tfrac{1}{\sqrt2}\begin{bmatrix} 1 & 1 \end{bmatrix}
+= \begin{bmatrix} 2 & 2 \\ 1 & 1 \end{bmatrix} \ \checkmark$$
+
+The single nonzero singular value carries the whole matrix; $\sigma_2 = 0$ means dropping to rank 1 loses nothing.
+For a full-rank matrix, truncating to rank $k$ discards $\sum_{i>k}\sigma_i^2$ worth of squared "energy" — the
+Eckart–Young error $\|A - A_k\|_F^2$.
 
 ### 7.4 Why SVD Matters in AI
 
@@ -593,6 +1022,53 @@ $$\text{null}(A) = \left\{ t \begin{bmatrix} -2 \\ 1 \end{bmatrix} \mid t \in \m
 
 ---
 
+### 8.4 The Four Fundamental Subspaces
+
+Every matrix $A \in \mathbb{R}^{m \times n}$ of rank $r$ has four associated subspaces. Together they describe
+everything the linear map $\mathbf{x} \mapsto A\mathbf{x}$ does.
+
+| Subspace | Symbol | Lives in | Dimension | Basis from row reduction |
+|----------|--------|----------|-----------|--------------------------|
+| **Column space** (range/image) | $C(A)$ | $\mathbb{R}^m$ | $r$ | The **original** columns of $A$ at pivot positions |
+| **Null space** (kernel) | $N(A)$ | $\mathbb{R}^n$ | $n - r$ | One vector per free column of $\operatorname{rref}(A)$ |
+| **Row space** | $C(A^\top)$ | $\mathbb{R}^n$ | $r$ | The nonzero rows of $\operatorname{rref}(A)$ |
+| **Left null space** | $N(A^\top)$ | $\mathbb{R}^m$ | $m - r$ | $N(A^\top)$, or the rows of $E$ (from $EA=R$) that zero out |
+
+**Fundamental Theorem of Linear Algebra** — within each ambient space the two subspaces are **orthogonal
+complements**:
+
+$$C(A^\top) \perp N(A) \quad \text{and} \quad C(A^\top) \oplus N(A) = \mathbb{R}^n$$
+$$C(A) \perp N(A^\top) \quad \text{and} \quad C(A) \oplus N(A^\top) = \mathbb{R}^m$$
+
+$C(A^\top) \perp N(A)$ is immediate: if $A\mathbf{x} = \mathbf{0}$ then every row of $A$ dotted with $\mathbf{x}$ is $0$.
+
+**Reading a null-space basis off the RREF.** For each free column, set that free variable to $1$, the other
+free variables to $0$, and solve the pivot rows:
+
+$$\operatorname{rref}(A) = \begin{bmatrix} 1 & 2 & 0 & 2 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 0 \end{bmatrix}
+\quad\Rightarrow\quad
+N(A) = \operatorname{span}\!\left\{ \begin{bmatrix}-2\\1\\0\\0\end{bmatrix},\ \begin{bmatrix}-2\\0\\-1\\1\end{bmatrix} \right\}$$
+
+(columns 2 and 4 are free; $r = 2$, $n - r = 2$). The pivot columns $1, 3$ of the **original** $A$ form a basis
+for $C(A)$; the two nonzero RREF rows form a basis for $C(A^\top)$.
+
+**Existence and uniqueness of solutions to $A\mathbf{x} = \mathbf{b}$:**
+
+| Condition | Consequence |
+|-----------|-------------|
+| $\mathbf{b} \in C(A)$ (equivalently $\mathbf{b} \perp N(A^\top)$) | At least one solution exists |
+| $N(A) = \{\mathbf{0}\}$ (full column rank) | Solution is unique if it exists |
+| $\dim N(A) > 0$ | Solutions form the coset $\mathbf{x}_p + N(A)$ (particular + homogeneous) |
+
+**Example — incidence matrix of a graph.** For a connected graph with $n$ nodes and $m$ edges, let each row
+of $A$ be an edge $i \to j$ with $-1$ in column $i$, $+1$ in column $j$:
+
+- $N(A) = \operatorname{span}\{[1,1,\ldots,1]^\top\}$, dimension $1$ — adding a constant to every node potential changes no edge difference.
+- $\operatorname{rank}(A) = n - 1$; the row space is the zero-sum node vectors.
+- $N(A^\top)$ has dimension $m - n + 1$ — the number of **independent cycles** (Euler's formula). Its vectors are the loop currents that satisfy Kirchhoff's voltage law.
+
+---
+
 ## 9. Orthogonality
 
 ### 9.1 Orthogonal Vectors & Matrices
@@ -628,7 +1104,77 @@ $$P = A(A^\top A)^{-1} A^\top, \qquad P^2 = P \quad \text{(idempotent)}$$
 | $\mathbf{b} - P\mathbf{b}$ | Residual — perpendicular to column space |
 | $P^2 = P$ | Projecting twice is the same as projecting once |
 
-**In AI:** attention computes projections; least squares regression minimizes $\|A\mathbf{x} - \mathbf{b}\|_2^2$ via projection.
+**In AI:** attention computes projections; least squares regression minimizes $\|A\mathbf{x} - \mathbf{b}\|_2^2$ via projection (full treatment in §13).
+
+### 9.3 Gram–Schmidt Orthogonalization
+
+Turns a linearly independent list $\mathbf{a}_1, \ldots, \mathbf{a}_n$ into an **orthonormal** list
+$\mathbf{q}_1, \ldots, \mathbf{q}_n$ that spans the same subspace — and, step by step,
+$\operatorname{span}(\mathbf{q}_1, \ldots, \mathbf{q}_j) = \operatorname{span}(\mathbf{a}_1, \ldots, \mathbf{a}_j)$ for every $j$.
+
+$$\tilde{\mathbf{q}}_j = \mathbf{a}_j - \sum_{k<j} (\mathbf{q}_k^\top \mathbf{a}_j)\,\mathbf{q}_k, \qquad \mathbf{q}_j = \frac{\tilde{\mathbf{q}}_j}{\|\tilde{\mathbf{q}}_j\|}$$
+
+Each sum term is the projection of $\mathbf{a}_j$ onto an already-built axis (§9.2); subtracting them all
+leaves the part of $\mathbf{a}_j$ orthogonal to everything before it. If $\|\tilde{\mathbf{q}}_j\| = 0$, then
+$\mathbf{a}_j$ was in the span of the earlier vectors — the inputs were **not** independent.
+
+**Concrete example:**
+
+$$\mathbf{a}_1 = \begin{bmatrix}1\\1\\0\end{bmatrix},\ \mathbf{a}_2 = \begin{bmatrix}1\\0\\1\end{bmatrix}
+\;\Rightarrow\;
+\mathbf{q}_1 = \tfrac{1}{\sqrt2}\begin{bmatrix}1\\1\\0\end{bmatrix},\quad
+\tilde{\mathbf{q}}_2 = \mathbf{a}_2 - \tfrac12\begin{bmatrix}1\\1\\0\end{bmatrix} = \begin{bmatrix}\tfrac12\\-\tfrac12\\1\end{bmatrix},\quad
+\mathbf{q}_2 = \tfrac{1}{\sqrt6}\begin{bmatrix}1\\-1\\2\end{bmatrix}$$
+
+**Classical vs modified.** Mathematically identical, numerically different:
+
+| Variant | Update rule | Stability |
+|---------|-------------|-----------|
+| Classical (CGS) | Subtract all projections onto the **original** $\mathbf{a}_j$ at once | Loses orthogonality under rounding |
+| Modified (MGS) | Subtract each projection from the **running** vector, one $\mathbf{q}_k$ at a time | Much better — preferred in code |
+
+### 9.4 QR Factorization
+
+Gram–Schmidt on the columns of $A$, written as a matrix product:
+
+$$A = QR, \qquad A \in \mathbb{R}^{m \times n}\ (m \geq n,\ \text{full column rank})$$
+
+| Factor | Shape | Meaning |
+|--------|-------|---------|
+| $Q$ | $m \times n$ | Orthonormal columns ($Q^\top Q = I_n$) — the $\mathbf{q}_j$ from Gram–Schmidt |
+| $R$ | $n \times n$ | Upper triangular, $R_{kj} = \mathbf{q}_k^\top \mathbf{a}_j$, $R_{jj} = \|\tilde{\mathbf{q}}_j\| > 0$ |
+
+$R$ is upper triangular precisely *because* $\mathbf{q}_k$ (built from $\mathbf{a}_1, \ldots, \mathbf{a}_k$) is
+orthogonal to $\mathbf{a}_j$ for $j < k$. Since $Q^\top Q = I$, we get $R = Q^\top A$.
+
+**Worked example** — the same columns as the Gram–Schmidt example above, now assembled into $Q$ and $R$:
+
+$$A = \begin{bmatrix} 1 & 1 \\ 1 & 0 \\ 0 & 1 \end{bmatrix}
+\quad(\mathbf{a}_1 = [1,1,0]^\top,\ \mathbf{a}_2 = [1,0,1]^\top)$$
+
+$$R_{11} = \|\mathbf{a}_1\| = \sqrt2, \quad
+R_{12} = \mathbf{q}_1^\top \mathbf{a}_2 = \tfrac{1}{\sqrt2}, \quad
+R_{22} = \|\tilde{\mathbf{q}}_2\| = \sqrt{\tfrac32} = \tfrac{\sqrt6}{2}$$
+
+$$Q = \begin{bmatrix} 1/\sqrt2 & 1/\sqrt6 \\ 1/\sqrt2 & -1/\sqrt6 \\ 0 & 2/\sqrt6 \end{bmatrix}, \qquad
+R = \begin{bmatrix} \sqrt2 & 1/\sqrt2 \\ 0 & \sqrt6/2 \end{bmatrix}$$
+
+Check column 2 of $QR$: $\tfrac{1}{\sqrt2}\mathbf{q}_1 + \tfrac{\sqrt6}{2}\mathbf{q}_2
+= [\tfrac12, \tfrac12, 0]^\top + [\tfrac12, -\tfrac12, 1]^\top = [1, 0, 1]^\top = \mathbf{a}_2$ ✓.
+
+- **Reduced** QR: $Q$ is $m \times n$, $R$ is $n \times n$ (above).
+- **Full** QR: $Q$ is $m \times m$ orthogonal, $R$ is $m \times n$ with a zero block below row $n$.
+
+| Use | How |
+|-----|-----|
+| Solve square $A\mathbf{x} = \mathbf{b}$ | $R\mathbf{x} = Q^\top \mathbf{b}$, then back substitution (§4.3) |
+| Least squares, tall $A$ | Same formula — see §13.3 |
+| $\det(A)$ (square) | $\pm\prod_i R_{ii}$ |
+| Eigenvalues | The **QR algorithm**: repeatedly $A \leftarrow RQ$ from $A = QR$ converges to triangular |
+
+**Numerical note.** In practice QR is built with **Householder reflections** or **Givens rotations** rather
+than Gram–Schmidt — they are backward stable. QR-based least squares avoids squaring the condition number,
+which $A^\top A$ in the normal equations does ($\kappa(A^\top A) = \kappa(A)^2$).
 
 ---
 
@@ -645,6 +1191,53 @@ Equivalently: all eigenvalues are strictly positive.
 | Positive definite (PD) | $\mathbf{x}^\top A \mathbf{x} > 0$ | All $\lambda > 0$ |
 | Positive semi-definite (PSD) | $\mathbf{x}^\top A \mathbf{x} \geq 0$ | All $\lambda \geq 0$ |
 | Indefinite | Neither | Mixed signs |
+
+**Proof — PD $\iff$ all eigenvalues are positive**
+
+Throughout, $A$ is symmetric, so by §2.5 its eigenvalues are real and $A = V\Lambda V^\top$ with $V$ orthogonal.
+
+---
+
+#### ($\Rightarrow$) PD implies every eigenvalue is positive
+
+**Setup.** Let $\lambda$ be any eigenvalue with eigenvector $\mathbf{v} \neq \mathbf{0}$, so $A\mathbf{v} = \lambda\mathbf{v}$.
+
+**Step 1 — plug the eigenvector into the quadratic form.**
+
+$$\mathbf{v}^\top A \mathbf{v} = \mathbf{v}^\top (\lambda \mathbf{v}) = \lambda\, \mathbf{v}^\top \mathbf{v} = \lambda\, \|\mathbf{v}\|^2$$
+
+**Step 2 — use the PD hypothesis.**
+$\mathbf{v} \neq \mathbf{0}$, so PD gives $\mathbf{v}^\top A \mathbf{v} > 0$. Hence
+
+$$\lambda\, \underbrace{\|\mathbf{v}\|^2}_{>\,0} > 0 \quad\Longrightarrow\quad \lambda > 0$$
+
+**Conclusion.** Every eigenvalue is strictly positive. $\blacksquare$
+
+> **Intuition:** the quadratic form $\mathbf{x}^\top A \mathbf{x}$ measures how much $A$ "stretches" $\mathbf{x}$ *along itself*. On an eigenvector, $A$ acts as pure scaling by $\lambda$, so the stretch is exactly $\lambda \|\mathbf{v}\|^2$. If that must be positive, $\lambda$ must be positive.
+
+---
+
+#### ($\Leftarrow$) All eigenvalues positive implies PD
+
+**Setup.** Assume $\lambda_1, \ldots, \lambda_n > 0$ and $A = V\Lambda V^\top$. Take any $\mathbf{x} \neq \mathbf{0}$.
+
+**Step 1 — change to the eigenvector basis.**
+Let $\mathbf{y} = V^\top \mathbf{x}$. Since $V$ is orthogonal, $\mathbf{y} \neq \mathbf{0}$ (because $\mathbf{x} = V\mathbf{y}$ and $V\mathbf{0} = \mathbf{0}$).
+
+**Step 2 — the quadratic form becomes a weighted sum of squares.**
+
+$$\mathbf{x}^\top A \mathbf{x} = \mathbf{x}^\top V \Lambda V^\top \mathbf{x} = (V^\top \mathbf{x})^\top \Lambda (V^\top \mathbf{x}) = \mathbf{y}^\top \Lambda \mathbf{y} = \sum_{i=1}^n \lambda_i\, y_i^2$$
+
+**Step 3 — every term is non-negative and at least one is positive.**
+Each $\lambda_i > 0$ and $y_i^2 \geq 0$, so every term is $\geq 0$. Since $\mathbf{y} \neq \mathbf{0}$, some $y_j \neq 0$, and that term $\lambda_j y_j^2 > 0$. Hence
+
+$$\mathbf{x}^\top A \mathbf{x} = \sum_{i=1}^n \lambda_i\, y_i^2 > 0$$
+
+**Conclusion.** $\mathbf{x}^\top A \mathbf{x} > 0$ for all $\mathbf{x} \neq \mathbf{0}$, i.e. $A$ is PD. $\blacksquare$
+
+> **PSD version:** replace every strict inequality with $\geq$. The same two arguments give $A$ is PSD $\iff$ all $\lambda_i \geq 0$.
+
+---
 
 **Why AI cares:**
 - The **Hessian** of the loss being PD at a critical point → strict local minimum; PD everywhere → convex with a unique minimum ([multivariable_calculus.md](multivariable_calculus.md) §7–8)
@@ -994,9 +1587,234 @@ $$\mathbf{z} = W\mathbf{x}, \quad \mathbf{h} = \text{ReLU}(\mathbf{z}), \quad \m
 
 ---
 
-## 13. AI Applications
+## 13. Least Squares
 
-### 13.1 Neural Network Forward Pass
+### 13.1 The Overdetermined Problem
+
+When $A \in \mathbb{R}^{m \times n}$ has **more equations than unknowns** ($m > n$), $A\mathbf{x} = \mathbf{b}$
+usually has **no exact solution** — $\mathbf{b}$ lies outside the column space $C(A)$ (§8.4). Instead, find the
+$\mathbf{x}$ that comes closest:
+
+$$\hat{\mathbf{x}} = \arg\min_{\mathbf{x}} \|A\mathbf{x} - \mathbf{b}\|_2^2$$
+
+**Geometry:** $A\hat{\mathbf{x}}$ is the **orthogonal projection** of $\mathbf{b}$ onto $C(A)$ (§9.2). The
+residual $\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}}$ is perpendicular to every column of $A$:
+
+$$A^\top \mathbf{r} = \mathbf{0} \quad\Longleftrightarrow\quad A^\top(\mathbf{b} - A\hat{\mathbf{x}}) = \mathbf{0}$$
+
+### 13.2 Normal Equations
+
+Rearranging the orthogonality condition:
+
+$$A^\top A\,\hat{\mathbf{x}} = A^\top \mathbf{b}$$
+
+| Case | Solution |
+|------|----------|
+| $A$ full column rank ($A^\top A$ invertible, SPD) | $\hat{\mathbf{x}} = (A^\top A)^{-1} A^\top \mathbf{b} = A^{+}\mathbf{b}$ |
+| Rank-deficient | Infinitely many minimizers; the **pseudoinverse** $A^{+}$ (from SVD, §7) picks the minimum-norm one |
+
+$A^{+} = (A^\top A)^{-1}A^\top$ is the **Moore–Penrose pseudoinverse** (left inverse: $A^{+}A = I_n$). The
+projection matrix onto $C(A)$ is $P = AA^{+} = A(A^\top A)^{-1}A^\top$ (§9.2).
+
+**You can also derive the normal equations by calculus** (§11.1): set
+$\nabla_{\mathbf{x}} \|A\mathbf{x}-\mathbf{b}\|_2^2 = 2A^\top(A\mathbf{x}-\mathbf{b}) = \mathbf{0}$.
+
+> **Warning:** forming $A^\top A$ **squares the condition number** ($\kappa(A^\top A) = \kappa(A)^2$),
+> so a mildly ill-conditioned $A$ gives a badly inaccurate $\hat{\mathbf{x}}$. Prefer QR (§13.3) or SVD.
+
+### 13.3 Solving via QR
+
+Factor $A = QR$ (reduced, §9.4). Because $Q$ has orthonormal columns, $\|A\mathbf{x} - \mathbf{b}\|_2$ is
+minimized by
+
+$$R\hat{\mathbf{x}} = Q^\top \mathbf{b} \qquad \text{(upper triangular — solve by back substitution)}$$
+
+This never forms $A^\top A$, so it keeps the original conditioning. Substituting $A = QR$ into the normal
+equations reproduces it exactly: $R^\top R \hat{\mathbf{x}} = R^\top Q^\top \mathbf{b} \Rightarrow R\hat{\mathbf{x}} = Q^\top \mathbf{b}$.
+
+### 13.4 Polynomial Fitting & the Design Matrix
+
+To fit $p_d(t) = c_0 + c_1 t + \cdots + c_d t^d$ to data points $(t_i, y_i)$, $i = 1, \ldots, m$, build the
+**Vandermonde design matrix**:
+
+$$A = \begin{bmatrix} 1 & t_1 & t_1^2 & \cdots & t_1^d \\ 1 & t_2 & t_2^2 & \cdots & t_2^d \\ \vdots & & & & \vdots \\ 1 & t_m & t_m^2 & \cdots & t_m^d \end{bmatrix} \in \mathbb{R}^{m \times (d+1)}, \qquad \mathbf{c} = \begin{bmatrix} c_0 \\ c_1 \\ \vdots \\ c_d \end{bmatrix}$$
+
+Then $A\mathbf{c} \approx \mathbf{y}$ is an ordinary least-squares problem. The model is **linear in the
+coefficients** $\mathbf{c}$ even though it is nonlinear in $t$ — this is why least squares applies. Any set of
+basis functions $\phi_j(t)$ works the same way ($A_{ij} = \phi_j(t_i)$): Fourier terms, splines, radial basis
+functions.
+
+| Degree $d$ | Behavior |
+|-----------|----------|
+| Too low | **Underfits** — large residual, misses real structure |
+| Well chosen | Small residual, smooth curve |
+| Too high ($d \to m-1$) | **Overfits** — interpolates the noise; $A$ becomes ill-conditioned |
+
+### 13.5 Regularization (Ridge / Tikhonov)
+
+Add a penalty that keeps $\mathbf{x}$ small (or close to a prior $\mathbf{x}_0$):
+
+$$\min_{\mathbf{x}} \|A\mathbf{x} - \mathbf{b}\|_2^2 + \lambda \|\mathbf{x} - \mathbf{x}_0\|_2^2, \qquad \lambda > 0$$
+
+**Stacked form** — it is just ordinary least squares on a taller system:
+
+$$A_{\text{aug}} = \begin{bmatrix} A \\ \sqrt{\lambda}\,I \end{bmatrix}, \qquad
+\mathbf{b}_{\text{aug}} = \begin{bmatrix} \mathbf{b} \\ \sqrt{\lambda}\,\mathbf{x}_0 \end{bmatrix}
+\quad\Longrightarrow\quad \min_{\mathbf{x}} \|A_{\text{aug}}\mathbf{x} - \mathbf{b}_{\text{aug}}\|_2^2$$
+
+Closed form ($\mathbf{x}_0 = \mathbf{0}$):
+
+$$\hat{\mathbf{x}}_{\text{ridge}} = (A^\top A + \lambda I)^{-1} A^\top \mathbf{b}$$
+
+| Effect of $\lambda$ | |
+|---|---|
+| $A^\top A + \lambda I$ is **always** invertible ($\lambda > 0$) | Fixes rank-deficiency and ill-conditioning |
+| Shrinks $\hat{\mathbf{x}}$ toward $\mathbf{x}_0$ | Trades a little bias for much less variance |
+| $\lambda \to 0$ | Recovers ordinary least squares |
+| $\lambda \to \infty$ | $\hat{\mathbf{x}} \to \mathbf{x}_0$ |
+
+This is **ridge regression** / **weight decay**. Using an L1 penalty $\lambda\|\mathbf{x}\|_1$ instead gives
+**Lasso** (sparse solutions, no closed form). **Weighted** least squares generalizes the data term to
+$\|W^{1/2}(A\mathbf{x} - \mathbf{b})\|_2^2$ for a diagonal weight matrix $W$.
+
+### 13.6 Equality-Constrained Least Squares (KKT)
+
+Minimize the residual while forcing $\mathbf{x}$ to satisfy exact linear constraints:
+
+$$\min_{\mathbf{x}} \|A\mathbf{x} - \mathbf{b}\|_2^2 \quad \text{subject to} \quad C\mathbf{x} = \mathbf{d}, \qquad C \in \mathbb{R}^{q \times n}$$
+
+Form the **Lagrangian** $\mathcal{L}(\mathbf{x}, \boldsymbol{\lambda}) = \|A\mathbf{x} - \mathbf{b}\|_2^2 + 2\boldsymbol{\lambda}^\top(C\mathbf{x} - \mathbf{d})$
+and set both gradients to zero. This gives the **KKT system** — one symmetric block matrix:
+
+$$\begin{bmatrix} A^\top A & C^\top \\ C & 0 \end{bmatrix} \begin{bmatrix} \mathbf{x} \\ \boldsymbol{\lambda} \end{bmatrix} = \begin{bmatrix} A^\top \mathbf{b} \\ \mathbf{d} \end{bmatrix}$$
+
+| Block row | Enforces |
+|-----------|----------|
+| Top: $A^\top A\,\mathbf{x} + C^\top \boldsymbol{\lambda} = A^\top \mathbf{b}$ | Stationarity (least-squares optimality along the constraint surface) |
+| Bottom: $C\mathbf{x} = \mathbf{d}$ | Feasibility (the constraint itself) |
+
+$\boldsymbol{\lambda}$ are the **Lagrange multipliers** — the sensitivity of the optimal cost to loosening
+each constraint. Example: forcing coefficients to sum to one, $C = [1\ 1\ \cdots\ 1]$, $\mathbf{d} = 1$.
+
+### 13.7 Reference Table
+
+| Problem | Solution |
+|---------|----------|
+| $\min \|A\mathbf{x} - \mathbf{b}\|_2^2$ | $A^\top A\,\hat{\mathbf{x}} = A^\top \mathbf{b}$; or $R\hat{\mathbf{x}} = Q^\top \mathbf{b}$ |
+| Ridge: $+\,\lambda\|\mathbf{x}\|_2^2$ | $(A^\top A + \lambda I)\hat{\mathbf{x}} = A^\top \mathbf{b}$ |
+| Constrained: $C\mathbf{x} = \mathbf{d}$ | KKT block system above |
+| Underdetermined ($m < n$), min-norm | $\hat{\mathbf{x}} = A^\top(AA^\top)^{-1}\mathbf{b}$ |
+| Rank-deficient, min-norm | $\hat{\mathbf{x}} = A^{+}\mathbf{b}$ via SVD (§7) |
+
+---
+
+## 14. Linear Dynamical Systems
+
+Eigenvalues (§6) exist to answer one question: **what does $A$ do when applied over and over?**
+
+### 14.1 Discrete Systems & Matrix Powers
+
+$$\mathbf{x}_{t+1} = A\mathbf{x}_t \quad\Longrightarrow\quad \mathbf{x}_t = A^t \mathbf{x}_0$$
+
+Diagonalize $A = V\Lambda V^{-1}$ (§6.3). Then powers are trivial:
+
+$$A^t = V \Lambda^t V^{-1} = V \operatorname{diag}(\lambda_1^t, \ldots, \lambda_n^t) V^{-1}$$
+
+Expanding $\mathbf{x}_0 = \sum_i c_i \mathbf{v}_i$ in the eigenbasis ($\mathbf{c} = V^{-1}\mathbf{x}_0$):
+
+$$\mathbf{x}_t = \sum_{i=1}^n c_i\, \lambda_i^t\, \mathbf{v}_i$$
+
+Each **mode** $\mathbf{v}_i$ evolves independently, scaled by $\lambda_i^t$. The behavior is decided entirely by
+the eigenvalues.
+
+### 14.2 Stability & Steady States
+
+Let the **spectral radius** be $\rho(A) = \max_i |\lambda_i|$.
+
+| Condition | Long-run behavior of $\mathbf{x}_t$ |
+|-----------|------------------------------------|
+| $\rho(A) < 1$ | $\mathbf{x}_t \to \mathbf{0}$ — every mode decays |
+| $\rho(A) > 1$ | $\|\mathbf{x}_t\| \to \infty$ — the mode(s) with largest $|\lambda|$ dominate and blow up |
+| $\rho(A) = 1$, simple dominant $\lambda = 1$ | $\mathbf{x}_t \to c_1 \mathbf{v}_1$ — a nonzero **steady state** along the dominant eigenvector |
+| $|\lambda| = 1$ complex | Undamped oscillation / rotation |
+
+For large $t$ the term with the largest $|\lambda_i|$ swamps the rest — the **dominant eigenpair** governs the
+asymptotics. Normalizing $\mathbf{x}_t/\|\mathbf{x}_t\|$ at each step to extract it is **power iteration**
+(the basis of PageRank, §6.2).
+
+**Gradient-descent connection.** One GD step $\mathbf{x} \leftarrow (I - \eta H)\mathbf{x}$ (on a quadratic with
+Hessian $H$, §11.3) is a linear system with iteration matrix $I - \eta H$; it converges iff
+$|1 - \eta\lambda_i| < 1$ for every eigenvalue $\lambda_i$ of $H$, i.e. $0 < \eta < 2/\lambda_{\max}$.
+
+### 14.3 Markov Chains
+
+A **stochastic matrix** $P$ has nonnegative entries with each column summing to $1$ (so probability is
+conserved: $\mathbf{1}^\top P = \mathbf{1}^\top$). Then:
+
+- $\lambda = 1$ is always an eigenvalue, and $\rho(P) = 1$ (Perron–Frobenius).
+- If $P$ is irreducible and aperiodic, the dominant left eigenvector normalizes to the unique **stationary
+  distribution** $\boldsymbol{\pi}$ with $P\boldsymbol{\pi} = \boldsymbol{\pi}$, and $\mathbf{x}_t \to \boldsymbol{\pi}$ from any start.
+
+**Example — a doubly stochastic averaging step** (rows *and* columns sum to 1), e.g. each node replacing its
+value by $\tfrac12$ itself $+\ \tfrac14$ each neighbor around a ring. Here $\boldsymbol{\pi}$ is uniform, so
+every coordinate converges to the **average of the initial values** — the total is conserved and spreads out evenly.
+
+### 14.4 Continuous Systems & the Matrix Exponential
+
+The continuous-time analogue is the linear ODE
+
+$$\dot{\mathbf{x}}(t) = A\mathbf{x}(t) \quad\Longrightarrow\quad \mathbf{x}(t) = e^{At}\,\mathbf{x}(0)$$
+
+The **matrix exponential** is defined by the same series as the scalar one:
+
+$$e^{At} = \sum_{k=0}^{\infty} \frac{(At)^k}{k!} = I + At + \frac{(At)^2}{2!} + \cdots$$
+
+| Property | |
+|----------|---|
+| $e^{A \cdot 0} = I$ | |
+| $\frac{d}{dt} e^{At} = A e^{At} = e^{At} A$ | why it solves the ODE |
+| $e^{A(s+t)} = e^{As}e^{At}$ | but $e^{A+B} \neq e^A e^B$ unless $AB = BA$ |
+| $\det(e^{A}) = e^{\operatorname{tr}(A)}$ | always invertible |
+
+**Compute it by diagonalization** ($A = V\Lambda V^{-1}$):
+
+$$e^{At} = V \operatorname{diag}(e^{\lambda_1 t}, \ldots, e^{\lambda_n t})\, V^{-1}$$
+
+So $\mathbf{x}(t) = \sum_i c_i\, e^{\lambda_i t}\, \mathbf{v}_i$ — modes again, now with continuous growth/decay rates.
+
+| Condition on eigenvalues of $A$ | Behavior of $\dot{\mathbf{x}} = A\mathbf{x}$ |
+|-------------------------------|---------------------------------------------|
+| $\operatorname{Re}(\lambda_i) < 0$ for all $i$ | Asymptotically stable — $\mathbf{x}(t) \to \mathbf{0}$ |
+| Some $\operatorname{Re}(\lambda_i) > 0$ | Unstable — blows up |
+| $\operatorname{Re}(\lambda_i) \leq 0$, a simple $\lambda = 0$ | Converges to a steady state in $N(A)$ |
+| $\operatorname{Im}(\lambda_i) \neq 0$ | Oscillation at angular frequency $\operatorname{Im}(\lambda_i)$ |
+
+(Contrast with the discrete test, which compares $|\lambda|$ to $1$; the continuous test compares
+$\operatorname{Re}(\lambda)$ to $0$. The map $\lambda \mapsto e^{\lambda t}$ sends the left half-plane to the unit disk.)
+
+### 14.5 The Graph Laplacian
+
+Both the discrete averaging example and continuous diffusion are governed by the **graph Laplacian**
+$L = D - W$, where $W$ is the (symmetric) edge-weight matrix and $D$ is the diagonal degree matrix. Equivalently
+$L = A^\top A$ for the incidence matrix $A$ of §8.4.
+
+| Property | Consequence |
+|----------|-------------|
+| Symmetric positive semidefinite | Real eigenvalues $0 = \lambda_1 \leq \lambda_2 \leq \cdots$ |
+| Every row sums to $0$ ($L\mathbf{1} = \mathbf{0}$) | $\mathbf{1}$ is an eigenvector with eigenvalue $0$ |
+| Multiplicity of eigenvalue $0$ | Number of connected components of the graph |
+| $\lambda_2$ (**Fiedler value**) | Algebraic connectivity; its eigenvector bisects the graph (spectral clustering) |
+
+**Diffusion** $\dot{\mathbf{x}} = -L\mathbf{x}$: eigenvalues of $-L$ are $0 \geq -\lambda_2 \geq \cdots$, so every
+mode except the constant one decays. The $\lambda = 0$ mode ($\mathbf{1}$) is conserved — the total
+$\sum_i x_i$ never changes — and $\mathbf{x}(t)$ relaxes to the **average** of the initial values, at a rate
+set by $\lambda_2$. This is heat flow, consensus/averaging in multi-agent systems, and label propagation.
+
+---
+
+## 15. AI Applications
+
+### 15.1 Neural Network Forward Pass
 
 A fully connected layer is a matrix multiplication followed by a nonlinearity:
 
@@ -1015,7 +1833,7 @@ $$H^{(l)} = \sigma(H^{(l-1)} W^{(l)\top} + \mathbf{b}^{(l)\top}), \quad H \in \m
 
 
 
-### 13.2 Attention Mechanism
+### 15.2 Attention Mechanism
 
 Scaled dot-product attention computes similarity between queries and keys, then uses it to weight values:
 
@@ -1033,7 +1851,7 @@ $$QK^\top \in \mathbb{R}^{n \times m}: \quad (QK^\top)_{ij} = \mathbf{q}_i^\top 
 
 
 
-### 13.3 PCA
+### 15.3 PCA
 
 Principal Component Analysis finds the directions of maximum variance in data using SVD.
 
@@ -1056,3 +1874,105 @@ $$\text{3. Project: } Z = \tilde{X} V_k = U_k \Sigma_k \quad \text{(top-}k\text{
 - Reduce input dimensionality before training
 - Visualize high-dimensional embeddings (word vectors, latent spaces)
 - Initialize weights or analyze learned representations
+
+---
+
+### 15.4 K-Means Clustering
+
+K-means partitions $N$ points $\mathbf{x}_1, \ldots, \mathbf{x}_N \in \mathbb{R}^D$ into $K$ groups by
+alternating two linear-algebra operations until the assignment stops changing.
+
+**Objective** — minimize the total squared L2 distance from each point to its cluster centroid:
+
+$$J = \sum_{i=1}^{N} \left\| \mathbf{x}_i - \boldsymbol{\mu}_{c_i} \right\|_2^2, \qquad c_i \in \{1, \ldots, K\}$$
+
+| Term | Meaning |
+|------|---------|
+| $c_i$ | Cluster index assigned to point $\mathbf{x}_i$ |
+| $\boldsymbol{\mu}_k \in \mathbb{R}^D$ | Centroid (mean vector) of cluster $k$ |
+| $\|\mathbf{x}_i - \boldsymbol{\mu}_{c_i}\|_2^2$ | Squared Euclidean distance — the quantity §1.4 calls the L2 norm |
+
+**The algorithm — Lloyd's iteration:**
+
+| Step | Operation | Linear algebra |
+|------|-----------|----------------|
+| **0. Init** | Pick $K$ initial centroids (e.g. $K$ random points) | — |
+| **1. Assign** | $c_i \leftarrow \arg\min_k \|\mathbf{x}_i - \boldsymbol{\mu}_k\|_2$ | Nearest-centroid by L2 distance |
+| **2. Update** | $\boldsymbol{\mu}_k \leftarrow \dfrac{1}{|S_k|} \sum_{i \in S_k} \mathbf{x}_i$ | Feature-wise mean of the points in cluster $S_k$ |
+| **3. Repeat** | Alternate steps 1–2 until assignments stabilize | $J$ decreases monotonically → converges |
+
+**Why the centroid is the mean:** for a fixed set $S_k$, the point $\boldsymbol{\mu}$ minimizing
+$\sum_{i \in S_k} \|\mathbf{x}_i - \boldsymbol{\mu}\|_2^2$ is found by setting the gradient to zero
+(§11.1, $\nabla_{\boldsymbol{\mu}} \|\mathbf{x}_i - \boldsymbol{\mu}\|_2^2 = -2(\mathbf{x}_i - \boldsymbol{\mu})$):
+
+$$\sum_{i \in S_k} -2(\mathbf{x}_i - \boldsymbol{\mu}) = \mathbf{0} \quad\Longrightarrow\quad \boldsymbol{\mu} = \frac{1}{|S_k|}\sum_{i \in S_k} \mathbf{x}_i$$
+
+**Vectorized distance to all centroids.** Stack centroids as rows of $M \in \mathbb{R}^{K \times D}$. Broadcasting
+$X \in \mathbb{R}^{N \times D}$ against $M$ gives an $(N \times K)$ distance matrix in one shot:
+
+$$\text{dist}_2^2(X, M)_{ik} = \|\mathbf{x}_i\|_2^2 - 2\,\mathbf{x}_i^\top \boldsymbol{\mu}_k + \|\boldsymbol{\mu}_k\|_2^2$$
+
+The cross term $X M^\top \in \mathbb{R}^{N \times K}$ is a single matrix multiply (§2.3); the two norm terms are
+per-row / per-column vectors added by broadcasting. `argmin` along axis 1 gives the assignments.
+
+**Concrete example** ($D=1$, $K=2$, points $\{1, 2, 10, 12\}$, init $\mu_1=1,\ \mu_2=2$):
+
+| Iter | Assign ($c$) | Update |
+|------|-------------|--------|
+| 1 | $1\!\to\!\mu_1;\ 2,10,12\!\to\!\mu_2$ | $\mu_1 = 1,\quad \mu_2 = (2+10+12)/3 = 8$ |
+| 2 | $1,2\!\to\!\mu_1;\ 10,12\!\to\!\mu_2$ | $\mu_1 = 1.5,\quad \mu_2 = 11$ |
+| 3 | $1,2\!\to\!\mu_1;\ 10,12\!\to\!\mu_2$ | unchanged → **converged** |
+
+Final $J = (0.5^2 + 0.5^2) + (1^2 + 1^2) = 2.5$.
+
+**In AI:** vector quantization, image color compression, feature learning (bag-of-visual-words),
+initializing Gaussian mixture models, and building the codebooks used in some tokenizers (e.g. VQ-VAE).
+
+> **Caveats:** K-means assumes roughly spherical, equal-size clusters (it only sees L2 distance); the result
+> depends on initialization (run several times, keep the lowest $J$, or use k-means++); $K$ must be chosen in advance.
+
+---
+
+### 15.5 K-Nearest Neighbors (KNN)
+
+KNN is a non-parametric classifier: there is no training beyond **storing** the labeled set. A test point is
+labeled by a majority vote of its $k$ closest training points under the L2 metric.
+
+| Step | Operation |
+|------|-----------|
+| **Train** | Store $X_{\text{train}} \in \mathbb{R}^{M \times D}$ and labels $\mathbf{y} \in \{0,\ldots,C-1\}^M$ |
+| **Distance** | For each test point, L2 distance to every training point |
+| **Vote** | Take the $k$ smallest distances; predict the most common label among them |
+
+**Pairwise distance matrix.** With $X_{\text{test}} \in \mathbb{R}^{N \times D}$, broadcasting a
+$(N, 1, D)$ array against a $(1, M, D)$ array produces the $(N, M, D)$ difference tensor; reducing the last
+axis with an L2 norm gives
+
+$$\Big[\text{dist}(X_{\text{test}}, X_{\text{train}})\Big]_{ij} = \left\| \mathbf{x}^{\text{test}}_i - \mathbf{x}^{\text{train}}_j \right\|_2 \in \mathbb{R}^{N \times M}$$
+
+Equivalently, and faster, via the same expansion as §15.4:
+
+$$D^2 = \|X_{\text{test}}\|^2_{\text{row}} \; - \; 2\,X_{\text{test}} X_{\text{train}}^\top \; + \; \|X_{\text{train}}\|^2_{\text{col}}$$
+
+where $X_{\text{test}} X_{\text{train}}^\top \in \mathbb{R}^{N \times M}$ is one matrix multiply and the norm
+terms broadcast over rows and columns.
+
+**Prediction:** `idx = argsort(D, axis=1)[:, :k]` selects the $k$ nearest training indices per test row;
+`y_pred[i] = mode(y_train[idx[i]])`.
+
+| Hyperparameter | Effect |
+|----------------|--------|
+| Small $k$ (e.g. 1) | Low bias, high variance — sensitive to noise / outliers |
+| Large $k$ | Smoother decision boundary, higher bias; too large washes out real structure |
+| Distance metric | L2 is standard; features should be scaled first so no dimension dominates the norm |
+
+**Concrete example** ($k=3$): test point $\mathbf{x}$ has the 3 nearest training labels $\{A, A, B\}$
+→ predict $A$ (2 votes vs 1).
+
+**In AI:** strong baseline for classification, k-NN retrieval over embedding vectors
+(semantic search, RAG, face recognition, recommendation), and label propagation. At scale the exact
+$X X^\top$ distance computation is replaced by approximate nearest-neighbor indexes (FAISS, HNSW), but the
+underlying quantity is still the L2 (or cosine, §1.3) distance between vectors.
+
+> **Cost:** no training time, but inference is $O(NMD)$ — every prediction scans the whole training set.
+> Memory grows linearly with the data. This is the opposite trade-off from a neural network.

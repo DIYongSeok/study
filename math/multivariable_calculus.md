@@ -557,4 +557,4 @@ and the chain rule (§4) handles the rest. This is just differentiating through 
 | 4 | Lagrange multipliers & KKT (§9) | Constrained control, SVMs, trajectory optimization, RL with constraints |
 | 5 | Change of variables & expectation integrals (§11) | Normalizing flows, VAEs, Monte Carlo objectives |
 
-**Companion documents:** [linear_algebra.md](linear_algebra.md) (matrix derivatives, SVD, pseudo-inverse) · [statistics_probability.md](statistics_probability.md) (distributions, expectation, information theory)
+**Companion documents:** [linear_algebra.md](linear_algebra.md) (matrix derivatives, SVD, pseudo-inverse) · [statistics_probability.md](statistics_probability.md) (distributions, expectation, information theory) · [optimization.md](optimization.md) (convexity, gradient methods, Adam, Newton/quasi-Newton, constrained optimization)
