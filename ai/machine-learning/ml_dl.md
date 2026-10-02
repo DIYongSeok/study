@@ -511,7 +511,7 @@ $$\min_{C_1,\ldots,C_K} \sum_{k=1}^K \sum_{\mathbf{x} \in C_k} \|\mathbf{x} - \b
 | Term | Meaning |
 |------|---------|
 | $C_k$ | Set of points assigned to cluster $k$ |
-| $\boldsymbol{\mu}_k = \frac{1}{|C_k|}\sum_{\mathbf{x}\in C_k} \mathbf{x}$ | Centroid of cluster $k$ |
+| $\boldsymbol{\mu}_k = \frac{1}{\lvert C_k \rvert}\sum_{\mathbf{x}\in C_k} \mathbf{x}$ | Centroid of cluster $k$ |
 
 **Algorithm (Lloyd's):**
 1. Initialize $K$ centroids randomly

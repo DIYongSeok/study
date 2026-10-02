@@ -261,8 +261,8 @@ $$dV_{\mathbf{y}} = |\det J|\; dV_{\mathbf{x}}$$
 
 | $\det J$ | Meaning |
 |----------|---------|
-| $|\det J| > 1$ | Map expands volume locally |
-| $|\det J| < 1$ | Map contracts volume locally |
+| $\lvert \det J \rvert > 1$ | Map expands volume locally |
+| $\lvert \det J \rvert < 1$ | Map contracts volume locally |
 | $\det J = 0$ | Map collapses a dimension — **singular**, not locally invertible |
 | $\det J \neq 0$ | **Inverse Function Theorem:** $\mathbf{f}$ is locally invertible near that point |
 
