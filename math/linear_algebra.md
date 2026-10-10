@@ -21,6 +21,8 @@ networks, attention, PCA, SVD, and optimization all reduce to matrix and vector 
 3. [Linear Transformations](#3-linear-transformations)
    - 3.1 [Geometric Intuition](#31-geometric-intuition)
    - 3.2 [Composition](#32-composition)
+   - 3.3 [Kernel & Image](#33-kernel--image)
+   - 3.4 [Change of Basis](#34-change-of-basis)
 4. [Systems of Linear Equations](#4-systems-of-linear-equations)
    - 4.1 [Matrix Form](#41-matrix-form)
    - 4.2 [Invertibility](#42-invertibility)
@@ -395,9 +397,21 @@ $$\mathbf{e}_i^\top A \mathbf{e}_j = a_{ij}, \qquad \mathbf{e}_j^\top A \mathbf{
 
 ### 3.1 Geometric Intuition
 
+A map $T: \mathbb{R}^n \to \mathbb{R}^m$ is **linear** if it preserves addition and scalar multiplication:
+
+$$T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v}), \qquad T(c\,\mathbf{u}) = c\,T(\mathbf{u})$$
+
+Consequence: $T(\mathbf{0}) = \mathbf{0}$ always. So $f(\mathbf{x}) = A\mathbf{x} + \mathbf{b}$ with $\mathbf{b} \neq \mathbf{0}$ is **affine**, not linear.
+
 Every matrix $A \in \mathbb{R}^{m \times n}$ defines a linear transformation: it maps a vector in $\mathbb{R}^n$ to a vector in $\mathbb{R}^m$.
 
 $$T(\mathbf{x}) = A\mathbf{x}$$
+
+**The converse is also true — every linear map is a matrix.** Write $\mathbf{x} = x_1\mathbf{e}_1 + \cdots + x_n\mathbf{e}_n$. By linearity:
+
+$$T(\mathbf{x}) = x_1 T(\mathbf{e}_1) + \cdots + x_n T(\mathbf{e}_n) = \underbrace{\begin{bmatrix} | & & | \\ T(\mathbf{e}_1) & \cdots & T(\mathbf{e}_n) \\ | & & | \end{bmatrix}}_{A}\mathbf{x}$$
+
+> **Key insight:** the $j$-th column of $A$ is where the $j$-th basis vector lands. To build the matrix of any linear map, just ask "where does each $\mathbf{e}_j$ go?"
 
 | Matrix type | Geometric effect |
 |-------------|-----------------|
@@ -409,7 +423,18 @@ $$T(\mathbf{x}) = A\mathbf{x}$$
 
 $$R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$
 
+Derived from the key insight: $\mathbf{e}_1 = (1, 0)$ rotates to $(\cos\theta, \sin\theta)$ — column 1. $\mathbf{e}_2 = (0, 1)$ rotates to $(-\sin\theta, \cos\theta)$ — column 2.
 
+**More 2D examples:**
+
+| Transformation | Matrix | $\mathbf{e}_1 \mapsto$ | $\mathbf{e}_2 \mapsto$ |
+|----------------|--------|------------------------|------------------------|
+| Scale $x$ by 2 | $\begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}$ | $(2, 0)$ | $(0, 1)$ |
+| Shear (horizontal) | $\begin{bmatrix} 1 & k \\ 0 & 1 \end{bmatrix}$ | $(1, 0)$ | $(k, 1)$ |
+| Reflect across $x$-axis | $\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$ | $(1, 0)$ | $(0, -1)$ |
+| Project onto $x$-axis | $\begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}$ | $(1, 0)$ | $(0, 0)$ |
+
+The last one is not invertible — it squashes the $y$-direction to zero (see §3.3).
 
 ### 3.2 Composition
 
@@ -417,7 +442,76 @@ Applying transformation $B$ then $A$ is equivalent to the single matrix $AB$:
 
 $$A(B\mathbf{x}) = (AB)\mathbf{x}$$
 
+Read right to left: $B$ acts first. Order matters — in general $AB \neq BA$. Rotating then scaling $x$ is not the same as scaling $x$ then rotating.
+
 **In AI:** a deep network with no activations is just one big matrix multiplication — that's why nonlinear activations (ReLU, Tanh) are essential. Without them, all layers collapse into a single linear transformation.
+
+### 3.3 Kernel & Image
+
+Every linear map $T(\mathbf{x}) = A\mathbf{x}$ has two subspaces attached to it:
+
+| Subspace | Definition | Lives in | Meaning |
+|----------|-----------|----------|---------|
+| **Kernel** (null space) | $\ker(A) = \{\mathbf{x} \mid A\mathbf{x} = \mathbf{0}\}$ | $\mathbb{R}^n$ (input) | Directions that get destroyed |
+| **Image** (column space / range) | $\text{im}(A) = \{A\mathbf{x} \mid \mathbf{x} \in \mathbb{R}^n\}$ | $\mathbb{R}^m$ (output) | Everything the map can reach |
+
+**Example:**
+
+$$A = \begin{bmatrix} 1 & 2 \\ 2 & 4 \end{bmatrix}$$
+
+- Column 2 = 2 × column 1, so $\text{im}(A) = \text{span}\{(1, 2)\}$ — a line. Every output lands on it.
+- $A\mathbf{x} = \mathbf{0} \iff x_1 + 2x_2 = 0$, so $\ker(A) = \text{span}\{(-2, 1)\}$ — also a line. The whole 2D plane is crushed onto a 1D line.
+
+**Rank–nullity** ties them together (details in §8.3):
+
+$$\underbrace{\dim \ker(A)}_{\text{lost}} + \underbrace{\dim \text{im}(A)}_{\text{kept}} = n$$
+
+Here: $1 + 1 = 2$. ✓
+
+| Property | Condition |
+|----------|-----------|
+| **Injective** (one-to-one): different inputs → different outputs | $\ker(A) = \{\mathbf{0}\}$ |
+| **Surjective** (onto): every output is reachable | $\text{im}(A) = \mathbb{R}^m$ |
+| **Bijective** (invertible) | both — only possible when $m = n$ |
+
+Why injective ⇔ trivial kernel: $A\mathbf{u} = A\mathbf{v} \iff A(\mathbf{u} - \mathbf{v}) = \mathbf{0} \iff \mathbf{u} - \mathbf{v} \in \ker(A)$.
+
+**In AI:** a linear layer $\mathbb{R}^{768} \to \mathbb{R}^{64}$ (e.g., an attention head projection) has a kernel of dimension at least $704$ — most input directions are invisible to that head. Low-rank bottlenecks (LoRA, autoencoders) deliberately make the image small.
+
+### 3.4 Change of Basis
+
+The same vector has different coordinates in different bases. Let the columns of an invertible $P$ be a new basis $\{\mathbf{p}_1, \ldots, \mathbf{p}_n\}$. If $\mathbf{x}$ has coordinates $\mathbf{c}$ in that basis:
+
+$$\mathbf{x} = c_1\mathbf{p}_1 + \cdots + c_n\mathbf{p}_n = P\mathbf{c} \qquad \Longleftrightarrow \qquad \mathbf{c} = P^{-1}\mathbf{x}$$
+
+| Direction | Formula |
+|-----------|---------|
+| New coordinates → standard | $\mathbf{x} = P\mathbf{c}$ |
+| Standard → new coordinates | $\mathbf{c} = P^{-1}\mathbf{x}$ |
+
+**Example:** basis $\mathbf{p}_1 = (1, 1)$, $\mathbf{p}_2 = (1, -1)$. For $\mathbf{x} = (3, 1)$:
+
+$$\mathbf{c} = P^{-1}\mathbf{x} = \frac{1}{2}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}\begin{bmatrix} 3 \\ 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 1 \end{bmatrix}$$
+
+Check: $2(1, 1) + 1(1, -1) = (3, 1)$. ✓
+
+**The same linear map in a new basis.** If $T(\mathbf{x}) = A\mathbf{x}$ in standard coordinates, then in $P$-coordinates it becomes:
+
+$$B = P^{-1} A P$$
+
+Read right to left: convert new coords → standard ($P$), apply $T$ ($A$), convert back ($P^{-1}$).
+
+$A$ and $B$ are called **similar**. They describe the same geometric map, so they share everything basis-independent:
+
+| Shared by similar matrices | |
+|---------------------------|---|
+| Eigenvalues | $\det(B - \lambda I) = \det(P^{-1}(A - \lambda I)P) = \det(A - \lambda I)$ |
+| Determinant, trace | |
+| Rank | |
+
+**Why this matters:** choosing the right basis makes a map simple. If $P$ = eigenvectors of $A$, then $B = P^{-1}AP = \Lambda$ is diagonal (§6.3) — in that basis the map just scales each axis. For a symmetric $A$, $P$ can be orthogonal, so $P^{-1} = P^\top$ and $B = P^\top A P$.
+
+**In AI:** PCA (§15.3) is a change of basis to the eigenvectors of the covariance matrix — in those coordinates the features are uncorrelated.
 
 ---
 
@@ -1094,6 +1188,26 @@ The **projection** of $\mathbf{b}$ onto $\mathbf{a}$ is the component of $\mathb
 
 $$\text{proj}_{\mathbf{a}} \mathbf{b} = \frac{\mathbf{a}^\top \mathbf{b}}{\mathbf{a}^\top \mathbf{a}} \mathbf{a}$$
 
+**Derivation (onto a line).** The projection must lie on the line, so $\mathbf{p} = \hat{x}\,\mathbf{a}$ for some scalar $\hat{x}$. The defining condition: the error $\mathbf{e} = \mathbf{b} - \hat{x}\mathbf{a}$ is **perpendicular** to $\mathbf{a}$:
+
+$$\mathbf{a}^\top(\mathbf{b} - \hat{x}\mathbf{a}) = 0 \quad \Rightarrow \quad \hat{x} = \frac{\mathbf{a}^\top \mathbf{b}}{\mathbf{a}^\top \mathbf{a}}$$
+
+As a matrix: $\mathbf{p} = \mathbf{a}\hat{x} = \dfrac{\mathbf{a}\mathbf{a}^\top}{\mathbf{a}^\top\mathbf{a}}\,\mathbf{b}$, so the projection matrix is $P = \dfrac{\mathbf{a}\mathbf{a}^\top}{\mathbf{a}^\top\mathbf{a}}$ (rank 1). If $\mathbf{a}$ is a unit vector $\mathbf{u}$, this simplifies to $P = \mathbf{u}\mathbf{u}^\top$.
+
+**Example:** project $\mathbf{b} = (2, 3)$ onto $\mathbf{a} = (1, 1)$.
+
+$$\hat{x} = \frac{1 \cdot 2 + 1 \cdot 3}{1 + 1} = \frac{5}{2}, \qquad \mathbf{p} = \tfrac{5}{2}(1, 1) = (2.5,\ 2.5), \qquad \mathbf{e} = \mathbf{b} - \mathbf{p} = (-0.5,\ 0.5)$$
+
+Check: $\mathbf{a}^\top\mathbf{e} = -0.5 + 0.5 = 0$. ✓ And $\|\mathbf{p}\|^2 + \|\mathbf{e}\|^2 = 12.5 + 0.5 = 13 = \|\mathbf{b}\|^2$ (Pythagoras). ✓
+
+**Derivation (onto a subspace).** Now project onto the column space of $A \in \mathbb{R}^{m \times n}$ (independent columns $\mathbf{a}_1, \ldots, \mathbf{a}_n$). The projection is a combination of the columns, $\mathbf{p} = A\hat{\mathbf{x}}$, and the error must be perpendicular to **every** column:
+
+$$\mathbf{a}_i^\top(\mathbf{b} - A\hat{\mathbf{x}}) = 0 \ \text{ for all } i \quad \Longleftrightarrow \quad A^\top(\mathbf{b} - A\hat{\mathbf{x}}) = \mathbf{0}$$
+
+$$A^\top A\,\hat{\mathbf{x}} = A^\top \mathbf{b} \quad \Rightarrow \quad \hat{\mathbf{x}} = (A^\top A)^{-1}A^\top\mathbf{b} \quad \Rightarrow \quad \mathbf{p} = A(A^\top A)^{-1}A^\top\mathbf{b}$$
+
+The first equation is exactly the **normal equation** of least squares (§13.2). ($A^\top A$ is invertible because the columns are independent.)
+
 The **projection matrix** onto the column space of $A$:
 
 $$P = A(A^\top A)^{-1} A^\top, \qquad P^2 = P \quad \text{(idempotent)}$$
@@ -1103,6 +1217,25 @@ $$P = A(A^\top A)^{-1} A^\top, \qquad P^2 = P \quad \text{(idempotent)}$$
 | $P\mathbf{b}$ | Closest point in column space of $A$ to $\mathbf{b}$ |
 | $\mathbf{b} - P\mathbf{b}$ | Residual — perpendicular to column space |
 | $P^2 = P$ | Projecting twice is the same as projecting once |
+| $P^\top = P$ | Orthogonal projections are symmetric |
+| $I - P$ | Projects onto the orthogonal complement (the left null space $\text{null}(A^\top)$) |
+| Eigenvalues of $P$ | Only $1$ (directions in the subspace) and $0$ (directions perpendicular to it) |
+
+**Why $P\mathbf{b}$ is the closest point.** For any other point $A\mathbf{y}$ in the column space, $P\mathbf{b} - A\mathbf{y}$ lies in the column space and $\mathbf{e} = \mathbf{b} - P\mathbf{b}$ is perpendicular to it, so by Pythagoras:
+
+$$\|\mathbf{b} - A\mathbf{y}\|^2 = \|\mathbf{e}\|^2 + \|P\mathbf{b} - A\mathbf{y}\|^2 \geq \|\mathbf{e}\|^2$$
+
+**Orthonormal shortcut.** If the columns of $Q$ are orthonormal, $Q^\top Q = I$ and the formula collapses:
+
+$$P = QQ^\top, \qquad P\mathbf{b} = \sum_{i} (\mathbf{q}_i^\top\mathbf{b})\,\mathbf{q}_i$$
+
+— just add up the projections onto each basis vector. This is why Gram–Schmidt / QR (§9.3–9.4) is so useful.
+
+**Example (onto a plane).** Project $\mathbf{b} = (1, 2, 3)$ onto the $xy$-plane, $A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix}$:
+
+$$P = AA^\top = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix}, \qquad P\mathbf{b} = (1, 2, 0), \qquad \mathbf{e} = (0, 0, 3)$$
+
+The error points straight along $z$ — perpendicular to the plane. ✓
 
 **In AI:** attention computes projections; least squares regression minimizes $\|A\mathbf{x} - \mathbf{b}\|_2^2$ via projection (full treatment in §13).
 

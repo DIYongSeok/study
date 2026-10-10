@@ -213,6 +213,48 @@ The infinitesimal change in $f$ from small changes $d\mathbf{x}$:
 
 $$df = \nabla f^\top d\mathbf{x} = \frac{\partial f}{\partial x_1}dx_1 + \cdots + \frac{\partial f}{\partial x_n}dx_n$$
 
+Each term is "sensitivity to $x_i$" × "how much $x_i$ moved." The total differential adds up the effect of moving every variable at once.
+
+**Example:** $f(x, y) = x^2 y$ at $(x, y) = (2, 3)$, with $dx = 0.01$, $dy = -0.02$:
+
+$$df = 2xy\,dx + x^2\,dy = 12(0.01) + 4(-0.02) = 0.12 - 0.08 = 0.04$$
+
+Exact: $f(2.01, 2.98) - f(2, 3) = 12.0395 - 12 = 0.0395$. The differential is accurate to first order.
+
+**Error propagation:** the volume of a cylinder $V = \pi r^2 h$ with $r = 5 \pm 0.1$, $h = 10 \pm 0.2$:
+
+$$dV = 2\pi r h\,dr + \pi r^2\,dh = 100\pi(0.1) + 25\pi(0.2) = 15\pi \approx 47.1$$
+
+So $V = 250\pi \approx 785 \pm 47$ in the worst case. Relative form: $\dfrac{dV}{V} = 2\dfrac{dr}{r} + \dfrac{dh}{h} = 2(2\%) + 2\% = 6\%$.
+
+**Differentiability — what makes $df$ legitimate.** $f$ is **differentiable** at $\mathbf{x}_0$ if there is a vector $\nabla f(\mathbf{x}_0)$ such that the linear approximation error vanishes *faster* than the step:
+
+$$\lim_{\mathbf{h} \to \mathbf{0}} \frac{f(\mathbf{x}_0 + \mathbf{h}) - f(\mathbf{x}_0) - \nabla f(\mathbf{x}_0)^\top \mathbf{h}}{\|\mathbf{h}\|} = 0$$
+
+This is a statement about approaching from **every** direction at once — not just along the axes.
+
+**Partial derivatives existing is NOT enough.** Partials only test the axis directions. Counterexample:
+
+$$f(x, y) = \begin{cases} \dfrac{xy}{x^2 + y^2} & (x, y) \neq (0, 0) \\ 0 & (x, y) = (0, 0) \end{cases}$$
+
+- On both axes $f = 0$, so $\dfrac{\partial f}{\partial x}(0,0) = \dfrac{\partial f}{\partial y}(0,0) = 0$. Both partials exist.
+- Along the line $y = x$: $f(t, t) = \dfrac{t^2}{2t^2} = \dfrac12$ for all $t \neq 0$. So $f$ is not even **continuous** at the origin — let alone differentiable.
+
+The hierarchy:
+
+$$\text{partials exist and are continuous} \ \Rightarrow\ \text{differentiable} \ \Rightarrow\ \text{continuous, and all directional derivatives exist}$$
+
+None of the arrows reverse. In practice, the first condition is the easy one to check — and it holds for every smooth function built from polynomials, $\exp$, $\sin$, $\log$, etc.
+
+| Statement | Holds? |
+|-----------|--------|
+| Differentiable ⇒ partials exist | ✓ |
+| Partials exist ⇒ differentiable | ✗ (example above) |
+| Partials exist and continuous ⇒ differentiable | ✓ |
+| Differentiable ⇒ $D_{\mathbf{u}} f = \nabla f^\top \mathbf{u}$ for every unit $\mathbf{u}$ | ✓ |
+
+**In AI:** ReLU is not differentiable at $0$ (left slope 0, right slope 1). Frameworks just pick a value (usually 0) — a *subgradient*. It works because hitting exactly $0$ has probability zero.
+
 **In robotics:** if $\mathbf{p} = \text{FK}(\boldsymbol\theta)$ is forward kinematics, then $d\mathbf{p} = J(\boldsymbol\theta)\, d\boldsymbol\theta$ — small joint motions map to small end-effector motions through the Jacobian.
 
 ### 5.3 Multivariable Taylor Expansion

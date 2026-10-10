@@ -357,7 +357,81 @@ $$\mathcal{N}(\boldsymbol{\mu}, \Sigma): \quad f(\mathbf{x}) = \frac{1}{(2\pi)^{
 | $\boldsymbol{\mu}$ | $(n,)$ | Mean vector |
 | $\Sigma$ | $(n \times n)$ | Covariance matrix — encodes spread and correlations |
 | $\Sigma^{-1}$ | $(n \times n)$ | Precision matrix |
-| $(\mathbf{x}-\boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x}-\boldsymbol{\mu})$ | scalar | Mahalanobis distance |
+| $(\mathbf{x}-\boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x}-\boldsymbol{\mu})$ | scalar | Mahalanobis distance (squared) |
+
+**Normalizing constant:** $|\Sigma|^{1/2}$ is the volume scaling of the ellipse. With $n = 1$, $\Sigma = \sigma^2$, the formula reduces to the 1D Gaussian.
+
+**Geometry — eigendecomposition of $\Sigma$.** $\Sigma$ is symmetric positive definite, so $\Sigma = Q\Lambda Q^\top$ with orthonormal eigenvectors $\mathbf{q}_i$ and eigenvalues $\lambda_i > 0$. The density is constant where the Mahalanobis distance is constant:
+
+$$(\mathbf{x}-\boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x}-\boldsymbol{\mu}) = \sum_i \frac{y_i^2}{\lambda_i} = c, \qquad \mathbf{y} = Q^\top(\mathbf{x} - \boldsymbol{\mu})$$
+
+That is an **ellipse** (ellipsoid) centered at $\boldsymbol{\mu}$:
+
+| Part of $\Sigma$ | Shape of the contours |
+|------------------|----------------------|
+| Eigenvectors $\mathbf{q}_i$ | Directions of the ellipse axes |
+| $\sqrt{\lambda_i}$ | Length of each semi-axis (the std. dev. along $\mathbf{q}_i$) |
+| $\Sigma = \sigma^2 I$ | Circles — isotropic |
+| $\Sigma$ diagonal | Axis-aligned ellipse — components independent |
+| Off-diagonal $\Sigma_{ij} \neq 0$ | Tilted ellipse — components correlated |
+
+In the rotated coordinates $\mathbf{y}$ the components are **independent** 1D Gaussians with variances $\lambda_i$ — that is exactly what PCA finds.
+
+**Example:**
+
+$$\Sigma = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}: \quad \lambda_1 = 3,\ \mathbf{q}_1 = \tfrac{1}{\sqrt2}(1, 1); \qquad \lambda_2 = 1,\ \mathbf{q}_2 = \tfrac{1}{\sqrt2}(1, -1)$$
+
+The ellipse is tilted 45°, stretched along $y = x$ (std. $\sqrt3$) and narrow along $y = -x$ (std. $1$). Correlation $\rho = 1/\sqrt{2 \cdot 2} = 0.5$.
+
+**Sampling (the reparameterization trick).** Factor $\Sigma = LL^\top$ (Cholesky, or $L = Q\Lambda^{1/2}$). Then:
+
+$$\mathbf{z} \sim \mathcal{N}(\mathbf{0}, I) \quad \Rightarrow \quad \mathbf{x} = \boldsymbol{\mu} + L\mathbf{z} \sim \mathcal{N}(\boldsymbol{\mu}, \Sigma)$$
+
+Stretch a standard Gaussian blob by $L$, then shift by $\boldsymbol{\mu}$.
+
+**Key Property 1 — Affine transformations stay Gaussian.** If $\mathbf{x} \sim \mathcal{N}(\boldsymbol{\mu}, \Sigma)$, then for any matrix $A$ and vector $\mathbf{b}$:
+
+$$A\mathbf{x} + \mathbf{b} \sim \mathcal{N}(A\boldsymbol{\mu} + \mathbf{b},\ A\Sigma A^\top)$$
+
+Mean: linearity of expectation. Covariance: $\text{Cov}(A\mathbf{x}) = \mathbb{E}[A(\mathbf{x}-\boldsymbol\mu)(\mathbf{x}-\boldsymbol\mu)^\top A^\top] = A\Sigma A^\top$. (That the result is still *Gaussian* is the special part — most distributions lose their family under linear maps.)
+
+Special cases:
+- Sum of independent Gaussians: $X + Y \sim \mathcal{N}(\mu_X + \mu_Y,\ \sigma_X^2 + \sigma_Y^2)$ — take $A = [1\ \ 1]$.
+- Projection onto a direction $\mathbf{w}$: $\mathbf{w}^\top\mathbf{x} \sim \mathcal{N}(\mathbf{w}^\top\boldsymbol\mu,\ \mathbf{w}^\top\Sigma\mathbf{w})$.
+
+**Partitioned form.** Split $\mathbf{x}$ into two blocks:
+
+$$\mathbf{x} = \begin{bmatrix} \mathbf{x}_a \\ \mathbf{x}_b \end{bmatrix}, \qquad \boldsymbol{\mu} = \begin{bmatrix} \boldsymbol{\mu}_a \\ \boldsymbol{\mu}_b \end{bmatrix}, \qquad \Sigma = \begin{bmatrix} \Sigma_{aa} & \Sigma_{ab} \\ \Sigma_{ba} & \Sigma_{bb} \end{bmatrix}$$
+
+**Key Property 2 — Marginals are Gaussian.** Just read off the block:
+
+$$p(\mathbf{x}_a) = \mathcal{N}(\boldsymbol{\mu}_a,\ \Sigma_{aa})$$
+
+(This is Property 1 with $A = [I\ \ 0]$.) No integration needed.
+
+**Key Property 3 — Conditionals are Gaussian.**
+
+$$p(\mathbf{x}_a \mid \mathbf{x}_b) = \mathcal{N}\big(\boldsymbol{\mu}_{a|b},\ \Sigma_{a|b}\big)$$
+
+$$\boldsymbol{\mu}_{a|b} = \boldsymbol{\mu}_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\mathbf{x}_b - \boldsymbol{\mu}_b), \qquad \Sigma_{a|b} = \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}$$
+
+| Term | Meaning |
+|------|---------|
+| $\mathbf{x}_b - \boldsymbol{\mu}_b$ | How surprising the observation is |
+| $\Sigma_{ab}\Sigma_{bb}^{-1}$ | Regression coefficient — how much to shift $\mathbf{x}_a$ per unit of surprise |
+| $\Sigma_{a|b}$ | Remaining uncertainty — always $\preceq \Sigma_{aa}$; observing never increases variance. It does **not** depend on the observed value $\mathbf{x}_b$. |
+
+**2D example.** $(X, Y)$ with $\mu_X = \mu_Y = 0$, $\sigma_X^2 = \sigma_Y^2 = 1$, correlation $\rho$:
+
+$$X \mid Y = y \ \sim\ \mathcal{N}\big(\rho\, y,\ 1 - \rho^2\big)$$
+
+With $\rho = 0.8$ and $y = 2$: $X \mid Y{=}2 \sim \mathcal{N}(1.6,\ 0.36)$. The std. dev. drops from $1$ to $0.6$. With $\rho = 0$ the conditional equals the marginal — for Gaussians, **uncorrelated ⇔ independent** (false for general distributions).
+
+**In AI:**
+- **Gaussian processes:** prediction at new points is exactly Property 3 — condition the joint Gaussian on the observed training outputs.
+- **Kalman filter:** the predict step is Property 1 ($\Sigma \to F\Sigma F^\top + Q$); the update step is Property 3.
+- **VAE / diffusion:** sampling via $\boldsymbol\mu + L\mathbf{z}$ makes the sample differentiable w.r.t. $\boldsymbol\mu$ and $L$ (§11.3–11.4).
+- **Gaussian discriminant analysis / anomaly detection:** threshold on Mahalanobis distance.
 
 ### 4.4 Categorical & Softmax
 
