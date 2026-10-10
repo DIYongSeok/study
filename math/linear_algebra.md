@@ -1855,6 +1855,8 @@ So $\mathbf{x}(t) = \sum_i c_i\, e^{\lambda_i t}\, \mathbf{v}_i$ — modes again
 (Contrast with the discrete test, which compares $|\lambda|$ to $1$; the continuous test compares
 $\operatorname{Re}(\lambda)$ to $0$. The map $\lambda \mapsto e^{\lambda t}$ sends the left half-plane to the unit disk.)
 
+For inputs ($\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$), linearization of nonlinear systems, and turning continuous models into discrete ones, see [ode_linear_systems.md](engineering_math/ode_linear_systems.md).
+
 ### 14.5 The Graph Laplacian
 
 Both the discrete averaging example and continuous diffusion are governed by the **graph Laplacian**
