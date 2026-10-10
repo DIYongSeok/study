@@ -27,6 +27,7 @@ Multivariable calculus is how we reason about change in many dimensions at once.
    - 6.2 [Geometric Meaning — Local Linear Map](#62-geometric-meaning--local-linear-map)
    - 6.3 [Change of Variables & the Jacobian Determinant](#63-change-of-variables--the-jacobian-determinant)
    - 6.4 [Robotics: The Manipulator Jacobian](#64-robotics-the-manipulator-jacobian)
+   - 6.5 [Matrix Calculus Essentials](#65-matrix-calculus-essentials)
 7. [The Hessian & Second-Order Behavior](#7-the-hessian--second-order-behavior)
    - 7.1 [Definition](#71-definition)
    - 7.2 [Curvature & the Loss Landscape](#72-curvature--the-loss-landscape)
@@ -193,7 +194,7 @@ $$\frac{\partial \mathcal{L}}{\partial \mathbf{a}_1} = J_{f_2}^\top J_{f_3}^\top
 
 > **Key insight:** backprop is reverse-mode automatic differentiation. It is efficient precisely because the loss is a **single scalar**, so we propagate one vector backward instead of a full Jacobian.
 
-For the matrix mechanics — Jacobians of linear and element-wise maps, shape tables, and the matrix chain rule with worked numbers — see [linear_algebra.md](linear_algebra.md) §12.
+For the matrix mechanics — basic derivatives, the chain rule as matrix products with worked numbers, and the gradient of $\|A\mathbf{x} - \mathbf{b}\|^2$ — see §6.5.
 
 ---
 
@@ -285,7 +286,7 @@ $$J = \frac{\partial \mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix}
 
 Row $i$ is $\nabla f_i^\top$ — the gradient of the $i$-th output component.
 
-> **Layout note:** this document uses **numerator layout** ($m \times n$: outputs down the rows, inputs across the columns) — the standard in robotics and analysis, where $J$ is read directly as the local linear map $\mathbf{f}(\mathbf{x}_0 + \Delta\mathbf{x}) \approx \mathbf{f}(\mathbf{x}_0) + J\Delta\mathbf{x}$. The companion [linear_algebra.md](linear_algebra.md) §11.2, §12 uses **denominator layout** ($n \times m$) so ML gradients match parameter shapes. The two are transposes; each doc is internally consistent.
+> **Layout note:** this document uses **numerator layout** ($m \times n$: outputs down the rows, inputs across the columns) — the standard in robotics and analysis, where $J$ is read directly as the local linear map $\mathbf{f}(\mathbf{x}_0 + \Delta\mathbf{x}) \approx \mathbf{f}(\mathbf{x}_0) + J\Delta\mathbf{x}$. The companion [linear_algebra.md](linear_algebra.md) §11.2, §12 uses **denominator layout** ($n \times m$). The two are transposes — conversion table and dimension checklist in §6.5.6.
 
 ### 6.2 Geometric Meaning — Local Linear Map
 
@@ -330,6 +331,155 @@ J = \begin{bmatrix} J_v \\ J_\omega \end{bmatrix} \in \mathbb{R}^{6 \times n}$$
 **Singularities:** when $\det(JJ^\top) = 0$ the arm loses a degree of freedom — some Cartesian direction becomes unreachable instantaneously, and $J^{+}$ blows up. The **manipulability measure** $w = \sqrt{\det(JJ^\top)}$ quantifies how far the configuration is from a singularity.
 
 > **The transpose duality** $\boldsymbol\tau = J^\top \mathbf{F}$ comes from the principle of virtual work: $\mathbf{F}^\top \delta\mathbf{x} = \mathbf{F}^\top J \,\delta\boldsymbol\theta = \boldsymbol\tau^\top \delta\boldsymbol\theta$ for all $\delta\boldsymbol\theta$.
+
+### 6.5 Matrix Calculus Essentials
+
+Matrix calculus is the shared toolkit behind inverse kinematics, nonlinear least squares, state estimation, and backprop. The goal here is not to memorize a formula table, but to be able to **derive** four things on your own:
+
+1. The gradient of $\|A\mathbf{x} - \mathbf{b}\|^2$
+2. The Jacobian of a vector function
+3. The chain rule for compositions, written as matrix products
+4. A dimension check that catches mistakes
+
+Everything in this subsection uses **numerator layout**, consistent with §4.2 and §6.1.
+
+#### 6.5.1 The Convention & the Dimension Rule
+
+The **derivative** $D\mathbf{f}(\mathbf{x})$ is the matrix that best approximates $\mathbf{f}$ near $\mathbf{x}$:
+
+$$\mathbf{f}(\mathbf{x} + \mathbf{h}) = \mathbf{f}(\mathbf{x}) + D\mathbf{f}(\mathbf{x})\,\mathbf{h} + o(\|\mathbf{h}\|)$$
+
+For $D\mathbf{f}\,\mathbf{h}$ to make sense, the shape is forced:
+
+| Function | Derivative $D\mathbf{f}$ | Shape |
+|----------|--------------------------|-------|
+| $f: \mathbb{R} \to \mathbb{R}$ | $f'(x)$ | $1 \times 1$ |
+| $f: \mathbb{R}^n \to \mathbb{R}$ (scalar) | $Df = \nabla f^\top$ — a **row** | $1 \times n$ |
+| $\mathbf{f}: \mathbb{R}^n \to \mathbb{R}^m$ (vector) | $J$ (§6.1) | $m \times n$ |
+
+> **Dimension rule (numerator layout):** $D\mathbf{f}$ has shape **(output dim) × (input dim)**. The **gradient** of a scalar function is the column $\nabla f = (Df)^\top \in \mathbb{R}^n$ — same shape as $\mathbf{x}$.
+
+**The differential trick** — the one method behind every formula below: expand $f(\mathbf{x} + \mathbf{h})$, keep only the terms **linear in $\mathbf{h}$**, and write them as (matrix) × $\mathbf{h}$. That matrix is $Df$.
+
+#### 6.5.2 Four Basic Derivatives
+
+| $f(\mathbf{x})$ | Linear-in-$\mathbf{h}$ part of $f(\mathbf{x}+\mathbf{h})$ | $Df$ (row / matrix) | $\nabla f$ (column) |
+|-----------------|-----------------------------------|----------------------|--------------------|
+| $\mathbf{a}^\top\mathbf{x}$ | $\mathbf{a}^\top\mathbf{h}$ | $\mathbf{a}^\top$ | $\mathbf{a}$ |
+| $A\mathbf{x}$ (vector-valued) | $A\mathbf{h}$ | $A$ | — |
+| $\mathbf{x}^\top\mathbf{x} = \|\mathbf{x}\|^2$ | $2\mathbf{x}^\top\mathbf{h}$ | $2\mathbf{x}^\top$ | $2\mathbf{x}$ |
+| $\mathbf{x}^\top A\mathbf{x}$ | $\mathbf{x}^\top(A + A^\top)\mathbf{h}$ | $\mathbf{x}^\top(A + A^\top)$ | $(A + A^\top)\mathbf{x}$; $2A\mathbf{x}$ if $A$ symmetric |
+
+**Derivation of the last row** (the others are the same idea):
+
+$$(\mathbf{x} + \mathbf{h})^\top A(\mathbf{x} + \mathbf{h}) = \mathbf{x}^\top A\mathbf{x} + \underbrace{\mathbf{h}^\top A\mathbf{x} + \mathbf{x}^\top A\mathbf{h}}_{\text{linear in } \mathbf{h}} + \underbrace{\mathbf{h}^\top A\mathbf{h}}_{O(\|\mathbf{h}\|^2)}$$
+
+$\mathbf{h}^\top A\mathbf{x}$ is a scalar, so it equals its transpose $\mathbf{x}^\top A^\top\mathbf{h}$. The linear part is $\mathbf{x}^\top(A + A^\top)\mathbf{h}$.
+
+> **Common mistake:** writing $2A\mathbf{x}$ when $A$ is **not** symmetric. Check: $A = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}$ gives $\mathbf{x}^\top A\mathbf{x} = x_1 x_2$, whose gradient is $(x_2, x_1)$ — that is $(A + A^\top)\mathbf{x}$, not $2A\mathbf{x} = (2x_2, 0)$.
+
+#### 6.5.3 Jacobian of a Vector Function — the 2-Link Arm
+
+A planar arm with link lengths $l_1, l_2$ and joint angles $\boldsymbol\theta = (\theta_1, \theta_2)$. Forward kinematics gives the end-effector position (write $c_1 = \cos\theta_1$, $s_{12} = \sin(\theta_1 + \theta_2)$, etc.):
+
+$$\mathbf{p}(\boldsymbol\theta) = \begin{bmatrix} l_1 c_1 + l_2 c_{12} \\ l_1 s_1 + l_2 s_{12} \end{bmatrix}$$
+
+**Recipe:** row $i$ = gradient of output $i$; column $j$ = derivative w.r.t. input $j$.
+
+$$J = \frac{\partial \mathbf{p}}{\partial \boldsymbol\theta} = \begin{bmatrix} \dfrac{\partial p_x}{\partial \theta_1} & \dfrac{\partial p_x}{\partial \theta_2} \\[2ex] \dfrac{\partial p_y}{\partial \theta_1} & \dfrac{\partial p_y}{\partial \theta_2} \end{bmatrix} = \begin{bmatrix} -l_1 s_1 - l_2 s_{12} & -l_2 s_{12} \\ l_1 c_1 + l_2 c_{12} & l_2 c_{12} \end{bmatrix} \in \mathbb{R}^{2 \times 2}$$
+
+Shape check: 2 outputs × 2 inputs ✓. (Note $\theta_1$ appears inside $c_{12}$ too, so $\partial p_x / \partial \theta_1$ has two terms.)
+
+**Concrete numbers:** $l_1 = l_2 = 1$, $\boldsymbol\theta = (0, \pi/2)$ — upper arm along $x$, forearm pointing up.
+
+$$\mathbf{p} = \begin{bmatrix} 1 + 0 \\ 0 + 1 \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}, \qquad J = \begin{bmatrix} -1 & -1 \\ 1 & 0 \end{bmatrix}$$
+
+**Sanity check:** nudge only the shoulder, $\Delta\boldsymbol\theta = (0.01, 0)$. Then $\Delta\mathbf{p} \approx J\Delta\boldsymbol\theta = (-0.01,\ 0.01)$ — the tip at $(1, 1)$ swings perpendicular to the line from the shoulder, exactly what a small rotation about the origin should do. ✓
+
+**Singularity:** $\det J = l_1 l_2 \sin\theta_2$. At $\theta_2 = 0$ (arm fully stretched) $\det J = 0$ — the tip cannot move radially outward, and $J$ cannot be inverted (§6.4).
+
+#### 6.5.4 Chain Rule as Matrix Products — Worked Numbers
+
+For $h = g(\mathbf{f}(\mathbf{x}))$ with $\mathbf{f}: \mathbb{R}^n \to \mathbb{R}^m$ and $g: \mathbb{R}^m \to \mathbb{R}$:
+
+$$\underbrace{Dh}_{1 \times n} = \underbrace{Dg}_{1 \times m}\ \underbrace{D\mathbf{f}}_{m \times n} \qquad \Longleftrightarrow \qquad \underbrace{\nabla h}_{n \times 1} = \underbrace{D\mathbf{f}^\top}_{n \times m}\ \underbrace{\nabla g}_{m \times 1}$$
+
+**Outer function on the left** in numerator layout. Transposing to get the gradient flips the order — this is why backprop multiplies by $J^\top$ (§4.3).
+
+**Example:** $\mathbf{f}(\mathbf{x}) = \begin{bmatrix} x_1^2 \\ x_1 x_2 \end{bmatrix}$, $g(\mathbf{u}) = u_1 u_2$, so $h(\mathbf{x}) = x_1^3 x_2$.
+
+| Step | Result | Shape |
+|------|--------|-------|
+| $D\mathbf{f}$ | $\begin{bmatrix} 2x_1 & 0 \\ x_2 & x_1 \end{bmatrix}$ | $2 \times 2$ |
+| $Dg$ at $\mathbf{u} = \mathbf{f}(\mathbf{x})$ | $\begin{bmatrix} u_2 & u_1 \end{bmatrix} = \begin{bmatrix} x_1 x_2 & x_1^2 \end{bmatrix}$ | $1 \times 2$ |
+| $Dh = Dg\,D\mathbf{f}$ | $\begin{bmatrix} 2x_1^2 x_2 + x_1^2 x_2 & x_1^3 \end{bmatrix} = \begin{bmatrix} 3x_1^2 x_2 & x_1^3 \end{bmatrix}$ | $1 \times 2$ ✓ |
+
+Direct check: $\partial(x_1^3 x_2)/\partial x_1 = 3x_1^2 x_2$, $\partial/\partial x_2 = x_1^3$. ✓
+
+At $\mathbf{x} = (1, 2)$: $\mathbf{u} = (1, 2)$, so
+
+$$Dh = \begin{bmatrix} 2 & 1 \end{bmatrix}\begin{bmatrix} 2 & 0 \\ 2 & 1 \end{bmatrix} = \begin{bmatrix} 6 & 1 \end{bmatrix}, \qquad \nabla h = \begin{bmatrix} 6 \\ 1 \end{bmatrix}$$
+
+#### 6.5.5 The Key Example — Gradient of $\|A\mathbf{x} - \mathbf{b}\|^2$
+
+$f(\mathbf{x}) = \|A\mathbf{x} - \mathbf{b}\|^2$ with $A \in \mathbb{R}^{m \times n}$, $\mathbf{x} \in \mathbb{R}^n$, $\mathbf{b} \in \mathbb{R}^m$.
+
+**Method 1 — chain rule.** Let $\mathbf{r} = A\mathbf{x} - \mathbf{b}$ (residual, $m \times 1$) and $f = \mathbf{r}^\top\mathbf{r}$.
+
+$$\underbrace{Df}_{1 \times n} = \underbrace{D_{\mathbf{r}}(\mathbf{r}^\top\mathbf{r})}_{2\mathbf{r}^\top:\ 1 \times m}\ \underbrace{D_{\mathbf{x}}\mathbf{r}}_{A:\ m \times n} = 2(A\mathbf{x} - \mathbf{b})^\top A \qquad \Longrightarrow \qquad \boxed{\nabla f = 2A^\top(A\mathbf{x} - \mathbf{b})}$$
+
+**Method 2 — expand.**
+
+$$f = \mathbf{x}^\top A^\top A\mathbf{x} - 2\mathbf{b}^\top A\mathbf{x} + \mathbf{b}^\top\mathbf{b}$$
+
+Using §6.5.2 ($A^\top A$ is symmetric): $\nabla f = 2A^\top A\mathbf{x} - 2A^\top\mathbf{b}$ — same answer. ✓
+
+**Dimension check:** $A^\top$ is $n \times m$, $(A\mathbf{x} - \mathbf{b})$ is $m \times 1$ → $\nabla f$ is $n \times 1$, same as $\mathbf{x}$. ✓
+
+**Second derivative:** differentiate $\nabla f$ once more → Hessian $H = 2A^\top A$ (§7). Since $\mathbf{v}^\top A^\top A\mathbf{v} = \|A\mathbf{v}\|^2 \geq 0$, $H$ is PSD, so $f$ is convex and any critical point is a global minimum.
+
+**Setting $\nabla f = \mathbf{0}$** gives the **normal equations** $A^\top A\,\mathbf{x} = A^\top\mathbf{b}$ ([linear_algebra.md](linear_algebra.md) §13.2).
+
+**Concrete numbers:**
+
+$$A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \end{bmatrix}, \quad \mathbf{b} = \begin{bmatrix} 1 \\ 2 \\ 2 \end{bmatrix}$$
+
+At $\mathbf{x} = \mathbf{0}$: $\mathbf{r} = -\mathbf{b}$, so $\nabla f = 2A^\top(-\mathbf{b}) = 2\begin{bmatrix} -3 \\ -4 \end{bmatrix} = \begin{bmatrix} -6 \\ -8 \end{bmatrix}$.
+
+Minimum: $A^\top A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$, $A^\top\mathbf{b} = \begin{bmatrix} 3 \\ 4 \end{bmatrix}$ → $\mathbf{x}^\star = \dfrac{1}{3}\begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix}\begin{bmatrix} 3 \\ 4 \end{bmatrix} = \begin{bmatrix} 2/3 \\ 5/3 \end{bmatrix}$.
+
+Check: $\mathbf{r} = A\mathbf{x}^\star - \mathbf{b} = (-\tfrac13, -\tfrac13, \tfrac13)$ and $A^\top\mathbf{r} = (0, 0)$. ✓
+
+**Generalization — nonlinear least squares.** For $f(\mathbf{x}) = \tfrac12\|\mathbf{r}(\mathbf{x})\|^2$ with any residual $\mathbf{r}: \mathbb{R}^n \to \mathbb{R}^m$, the same chain rule gives
+
+$$\nabla f = J_{\mathbf{r}}^\top\,\mathbf{r}, \qquad J_{\mathbf{r}} = D\mathbf{r} \in \mathbb{R}^{m \times n}$$
+
+The linear case is $J_{\mathbf{r}} = A$. This one line is the core of Gauss–Newton ([optimization.md](optimization.md) §8.3), IK by least squares (e.g. $\mathbf{r}(\boldsymbol\theta) = \mathbf{p}(\boldsymbol\theta) - \mathbf{p}_{\text{target}}$ with $J$ from §6.5.3), and the measurement update in state estimation.
+
+#### 6.5.6 Dimension Checklist & Converting Between Layouts
+
+**Before trusting any matrix-calculus result, check:**
+
+| # | Check | Example |
+|---|-------|---------|
+| 1 | $D\mathbf{f}$ is (output dim) × (input dim) | $\mathbf{p}: \mathbb{R}^2 \to \mathbb{R}^2$ → $J$ is $2 \times 2$ |
+| 2 | A gradient $\nabla f$ has the **same shape as the variable** | $\mathbf{x} \in \mathbb{R}^n$ → $\nabla f \in \mathbb{R}^n$ |
+| 3 | Chain-rule products have matching inner dimensions | $(1 \times m)(m \times n) = (1 \times n)$ |
+| 4 | Every term in a sum has the same shape | $2A^\top A\mathbf{x}$ and $2A^\top\mathbf{b}$ are both $n \times 1$ |
+| 5 | Try $n = 1$ — it should reduce to ordinary calculus | $(ax - b)^2 \to 2a(ax - b)$ ✓ |
+| 6 | Is $A$ actually symmetric before writing $2A\mathbf{x}$? | §6.5.2 common mistake |
+
+**Other documents use a different convention.** [linear_algebra.md](linear_algebra.md) §11–12 uses **denominator layout**, and backprop code (and [ml_dl.md](../ai/machine-learning/ml_dl.md) §6) effectively works with gradients shaped like the parameters. The rule to convert is simple: **denominator layout = transpose of numerator layout.**
+
+| Object | Numerator layout (this doc) | Denominator layout (linear_algebra.md) |
+|--------|----------------------------|----------------------------------------|
+| $\partial f / \partial \mathbf{x}$, scalar $f$ | $1 \times n$ row ($= \nabla f^\top$) | $n \times 1$ column ($= \nabla f$) |
+| $\partial \mathbf{f} / \partial \mathbf{x}$, $\mathbf{f} \in \mathbb{R}^m$ | $J$, $m \times n$ | $J^\top$, $n \times m$ |
+| $\partial (A\mathbf{x}) / \partial \mathbf{x}$ | $A$ | $A^\top$ |
+| Chain rule for $\mathbf{g}(\mathbf{f}(\mathbf{x}))$ | $J_{\mathbf{g}}\,J_{\mathbf{f}}$ — outer first | $J_{\mathbf{f}}^\top\,J_{\mathbf{g}}^\top$ — inner first |
+| $\partial f / \partial W$, scalar $f$, $W \in \mathbb{R}^{m \times n}$ | Same shape as $W$ (both conventions in practice) | Same shape as $W$ |
+
+> **Practical tip:** pick one convention per derivation and never mix formulas from two sources without transposing. When in doubt, ignore the convention and fall back on checklist items 1–3 — the shapes will tell you where the transpose belongs.
 
 ---
 
@@ -594,7 +744,8 @@ and the chain rule (§4) handles the rest. This is just differentiating through 
 | Priority | Topic | Because |
 |----------|-------|---------|
 | 1 | Gradient, directional derivative, chain rule (§2–4) | Every training step; backprop |
-| 2 | Jacobian — shapes, geometry, pseudo-inverse (§6) | Robot kinematics, flows, sensitivity analysis |
+| 2 | Jacobian — shapes, geometry, pseudo-inverse (§6.1–6.4) | Robot kinematics, flows, sensitivity analysis |
+| 2 | Matrix calculus — $\|A\mathbf{x}-\mathbf{b}\|^2$, Jacobians, matrix chain rule, dimension checks (§6.5) | Common foundation for IK, nonlinear least squares, state estimation, and backprop — learn before [optimization.md](optimization.md) |
 | 3 | Hessian, curvature, Taylor (§5, §7) | Optimizer behavior, saddle points, conditioning |
 | 4 | Lagrange multipliers & KKT (§9) | Constrained control, SVMs, trajectory optimization, RL with constraints |
 | 5 | Change of variables & expectation integrals (§11) | Normalizing flows, VAEs, Monte Carlo objectives |

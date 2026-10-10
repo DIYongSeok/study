@@ -1414,7 +1414,7 @@ $$J = \frac{\partial \mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix} \partial
 | $J \in \mathbb{R}^{n \times m}$ | denominator shape ($\mathbf{x}$) × numerator shape ($\mathbf{f}$) |
 | $\det(J)$ | Local volume scaling factor — see [multivariable_calculus.md](multivariable_calculus.md) §6.3 |
 
-> **Convention bridge:** [multivariable_calculus.md](multivariable_calculus.md) §6 uses **numerator layout** ($m \times n$, where row $i$ is $\nabla f_i^\top$ and $J$ reads directly as the local linear map). This document uses **denominator layout** ($n \times m$) so that a gradient has the same shape as the variable. The two are transposes; each doc is internally consistent.
+> **Convention bridge:** [multivariable_calculus.md](multivariable_calculus.md) §6 uses **numerator layout** ($m \times n$, where row $i$ is $\nabla f_i^\top$ and $J$ reads directly as the local linear map). This document uses **denominator layout** ($n \times m$) so that a gradient has the same shape as the variable. The two are transposes — see the conversion table in [multivariable_calculus.md](multivariable_calculus.md) §6.5.6.
 
 For the geometric picture (local linear map, inverse function theorem), see [multivariable_calculus.md](multivariable_calculus.md) §6.2–6.4.
 
@@ -1433,7 +1433,7 @@ $H$ is **symmetric** (equality of mixed partials), so it has real eigenvalues an
 
 ## 12. Matrix Derivatives
 
-Rules for differentiating scalar and vector functions of vectors and matrices, with shape bookkeeping and worked numerical examples. For the underlying calculus — partial derivatives, the multivariable chain rule, Taylor expansion, and optimization theory — see [multivariable_calculus.md](multivariable_calculus.md).
+Rules for differentiating scalar and vector functions of vectors and matrices, with shape bookkeeping and worked numerical examples. For the underlying calculus — partial derivatives, the multivariable chain rule, Taylor expansion, and optimization theory — see [multivariable_calculus.md](multivariable_calculus.md). A numerator-layout introduction to the same core results (with a dimension checklist) is in [multivariable_calculus.md](multivariable_calculus.md) §6.5.
 
 ### 12.1 Layout Convention
 
