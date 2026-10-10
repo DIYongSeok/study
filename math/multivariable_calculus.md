@@ -193,7 +193,7 @@ $$\frac{\partial \mathcal{L}}{\partial \mathbf{a}_1} = J_{f_2}^\top J_{f_3}^\top
 
 > **Key insight:** backprop is reverse-mode automatic differentiation. It is efficient precisely because the loss is a **single scalar**, so we propagate one vector backward instead of a full Jacobian.
 
-For the matrix mechanics — per-layer Jacobians, shape tables, and fully worked numerical examples (linear layer, ReLU, softmax, MSE) — see [linear_algebra.md](linear_algebra.md) §12.
+For the matrix mechanics — Jacobians of linear and element-wise maps, shape tables, and the matrix chain rule with worked numbers — see [linear_algebra.md](linear_algebra.md) §12.
 
 ---
 

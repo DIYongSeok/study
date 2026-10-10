@@ -1,8 +1,7 @@
 ﻿# Linear Algebra
 
 The study of vectors, matrices, and linear maps. It is the language of systems of equations, geometry,
-data analysis, dynamical systems, and physics — and the mathematical backbone of modern AI, where neural
-networks, attention, PCA, SVD, and optimization all reduce to matrix and vector operations.
+data analysis, dynamical systems, and physics.
 
 ## Table of Contents
 
@@ -41,7 +40,7 @@ networks, attention, PCA, SVD, and optimization all reduce to matrix and vector 
    - 7.1 [Definition](#71-definition)
    - 7.2 [Geometric Meaning](#72-geometric-meaning)
    - 7.3 [Low-Rank Approximation](#73-low-rank-approximation)
-   - 7.4 [Why SVD Matters in AI](#74-why-svd-matters-in-ai)
+   - 7.4 [Why SVD Matters](#74-why-svd-matters)
 8. [Vector Spaces & Subspaces](#8-vector-spaces--subspaces)
    - 8.1 [Linear Independence](#81-linear-independence)
    - 8.2 [Span, Basis & Dimension](#82-span-basis--dimension)
@@ -63,7 +62,7 @@ networks, attention, PCA, SVD, and optimization all reduce to matrix and vector 
     - 12.3 [Scalar by Matrix](#123-scalar-by-matrix)
     - 12.4 [Vector by Vector — Jacobian](#124-vector-by-vector--jacobian)
     - 12.5 [Chain Rule in Matrix Form](#125-chain-rule-in-matrix-form)
-    - 12.6 [Common Reference Table](#126-common-matrix-derivative-reference)
+    - 12.6 [Common Matrix Derivative Reference](#126-common-matrix-derivative-reference)
 13. [Least Squares](#13-least-squares)
     - 13.1 [The Overdetermined Problem](#131-the-overdetermined-problem)
     - 13.2 [Normal Equations](#132-normal-equations)
@@ -84,7 +83,6 @@ networks, attention, PCA, SVD, and optimization all reduce to matrix and vector 
     - 15.3 [PCA](#153-pca)
     - 15.4 [K-Means Clustering](#154-k-means-clustering)
     - 15.5 [K-Nearest Neighbors (KNN)](#155-k-nearest-neighbors-knn)
-
 ---
 
 ## 1. Vectors
@@ -100,10 +98,6 @@ $$\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix} \in \ma
 | $\mathbf{x} \in \mathbb{R}^n$ | Column vector with $n$ real-valued entries |
 | $\mathbf{x}^\top$ | Row vector — transpose of $\mathbf{x}$ |
 | $x_i$ | The $i$-th element of $\mathbf{x}$ |
-
-**In AI:** an input to a neural network is a vector — e.g., a 784-dim vector for a 28×28 image, or a 512-dim embedding for a word.
-
-
 
 ### 1.2 Vector Operations
 
@@ -132,9 +126,9 @@ $$\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^\top \mathbf{b} = \sum_{i=1}^n a_i b_
 | $\mathbf{a} \cdot \mathbf{b} = 0$ | Vectors are perpendicular (orthogonal) |
 | $\mathbf{a} \cdot \mathbf{b} < 0$ | Vectors point in opposite directions |
 
-**In AI:** the dot product measures **similarity**. Attention scores, logits, and cosine similarity all use it.
+**Cosine similarity:** dividing out the lengths leaves only the angle,
 
-
+$$\cos\theta = \frac{\mathbf{a}^\top\mathbf{b}}{\|\mathbf{a}\|\|\mathbf{b}\|} \in [-1, 1]$$
 
 ### 1.4 Norms
 
@@ -146,11 +140,13 @@ $$\|\mathbf{x}\|_1 = \sum_{i=1}^n |x_i| \qquad (\text{L1 norm — Manhattan dist
 
 $$\|\mathbf{x}\|_\infty = \max_i |x_i| \qquad (\text{L}\infty\text{ norm — largest element})$$
 
-| Norm | Used in AI for |
+| Norm | Unit ball in $\mathbb{R}^2$ |
 |------|----------------|
-| L2 ($\|\cdot\|_2$) | Weight decay, gradient clipping, Euclidean distance |
-| L1 ($\|\cdot\|_1$) | Sparse regularization (Lasso) |
-| $L^\infty$ | Adversarial robustness bounds |
+| L2 ($\|\cdot\|_2$) | Circle |
+| L1 ($\|\cdot\|_1$) | Diamond |
+| $L^\infty$ | Square |
+
+Every norm satisfies: $\|\mathbf{x}\| \geq 0$ with equality only for $\mathbf{x} = \mathbf{0}$; $\|c\mathbf{x}\| = |c|\,\|\mathbf{x}\|$; and the triangle inequality $\|\mathbf{x} + \mathbf{y}\| \leq \|\mathbf{x}\| + \|\mathbf{y}\|$.
 
 
 
@@ -223,11 +219,13 @@ $$c_{ij} = \sum_{k=1}^n a_{ik} b_{kj} = \text{(row } i \text{ of } A) \cdot \tex
 
 
 
-**Matrix-vector multiply** is the core of a neural network layer:
+**Matrix-vector multiply:**
 
-$$\mathbf{y} = W\mathbf{x} + \mathbf{b}, \quad W \in \mathbb{R}^{m \times n},\ \mathbf{x} \in \mathbb{R}^n,\ \mathbf{y} \in \mathbb{R}^m$$
+$$\mathbf{y} = A\mathbf{x}, \quad A \in \mathbb{R}^{m \times n},\ \mathbf{x} \in \mathbb{R}^n,\ \mathbf{y} \in \mathbb{R}^m$$
 
-Each output $y_i$ is the dot product of row $i$ of $W$ with $\mathbf{x}$ — a weighted sum of all inputs.
+Two equivalent views:
+- **Row view:** each output $y_i$ is the dot product of row $i$ of $A$ with $\mathbf{x}$.
+- **Column view:** $\mathbf{y} = x_1\mathbf{a}_1 + \cdots + x_n\mathbf{a}_n$ — a linear combination of the columns of $A$.
 
 ### 2.4 Special Matrices
 
@@ -377,14 +375,14 @@ $$\mathbf{e}_i^\top A \mathbf{e}_j = a_{ij}, \qquad \mathbf{e}_j^\top A \mathbf{
 
 ---
 
-**Where symmetric matrices appear in AI:**
+**Where symmetric matrices appear:**
 
 | Matrix | Why symmetric |
 |--------|--------------|
 | Covariance matrix $\Sigma$ | $\text{Cov}(x_i, x_j) = \text{Cov}(x_j, x_i)$ by definition |
 | Hessian $\nabla^2 f$ | Mixed partials are equal: $\frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{\partial^2 f}{\partial x_j \partial x_i}$ |
 | Kernel matrix $K$ | $K_{ij} = k(x_i, x_j) = k(x_j, x_i)$ by symmetry of the kernel |
-| Attention score matrix | $QK^\top$ is symmetric when $Q = K$ (self-attention) |
+| Gram matrix $A^\top A$ | $(A^\top A)^\top = A^\top A$ |
 | Graph Laplacian $L$ | Encodes undirected graph structure |
 
 
@@ -444,7 +442,7 @@ $$A(B\mathbf{x}) = (AB)\mathbf{x}$$
 
 Read right to left: $B$ acts first. Order matters — in general $AB \neq BA$. Rotating then scaling $x$ is not the same as scaling $x$ then rotating.
 
-**In AI:** a deep network with no activations is just one big matrix multiplication — that's why nonlinear activations (ReLU, Tanh) are essential. Without them, all layers collapse into a single linear transformation.
+A chain of any number of linear maps is still a single linear map: $A_k \cdots A_2 A_1$.
 
 ### 3.3 Kernel & Image
 
@@ -476,7 +474,7 @@ Here: $1 + 1 = 2$. ✓
 
 Why injective ⇔ trivial kernel: $A\mathbf{u} = A\mathbf{v} \iff A(\mathbf{u} - \mathbf{v}) = \mathbf{0} \iff \mathbf{u} - \mathbf{v} \in \ker(A)$.
 
-**In AI:** a linear layer $\mathbb{R}^{768} \to \mathbb{R}^{64}$ (e.g., an attention head projection) has a kernel of dimension at least $704$ — most input directions are invisible to that head. Low-rank bottlenecks (LoRA, autoencoders) deliberately make the image small.
+**Consequence:** a map $\mathbb{R}^{n} \to \mathbb{R}^{m}$ with $m < n$ always has a kernel of dimension at least $n - m$ — it can never be injective.
 
 ### 3.4 Change of Basis
 
@@ -510,8 +508,6 @@ $A$ and $B$ are called **similar**. They describe the same geometric map, so the
 | Rank | |
 
 **Why this matters:** choosing the right basis makes a map simple. If $P$ = eigenvectors of $A$, then $B = P^{-1}AP = \Lambda$ is diagonal (§6.3) — in that basis the map just scales each axis. For a symmetric $A$, $P$ can be orthogonal, so $P^{-1} = P^\top$ and $B = P^\top A P$.
-
-**In AI:** PCA (§15.3) is a change of basis to the eigenvectors of the covariance matrix — in those coordinates the features are uncorrelated.
 
 ---
 
@@ -832,17 +828,17 @@ Eigenvectors expose the independent directions along which $A$ simply stretches 
 
 $$A^k \mathbf{v} = \lambda^k \mathbf{v}$$
 
-If $|\lambda| > 1$: repeated application explodes exponentially. If $|\lambda| < 1$: it decays to zero. This directly explains gradient explosion and vanishing in deep networks and RNNs.
+If $|\lambda| > 1$: repeated application explodes exponentially. If $|\lambda| < 1$: it decays to zero. This governs the stability of linear dynamical systems (§14).
 
-**3. AI applications:**
+**3. Where they appear:**
 
-| Application | How eigenvectors / eigenvalues are used |
+| Setting | How eigenvectors / eigenvalues are used |
 |-------------|----------------------------------------|
-| **PCA** | Eigenvectors of $\Sigma$ = directions of max variance; eigenvalues = variance in each direction |
-| **Hessian analysis** | Large $\lambda_{\max}$ → sharp curvature → small learning rate required |
-| **RNN stability** | $\|\lambda\| > 1$ → gradient explosion; $\|\lambda\| < 1$ → gradient vanishing |
-| **Graph NNs** | Eigenvectors of the graph Laplacian encode graph frequency structure |
-| **PageRank** | Dominant eigenvector of the web link matrix = page importance scores |
+| **Covariance matrix** | Eigenvectors = directions of max variance; eigenvalues = variance in each direction |
+| **Quadratic forms / Hessian** | Signs of eigenvalues classify $\mathbf{x}^\top A\mathbf{x}$ (§10) |
+| **Dynamical systems** | $\|\lambda\| < 1$ → decay; $\|\lambda\| > 1$ → growth (§14.2) |
+| **Graph Laplacian** | Eigenvectors encode graph connectivity and clusters (§14.5) |
+| **Markov chains** | Eigenvector with $\lambda = 1$ = steady-state distribution (§14.3) |
 
 ### 6.3 Eigendecomposition
 
@@ -901,7 +897,7 @@ $V^{-1} = \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix} \neq V^\top$.
 
 ### 7.1 Definition
 
-SVD is the most important matrix decomposition in AI. It works for **any** matrix (not just square).
+SVD is the most important matrix decomposition. It works for **any** matrix (not just square).
 
 $$A = U \Sigma V^\top, \quad A \in \mathbb{R}^{m \times n}$$
 
@@ -973,7 +969,7 @@ The single nonzero singular value carries the whole matrix; $\sigma_2 = 0$ means
 For a full-rank matrix, truncating to rank $k$ discards $\sum_{i>k}\sigma_i^2$ worth of squared "energy" — the
 Eckart–Young error $\|A - A_k\|_F^2$.
 
-### 7.4 Why SVD Matters in AI
+### 7.4 Why SVD Matters
 
 SVD is the most universally useful decomposition because it works for **any** matrix — not just square ones — and exposes the true geometric structure of any linear transformation.
 
@@ -985,15 +981,15 @@ Singular values that are near zero mean those directions carry almost no informa
 
 No other rank-$k$ matrix is closer to $A$ than $A_k = U_k \Sigma_k V_k^\top$. This is optimal data compression.
 
-**3. AI applications in depth:**
+**3. What SVD gives you:**
 
-| Application | How SVD is used |
+| Use | How SVD is used |
 |-------------|----------------|
-| **PCA** | SVD of centered data $\tilde{X} = U\Sigma V^\top$; columns of $V$ are principal components |
-| **LoRA** | Pretrained weight matrices $W$ are approximately low-rank; learn only $\Delta W = AB$ (rank $r \ll d$) |
-| **Recommendation systems** | Factorize user-item rating matrix $R \approx U\Sigma V^\top$ to predict missing ratings |
+| **Rank** | Number of nonzero $\sigma_i$ |
+| **Four fundamental subspaces** | Columns of $U$ / $V$ give orthonormal bases for column space, left null space, row space, null space (§8.4) |
+| **Matrix norms** | $\|A\|_2 = \sigma_1$, $\|A\|_F = \sqrt{\sum \sigma_i^2}$ |
 | **Noise removal** | Keep top-$k$ singular values; small $\sigma_i$ correspond to noise directions |
-| **Condition number** | $\kappa(A) = \sigma_{\max}/\sigma_{\min}$; large → numerically unstable (gradients become unreliable) |
+| **Condition number** | $\kappa(A) = \sigma_{\max}/\sigma_{\min}$; large → solving $A\mathbf{x} = \mathbf{b}$ is numerically unstable |
 | **Pseudo-inverse** | $A^+ = V\Sigma^+ U^\top$ solves $A\mathbf{x}=\mathbf{b}$ in the least-squares sense even when $A$ is not invertible |
 
 **4. SVD vs Eigendecomposition:**
@@ -1005,7 +1001,7 @@ No other rank-$k$ matrix is closer to $A$ than $A_k = U_k \Sigma_k V_k^\top$. Th
 | Output | Eigenvectors, eigenvalues | Left/right singular vectors, singular values |
 | $\sigma_i$ vs $\lambda_i$ | Same for symmetric PSD | $\sigma_i = \sqrt{\lambda_i(A^\top A)}$ |
 
-> **Key insight:** for symmetric PSD matrices (like covariance matrices), SVD and eigendecomposition coincide — $U = V$ and $\sigma_i = \lambda_i$. This is why PCA can be computed either way.
+> **Key insight:** for symmetric PSD matrices (like covariance matrices), SVD and eigendecomposition coincide — $U = V$ and $\sigma_i = \lambda_i$.
 
 ---
 
@@ -1032,10 +1028,6 @@ $$\mathbf{v}_1 = \begin{bmatrix}1\\0\\0\end{bmatrix},\quad \mathbf{v}_2 = \begin
 No vector is a combination of the others. Together they span all of $\mathbb{R}^3$.
 
 **How to check:** put vectors as columns of $A$ — they are independent if and only if $\det(A) \neq 0$, or equivalently $\text{rank}(A) = k$.
-
-
-
-**In AI:** redundant features (linearly dependent columns) make the model overparameterized and the matrix singular. PCA removes redundancy by finding independent directions.
 
 ---
 
@@ -1110,10 +1102,6 @@ Column 2 = $2 \times$ Column 1 → rank = 1. The null space is all $\mathbf{x}$ 
 
 $$\text{null}(A) = \left\{ t \begin{bmatrix} -2 \\ 1 \end{bmatrix} \mid t \in \mathbb{R} \right\} \quad \text{(a line through the origin)}$$
 
-
-
-**In AI:** if a weight matrix $W$ has a large null space, many input directions are completely ignored — the layer has low effective rank. LoRA exploits this: large pretrained weight matrices tend to be approximately low-rank, so you only need to learn a small rank update $\Delta W = AB$.
-
 ---
 
 ### 8.4 The Four Fundamental Subspaces
@@ -1177,10 +1165,11 @@ $$\mathbf{q}_i^\top \mathbf{q}_j = \begin{cases} 1 & i = j \\ 0 & i \neq j \end{
 
 An **orthogonal matrix** $Q$ has orthonormal columns: $Q^\top Q = I$, so $Q^{-1} = Q^\top$.
 
-**Why orthogonal matrices matter in AI:**
+**Why orthogonal matrices matter:**
 - They preserve the L2 norm: $\|Q\mathbf{x}\|_2 = \|\mathbf{x}\|_2$
 - They preserve dot products: $(Q\mathbf{a})^\top(Q\mathbf{b}) = \mathbf{a}^\top\mathbf{b}$
-- Gradients don't explode or vanish through them — used in RNNs and normalizing flows
+- $\det(Q) = \pm 1$ and every eigenvalue has $|\lambda| = 1$ — repeated application neither grows nor shrinks vectors
+- Inverting is free: $Q^{-1} = Q^\top$
 
 ### 9.2 Projections
 
@@ -1237,7 +1226,7 @@ $$P = AA^\top = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix
 
 The error points straight along $z$ — perpendicular to the plane. ✓
 
-**In AI:** attention computes projections; least squares regression minimizes $\|A\mathbf{x} - \mathbf{b}\|_2^2$ via projection (full treatment in §13).
+Least squares — minimizing $\|A\mathbf{x} - \mathbf{b}\|_2^2$ — is exactly this projection (full treatment in §13).
 
 ### 9.3 Gram–Schmidt Orthogonalization
 
@@ -1372,13 +1361,23 @@ $$\mathbf{x}^\top A \mathbf{x} = \sum_{i=1}^n \lambda_i\, y_i^2 > 0$$
 
 ---
 
-**Why AI cares:**
-- The **Hessian** of the loss being PD at a critical point → strict local minimum; PD everywhere → convex with a unique minimum ([multivariable_calculus.md](multivariable_calculus.md) §7–8)
+**Other tests for PD** (symmetric $A$):
+
+| Test | PD iff |
+|------|--------|
+| Eigenvalues | All $\lambda_i > 0$ (proved above) |
+| Leading principal minors (Sylvester) | $\det(A_{1:k,1:k}) > 0$ for $k = 1, \ldots, n$ |
+| Pivots | All pivots in elimination are $> 0$ |
+| Cholesky | $A = LL^\top$ with $L$ lower triangular, positive diagonal |
+| Gram form | $A = B^\top B$ for some $B$ with independent columns |
+
+**Example:** $A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$. Minors: $2 > 0$, $\det A = 3 > 0$ → PD. Eigenvalues $3, 1$ agree. Directly: $\mathbf{x}^\top A\mathbf{x} = 2x_1^2 + 2x_1x_2 + 2x_2^2 = x_1^2 + x_2^2 + (x_1 + x_2)^2 > 0$.
+
+**Where PD / PSD matrices appear:**
+- **Gram matrices** $A^\top A$ are always PSD: $\mathbf{x}^\top A^\top A\mathbf{x} = \|A\mathbf{x}\|^2 \geq 0$. PD exactly when $A$ has independent columns — which is why the normal equations (§13.2) are solvable.
 - **Covariance matrices** are always PSD — eigenvalues represent variance along each direction
-- **Kernel matrices** in SVMs must be PSD
-- Adam optimizer uses a diagonal approximation of the PD Hessian
-
-
+- **Hessians:** PD at a critical point → strict local minimum; PD everywhere → strictly convex ([multivariable_calculus.md](multivariable_calculus.md) §7–8)
+- **Geometry:** $\{\mathbf{x} : \mathbf{x}^\top A\mathbf{x} = 1\}$ is an ellipsoid with axes along the eigenvectors and semi-axis lengths $1/\sqrt{\lambda_i}$
 
 ---
 
@@ -1392,9 +1391,7 @@ For a scalar function $f: \mathbb{R}^n \to \mathbb{R}$, the gradient is the vect
 
 $$\nabla_{\mathbf{x}} f = \begin{bmatrix} \partial f / \partial x_1 \\ \partial f / \partial x_2 \\ \vdots \\ \partial f / \partial x_n \end{bmatrix} \in \mathbb{R}^n$$
 
-It points in the direction of **steepest increase** (derived in [multivariable_calculus.md](multivariable_calculus.md) §3.2); gradient descent steps opposite to it:
-
-$$\mathbf{x} \leftarrow \mathbf{x} - \alpha \nabla_\mathbf{x} f(\mathbf{x})$$
+It points in the direction of **steepest increase** (derived in [multivariable_calculus.md](multivariable_calculus.md) §3.2).
 
 **Common gradient identities** (used throughout §12):
 
@@ -1417,13 +1414,9 @@ $$J = \frac{\partial \mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix} \partial
 | $J \in \mathbb{R}^{n \times m}$ | denominator shape ($\mathbf{x}$) × numerator shape ($\mathbf{f}$) |
 | $\det(J)$ | Local volume scaling factor — see [multivariable_calculus.md](multivariable_calculus.md) §6.3 |
 
-> **Convention bridge:** [multivariable_calculus.md](multivariable_calculus.md) §6 uses **numerator layout** ($m \times n$, the math/robotics standard, where row $i$ is $\nabla f_i^\top$ and $J$ reads directly as the local linear map). This ML section uses **denominator layout** ($n \times m$) so gradients match parameter shapes for the update step. The two are transposes; each doc is internally consistent.
+> **Convention bridge:** [multivariable_calculus.md](multivariable_calculus.md) §6 uses **numerator layout** ($m \times n$, where row $i$ is $\nabla f_i^\top$ and $J$ reads directly as the local linear map). This document uses **denominator layout** ($n \times m$) so that a gradient has the same shape as the variable. The two are transposes; each doc is internally consistent.
 
-**In AI:** backpropagation computes Jacobian-vector products via the chain rule (see §12.4):
-
-$$\frac{\partial \mathcal{L}}{\partial \mathbf{x}} = J \cdot \frac{\partial \mathcal{L}}{\partial \mathbf{f}}$$
-
-For the geometric picture (local linear map, inverse function theorem) and the robot manipulator Jacobian, see [multivariable_calculus.md](multivariable_calculus.md) §6.2–6.4.
+For the geometric picture (local linear map, inverse function theorem), see [multivariable_calculus.md](multivariable_calculus.md) §6.2–6.4.
 
 ### 11.3 Hessian Matrix
 
@@ -1433,20 +1426,20 @@ $$H = \nabla^2 f = \begin{bmatrix} \partial^2 f/\partial x_1^2 & \partial^2 f/\p
 
 $H$ is **symmetric** (equality of mixed partials), so it has real eigenvalues and orthogonal eigenvectors — §2.5, §6.
 
-- Its eigenvalues are the curvatures of $f$; their **signs classify critical points** (PD → min, ND → max, mixed → saddle). Full treatment in [multivariable_calculus.md](multivariable_calculus.md) §7–8.
-- The **condition number** $\kappa(H) = \lambda_{\max}/\lambda_{\min}$ (§7.4) governs optimizer behavior: large $\kappa$ → a narrow ravine where plain gradient descent zig-zags, motivating momentum / Adam / preconditioning.
+- Its eigenvalues are the curvatures of $f$; their **signs classify critical points** (PD → min, ND → max, mixed → saddle; see §10). Full treatment in [multivariable_calculus.md](multivariable_calculus.md) §7–8.
+- For a quadratic $f(\mathbf{x}) = \tfrac12\mathbf{x}^\top A\mathbf{x} - \mathbf{b}^\top\mathbf{x}$ with symmetric $A$, the Hessian is the constant matrix $H = A$.
 
 ---
 
 ## 12. Matrix Derivatives
 
-Matrix derivatives are the engine of backpropagation. Every gradient update in a neural network is a matrix derivative computed through the chain rule. This section is the **ML-facing reference**: denominator layout, shape bookkeeping, and worked numerical examples. For the underlying calculus — partial derivatives, the multivariable chain rule, Taylor expansion, and optimization theory — see [multivariable_calculus.md](multivariable_calculus.md).
+Rules for differentiating scalar and vector functions of vectors and matrices, with shape bookkeeping and worked numerical examples. For the underlying calculus — partial derivatives, the multivariable chain rule, Taylor expansion, and optimization theory — see [multivariable_calculus.md](multivariable_calculus.md).
 
 ### 12.1 Layout Convention
 
-**This document uses denominator layout**, because it makes gradient descent work without any transposing: if $\mathbf{w}$ has shape $(n,)$ then $\partial L/\partial\mathbf{w}$ also has shape $(n,)$, so the update $\mathbf{w} \leftarrow \mathbf{w} - \eta\,\nabla_\mathbf{w} L$ is shape-consistent. PyTorch and NumPy follow this convention.
+**This document uses denominator layout**: if $\mathbf{x}$ has shape $(n,)$ then $\partial f/\partial\mathbf{x}$ also has shape $(n,)$, and if $W$ is $m \times n$ then $\partial f/\partial W$ is also $m \times n$.
 
-> This is the **opposite** of the numerator layout used for the Jacobian in [multivariable_calculus.md](multivariable_calculus.md) §6. Denominator layout is the right default for ML (gradients mirror parameters); numerator layout is the right default for kinematics and analysis (the Jacobian is read directly as the local linear map $\mathbf{f}(\mathbf{x}_0) + J\Delta\mathbf{x}$). Same numbers, transposed arrangement.
+> This is the **opposite** of the numerator layout used for the Jacobian in [multivariable_calculus.md](multivariable_calculus.md) §6, where the Jacobian is read directly as the local linear map $\mathbf{f}(\mathbf{x}_0) + J\Delta\mathbf{x}$. Same numbers, transposed arrangement.
 
 #### The shape table
 
@@ -1466,11 +1459,11 @@ Matrix derivatives are the engine of backpropagation. Every gradient update in a
 
 $$\frac{\partial}{\partial x}(x^2) = 2x \qquad \text{scalar in, scalar out}$$
 
-**Row 2 — scalar / vector:** the most common case in ML — loss $L$ differentiated w.r.t. a weight vector $\mathbf{w} \in \mathbb{R}^n$.
+**Row 2 — scalar / vector:** a scalar function $f$ differentiated w.r.t. a vector $\mathbf{x} \in \mathbb{R}^n$.
 
-$$\frac{\partial L}{\partial \mathbf{w}} = \begin{bmatrix}\partial L/\partial w_1 \\ \vdots \\ \partial L/\partial w_n\end{bmatrix} \in \mathbb{R}^n$$
+$$\frac{\partial f}{\partial \mathbf{x}} = \begin{bmatrix}\partial f/\partial x_1 \\ \vdots \\ \partial f/\partial x_n\end{bmatrix} \in \mathbb{R}^n$$
 
-One entry per weight, telling you how much $L$ changes if you nudge that weight. Shape matches $\mathbf{w}$, so the gradient descent step $\mathbf{w} \leftarrow \mathbf{w} - \eta\,\nabla L$ is always valid.
+One entry per component, telling you how much $f$ changes if you nudge that component.
 
 **Row 3 — vector / scalar:** a vector-valued quantity differentiated w.r.t. a scalar — e.g., position $\mathbf{p}(t) \in \mathbb{R}^3$ differentiated w.r.t. time $t$.
 
@@ -1480,27 +1473,15 @@ $$\frac{\partial \mathbf{p}}{\partial t} = \begin{bmatrix}\dot{p}_x \\ \dot{p}_y
 
 $$\mathbf{y} \in \mathbb{R}^m,\quad \mathbf{x} \in \mathbb{R}^n \quad\Rightarrow\quad J = \frac{\partial \mathbf{y}}{\partial \mathbf{x}} \in \mathbb{R}^{n \times m}$$
 
-In a neural network layer $\mathbf{y} = W\mathbf{x}$, the Jacobian tells you how each output dimension responds to each input dimension. Used in the chain rule during backprop.
+**Row 5 — scalar / matrix:** a scalar $f$ differentiated w.r.t. a matrix $W \in \mathbb{R}^{m \times n}$.
 
-**Row 5 — scalar / matrix:** loss $L$ differentiated w.r.t. a weight matrix $W \in \mathbb{R}^{m \times n}$.
+$$\frac{\partial f}{\partial W} \in \mathbb{R}^{m \times n}, \qquad \left[\frac{\partial f}{\partial W}\right]_{ij} = \frac{\partial f}{\partial W_{ij}}$$
 
-$$\frac{\partial L}{\partial W} \in \mathbb{R}^{m \times n}, \qquad \left[\frac{\partial L}{\partial W}\right]_{ij} = \frac{\partial L}{\partial W_{ij}}$$
-
-Entry $(i,j)$ says how much $L$ changes if you nudge weight $W_{ij}$. The gradient has exactly the same shape as $W$ — so `param.grad` in PyTorch always matches `param`.
-
-#### Why this matters for backpropagation
-
-Every layer in a neural network is a composition of functions. Backprop applies the chain rule repeatedly:
-
-$$\frac{\partial L}{\partial \mathbf{x}} = \frac{\partial \mathbf{y}}{\partial \mathbf{x}} \cdot \frac{\partial L}{\partial \mathbf{y}} = J \cdot \frac{\partial L}{\partial \mathbf{y}}$$
-
-The Jacobian $J \in \mathbb{R}^{n \times m}$ routes gradients from output space back to input space. Shapes check out: $(n \times m)(m,) = (n,)$ ✓. For a linear layer $\mathbf{y} = W\mathbf{x}$, $J = W^\top$, so this becomes the familiar $W^\top \frac{\partial L}{\partial \mathbf{y}}$.
+Entry $(i,j)$ says how much $f$ changes if you nudge entry $W_{ij}$. The result has exactly the same shape as $W$.
 
 ---
 
 ### 12.2 Scalar by Vector
-
-The most common case: loss function output w.r.t. input vector.
 
 **Result shape:** same as $\mathbf{x}$ — a column vector.
 
@@ -1530,8 +1511,6 @@ $$\frac{\partial y}{\partial x_i} = 2x_i \quad \Rightarrow \quad \frac{\partial 
 
 $$y = 1 + 4 + 9 = 14, \qquad \frac{\partial y}{\partial \mathbf{x}} = \begin{bmatrix}2\\4\\6\end{bmatrix}$$
 
-
-
 ---
 
 **Example 3 — Quadratic form: $y = \mathbf{x}^\top A \mathbf{x}$**
@@ -1552,15 +1531,13 @@ $$\frac{\partial y}{\partial \mathbf{x}} = 2A\mathbf{x} = 2\begin{bmatrix}2&1\\1
 
 ### 12.3 Scalar by Matrix
 
-Used every time we update neural network weights.
-
 **Result shape:** same as $W$ — an $(m \times n)$ matrix.
 
 **Key rule:** $({\partial y}/{\partial W})_{ij}$ = how much $y$ changes when $W_{ij}$ changes, holding all other entries fixed.
 
 ---
 
-**Example 4 — Linear layer loss: $y = \mathbf{a}^\top W \mathbf{b}$**
+**Example 4 — Bilinear form: $y = \mathbf{a}^\top W \mathbf{b}$**
 
 $$y = \sum_i \sum_j a_i W_{ij} b_j$$
 
@@ -1576,13 +1553,13 @@ Each entry $(i,j)$ tells how changing $W_{ij}$ affects $y$.
 
 ---
 
-**Example 5 — MSE loss w.r.t. weight matrix**
+**Example 5 — Squared residual w.r.t. a matrix**
 
-$$\mathcal{L} = \|\mathbf{y} - W\mathbf{x}\|_2^2 = (\mathbf{y} - W\mathbf{x})^\top(\mathbf{y} - W\mathbf{x})$$
+$$f(W) = \|\mathbf{y} - W\mathbf{x}\|_2^2 = (\mathbf{y} - W\mathbf{x})^\top(\mathbf{y} - W\mathbf{x})$$
 
 Let $\mathbf{e} = \mathbf{y} - W\mathbf{x}$ (residual vector). Then:
 
-$$\frac{\partial \mathcal{L}}{\partial W} = -2\,\mathbf{e}\,\mathbf{x}^\top$$
+$$\frac{\partial f}{\partial W} = -2\,\mathbf{e}\,\mathbf{x}^\top$$
 
 **Concrete numbers** ($m=2, n=2$):
 
@@ -1590,11 +1567,7 @@ $$W = \begin{bmatrix}1&0\\0&1\end{bmatrix}, \quad \mathbf{x} = \begin{bmatrix}2\
 
 $$W\mathbf{x} = \begin{bmatrix}2\\1\end{bmatrix}, \quad \mathbf{e} = \mathbf{y} - W\mathbf{x} = \begin{bmatrix}1\\2\end{bmatrix}$$
 
-$$\frac{\partial \mathcal{L}}{\partial W} = -2\begin{bmatrix}1\\2\end{bmatrix}\begin{bmatrix}2&1\end{bmatrix} = -2\begin{bmatrix}2&1\\4&2\end{bmatrix} = \begin{bmatrix}-4&-2\\-8&-4\end{bmatrix}$$
-
-The negative sign means: step in the opposite direction to reduce loss.
-
-
+$$\frac{\partial f}{\partial W} = -2\begin{bmatrix}1\\2\end{bmatrix}\begin{bmatrix}2&1\end{bmatrix} = -2\begin{bmatrix}2&1\\4&2\end{bmatrix} = \begin{bmatrix}-4&-2\\-8&-4\end{bmatrix}$$
 
 ---
 
@@ -1608,97 +1581,55 @@ Row $i$ = input index, column $j$ = output index (denominator layout).
 
 ---
 
-**Example 6 — Linear layer: $\mathbf{y} = W\mathbf{x}$, $W \in \mathbb{R}^{m \times n}$**
+**Example 6 — Linear map: $\mathbf{y} = A\mathbf{x}$, $A \in \mathbb{R}^{m \times n}$**
 
-$$y_j = \sum_k W_{jk} x_k \quad \Rightarrow \quad \frac{\partial y_j}{\partial x_i} = W_{ji}$$
+$$y_j = \sum_k A_{jk} x_k \quad \Rightarrow \quad \frac{\partial y_j}{\partial x_i} = A_{ji}$$
 
-$$J_{ij} = W_{ji} \quad \Rightarrow \quad J = W^\top \in \mathbb{R}^{n \times m}$$
+$$J_{ij} = A_{ji} \quad \Rightarrow \quad J = A^\top \in \mathbb{R}^{n \times m}$$
 
-**Verify backprop:** $\dfrac{\partial \mathcal{L}}{\partial \mathbf{x}} = J \cdot \dfrac{\partial \mathcal{L}}{\partial \mathbf{y}} = W^\top \dfrac{\partial \mathcal{L}}{\partial \mathbf{y}}$ — the familiar backprop formula. ✓
-
----
-
-**Example 7 — ReLU: $\mathbf{y} = \text{ReLU}(\mathbf{x})$, i.e. $y_i = \max(0, x_i)$**
-
-ReLU operates element-wise so the Jacobian is **diagonal**:
-
-$$\frac{\partial y_i}{\partial x_j} = \begin{cases} 1 & \text{if } i = j \text{ and } x_i > 0 \\ 0 & \text{otherwise} \end{cases}$$
-
-$$J = \text{diag}(\mathbf{1}[\mathbf{x} > 0]) = \begin{bmatrix} \mathbf{1}[x_1>0] & & \\ & \ddots & \\ & & \mathbf{1}[x_n>0] \end{bmatrix}$$
-
-**Concrete numbers** ($\mathbf{x} = [-1, 2, -0.5, 3]^\top$):
-
-$$J = \begin{bmatrix}0&0&0&0\\0&1&0&0\\0&0&0&0\\0&0&0&1\end{bmatrix}$$
-
-Dead neurons ($x_i \leq 0$) contribute zero gradient — they do not participate in learning.
+The derivative of a linear map is the map itself (transposed, in this layout) — a linear map is its own best linear approximation.
 
 ---
 
-**Example 8 — Softmax: $\mathbf{p} = \text{softmax}(\mathbf{z})$**
+**Example 7 — Element-wise function: $y_i = g(x_i)$**
 
-$$p_i = \frac{e^{z_i}}{\sum_k e^{z_k}}$$
+Each output depends only on its own input, so the Jacobian is **diagonal**:
 
-$$\frac{\partial p_i}{\partial z_j} = \begin{cases} p_i(1 - p_i) & i = j \\ -p_i p_j & i \neq j \end{cases}$$
+$$J = \text{diag}\big(g'(x_1), \ldots, g'(x_n)\big)$$
 
-In matrix form:
+**Concrete numbers** ($g(x) = x^2$, $\mathbf{x} = [1, -2, 3]^\top$):
 
-$$J = \text{diag}(\mathbf{p}) - \mathbf{p}\mathbf{p}^\top$$
-
-**Concrete numbers** ($\mathbf{z} = [2, 1, 0]^\top$):
-
-$$\mathbf{p} = \text{softmax}(\mathbf{z}) \approx [0.665, 0.245, 0.090]$$
-
-$$J = \begin{bmatrix}0.665&0&0\\0&0.245&0\\0&0&0.090\end{bmatrix} - \begin{bmatrix}0.665\\0.245\\0.090\end{bmatrix}\begin{bmatrix}0.665&0.245&0.090\end{bmatrix}$$
-
-$$= \begin{bmatrix}0.665&0&0\\0&0.245&0\\0&0&0.090\end{bmatrix} - \begin{bmatrix}0.442&0.163&0.060\\0.163&0.060&0.022\\0.060&0.022&0.008\end{bmatrix}$$
-
-$$= \begin{bmatrix}0.223&-0.163&-0.060\\-0.163&0.185&-0.022\\-0.060&-0.022&0.082\end{bmatrix}$$
-
-
+$$J = \begin{bmatrix}2&0&0\\0&-4&0\\0&0&6\end{bmatrix}$$
 
 ---
 
 ### 12.5 Chain Rule in Matrix Form
 
-Backpropagation is the chain rule applied repeatedly through layers. For the concept — composition of maps, computational graphs, and why reverse-mode is the efficient direction for a scalar loss — see [multivariable_calculus.md](multivariable_calculus.md) §4. This section is the matrix mechanics with worked numbers.
+For the concept — composition of maps and computational graphs — see [multivariable_calculus.md](multivariable_calculus.md) §4. This section is the matrix mechanics.
 
-For $\mathcal{L} = f(g(\mathbf{x}))$:
+For a scalar $f(\mathbf{g}(\mathbf{x}))$ with $\mathbf{g}: \mathbb{R}^n \to \mathbb{R}^m$:
 
-$$\frac{\partial \mathcal{L}}{\partial \mathbf{x}} = \underbrace{\frac{\partial g}{\partial \mathbf{x}}}_{J_g^\top} \cdot \underbrace{\frac{\partial \mathcal{L}}{\partial g}}_{\text{upstream gradient}}$$
+$$\frac{\partial f}{\partial \mathbf{x}} = \underbrace{\frac{\partial \mathbf{g}}{\partial \mathbf{x}}}_{n \times m} \cdot \underbrace{\frac{\partial f}{\partial \mathbf{g}}}_{(m,)}$$
+
+Shapes check out: $(n \times m)(m,) = (n,)$ ✓. In denominator layout the factors are written **inner function first** — the reverse of the order in numerator layout.
 
 ---
 
-**Example 9 — One linear layer + MSE loss**
+**Example 8 — Least-squares gradient: $f(\mathbf{x}) = \|A\mathbf{x} - \mathbf{b}\|_2^2$**
 
-Forward pass:
+Split into $\mathbf{r} = A\mathbf{x} - \mathbf{b}$ and $f = \mathbf{r}^\top\mathbf{r}$:
 
-$$\mathbf{h} = W\mathbf{x}, \quad \mathcal{L} = \|\mathbf{y} - \mathbf{h}\|_2^2$$
+$$\frac{\partial \mathbf{r}}{\partial \mathbf{x}} = A^\top \ (\text{Example 6}), \qquad \frac{\partial f}{\partial \mathbf{r}} = 2\mathbf{r} \ (\text{Example 2})$$
 
-**Step 1 — $\partial \mathcal{L} / \partial \mathbf{h}$** (loss w.r.t. layer output):
+$$\frac{\partial f}{\partial \mathbf{x}} = A^\top \cdot 2\mathbf{r} = 2A^\top(A\mathbf{x} - \mathbf{b})$$
 
-$$\mathcal{L} = \sum_i (y_i - h_i)^2 \quad \Rightarrow \quad \frac{\partial \mathcal{L}}{\partial \mathbf{h}} = -2(\mathbf{y} - \mathbf{h}) = -2\mathbf{e}$$
-
-**Step 2 — $\partial \mathcal{L} / \partial W$** (chain rule):
-
-$$\frac{\partial \mathcal{L}}{\partial W} = \frac{\partial \mathcal{L}}{\partial \mathbf{h}} \cdot \mathbf{x}^\top = -2\mathbf{e}\mathbf{x}^\top$$
-
-**Step 3 — $\partial \mathcal{L} / \partial \mathbf{x}$** (pass gradient to previous layer):
-
-$$\frac{\partial \mathcal{L}}{\partial \mathbf{x}} = W^\top \frac{\partial \mathcal{L}}{\partial \mathbf{h}} = -2W^\top\mathbf{e}$$
+Setting this to zero gives the **normal equations** $A^\top A\mathbf{x} = A^\top\mathbf{b}$ (§13.2). The Hessian is $2A^\top A$ — PSD always, PD when $A$ has independent columns (§10), so the critical point is the global minimum.
 
 **Concrete numbers:**
 
-$$W = \begin{bmatrix}1&2\\3&4\end{bmatrix}, \quad \mathbf{x} = \begin{bmatrix}1\\1\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}5\\8\end{bmatrix}$$
+$$A = \begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}, \quad \mathbf{b} = \begin{bmatrix}1\\2\\2\end{bmatrix}, \quad \mathbf{x} = \begin{bmatrix}0\\0\end{bmatrix}$$
 
-
-
----
-
-**Example 10 — Linear layer + ReLU + MSE (two-step backprop)**
-
-$$\mathbf{z} = W\mathbf{x}, \quad \mathbf{h} = \text{ReLU}(\mathbf{z}), \quad \mathcal{L} = \|\mathbf{y} - \mathbf{h}\|_2^2$$
-
-
+$$\mathbf{r} = -\mathbf{b} = \begin{bmatrix}-1\\-2\\-2\end{bmatrix}, \qquad \frac{\partial f}{\partial \mathbf{x}} = 2\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}\begin{bmatrix}-1\\-2\\-2\end{bmatrix} = 2\begin{bmatrix}-3\\-4\end{bmatrix} = \begin{bmatrix}-6\\-8\end{bmatrix}$$
 
 ---
 
@@ -1708,15 +1639,13 @@ $$\mathbf{z} = W\mathbf{x}, \quad \mathbf{h} = \text{ReLU}(\mathbf{z}), \quad \m
 |---|---|
 | $\mathbf{a}^\top \mathbf{x}$ | $\mathbf{a}$ |
 | $\mathbf{x}^\top \mathbf{x}$ | $2\mathbf{x}$ |
-| $\mathbf{x}^\top A \mathbf{x}$ | $2A\mathbf{x}$ (symmetric $A$) |
-| $\|\mathbf{y} - W\mathbf{x}\|_2^2$ w.r.t. $\mathbf{x}$ | $-2W^\top(\mathbf{y} - W\mathbf{x})$ |
+| $\mathbf{x}^\top A \mathbf{x}$ | $(A + A^\top)\mathbf{x}$; $2A\mathbf{x}$ for symmetric $A$ |
+| $A\mathbf{x}$ (Jacobian) | $A^\top$ |
+| $\|A\mathbf{x} - \mathbf{b}\|_2^2$ w.r.t. $\mathbf{x}$ | $2A^\top(A\mathbf{x} - \mathbf{b})$ |
 | $\|\mathbf{y} - W\mathbf{x}\|_2^2$ w.r.t. $W$ | $-2(\mathbf{y} - W\mathbf{x})\mathbf{x}^\top$ |
 | $\mathbf{a}^\top W \mathbf{b}$ w.r.t. $W$ | $\mathbf{a}\mathbf{b}^\top$ |
 | $\text{tr}(A^\top W)$ w.r.t. $W$ | $A$ |
 | $\log\det(W)$ w.r.t. $W$ | $W^{-\top}$ |
-| $\text{ReLU}(\mathbf{x})$ | $\text{diag}(\mathbf{1}[\mathbf{x}>0])$ |
-| $\text{softmax}(\mathbf{z})$ | $\text{diag}(\mathbf{p}) - \mathbf{p}\mathbf{p}^\top$ |
-| $\sigma(x)$ (sigmoid) | $\sigma(x)(1-\sigma(x))$ |
 
 ---
 
@@ -1806,7 +1735,7 @@ $$\hat{\mathbf{x}}_{\text{ridge}} = (A^\top A + \lambda I)^{-1} A^\top \mathbf{b
 | $\lambda \to 0$ | Recovers ordinary least squares |
 | $\lambda \to \infty$ | $\hat{\mathbf{x}} \to \mathbf{x}_0$ |
 
-This is **ridge regression** / **weight decay**. Using an L1 penalty $\lambda\|\mathbf{x}\|_1$ instead gives
+This is **ridge regression**. Using an L1 penalty $\lambda\|\mathbf{x}\|_1$ instead gives
 **Lasso** (sparse solutions, no closed form). **Weighted** least squares generalizes the data term to
 $\|W^{1/2}(A\mathbf{x} - \mathbf{b})\|_2^2$ for a diagonal weight matrix $W$.
 
@@ -1873,11 +1802,12 @@ Let the **spectral radius** be $\rho(A) = \max_i |\lambda_i|$.
 
 For large $t$ the term with the largest $|\lambda_i|$ swamps the rest — the **dominant eigenpair** governs the
 asymptotics. Normalizing $\mathbf{x}_t/\|\mathbf{x}_t\|$ at each step to extract it is **power iteration**
-(the basis of PageRank, §6.2).
+(the method behind PageRank-style ranking).
 
-**Gradient-descent connection.** One GD step $\mathbf{x} \leftarrow (I - \eta H)\mathbf{x}$ (on a quadratic with
-Hessian $H$, §11.3) is a linear system with iteration matrix $I - \eta H$; it converges iff
-$|1 - \eta\lambda_i| < 1$ for every eigenvalue $\lambda_i$ of $H$, i.e. $0 < \eta < 2/\lambda_{\max}$.
+**Iterative solvers.** To solve $A\mathbf{x} = \mathbf{b}$ (with $A$ symmetric PD), the **Richardson iteration**
+$\mathbf{x} \leftarrow \mathbf{x} + \eta(\mathbf{b} - A\mathbf{x})$ has error $\mathbf{e}_t = \mathbf{x}_t - \mathbf{x}^*$ obeying
+$\mathbf{e}_{t+1} = (I - \eta A)\mathbf{e}_t$ — a linear system with iteration matrix $I - \eta A$. It converges iff
+$|1 - \eta\lambda_i| < 1$ for every eigenvalue $\lambda_i$ of $A$, i.e. $0 < \eta < 2/\lambda_{\max}$.
 
 ### 14.3 Markov Chains
 
@@ -1941,7 +1871,7 @@ $L = A^\top A$ for the incidence matrix $A$ of §8.4.
 **Diffusion** $\dot{\mathbf{x}} = -L\mathbf{x}$: eigenvalues of $-L$ are $0 \geq -\lambda_2 \geq \cdots$, so every
 mode except the constant one decays. The $\lambda = 0$ mode ($\mathbf{1}$) is conserved — the total
 $\sum_i x_i$ never changes — and $\mathbf{x}(t)$ relaxes to the **average** of the initial values, at a rate
-set by $\lambda_2$. This is heat flow, consensus/averaging in multi-agent systems, and label propagation.
+set by $\lambda_2$. This is heat flow and consensus/averaging in multi-agent systems.
 
 ---
 
