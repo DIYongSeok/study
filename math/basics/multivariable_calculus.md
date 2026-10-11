@@ -469,7 +469,7 @@ The linear case is $J_{\mathbf{r}} = A$. This one line is the core of Gauss–Ne
 | 5 | Try $n = 1$ — it should reduce to ordinary calculus | $(ax - b)^2 \to 2a(ax - b)$ ✓ |
 | 6 | Is $A$ actually symmetric before writing $2A\mathbf{x}$? | §6.5.2 common mistake |
 
-**Other documents use a different convention.** [linear_algebra.md](linear_algebra.md) §11–12 uses **denominator layout**, and backprop code (and [ml_dl.md](../ai/machine-learning/ml_dl.md) §6) effectively works with gradients shaped like the parameters. The rule to convert is simple: **denominator layout = transpose of numerator layout.**
+**Other documents use a different convention.** [linear_algebra.md](linear_algebra.md) §11–12 uses **denominator layout**, and backprop code (and [ml_dl.md](../../ai/machine-learning/ml_dl.md) §6) effectively works with gradients shaped like the parameters. The rule to convert is simple: **denominator layout = transpose of numerator layout.**
 
 | Object | Numerator layout (this doc) | Denominator layout (linear_algebra.md) |
 |--------|----------------------------|----------------------------------------|
@@ -750,4 +750,4 @@ and the chain rule (§4) handles the rest. This is just differentiating through 
 | 4 | Lagrange multipliers & KKT (§9) | Constrained control, SVMs, trajectory optimization, RL with constraints |
 | 5 | Change of variables & expectation integrals (§11) | Normalizing flows, VAEs, Monte Carlo objectives |
 
-**Companion documents:** [linear_algebra.md](linear_algebra.md) (matrix derivatives, SVD, pseudo-inverse) · [statistics_probability.md](statistics_probability.md) (distributions, expectation, information theory) · [optimization.md](optimization.md) (convexity, gradient methods, Adam, Newton/quasi-Newton, constrained optimization) · [ode_linear_systems.md](engineering_math/ode_linear_systems.md) (state-space models, linearization with Jacobians, stability, discretization)
+**Companion documents:** [linear_algebra.md](linear_algebra.md) (matrix derivatives, SVD, pseudo-inverse) · [statistics_probability.md](statistics_probability.md) (distributions, expectation, information theory) · [optimization.md](optimization.md) (convexity, gradient methods, Adam, Newton/quasi-Newton, constrained optimization) · [ode_linear_systems.md](../engineering_math/ode_linear_systems.md) (state-space models, linearization with Jacobians, stability, discretization)

@@ -28,6 +28,7 @@ data analysis, dynamical systems, and physics.
    - 4.3 [Gaussian Elimination & Row Reduction](#43-gaussian-elimination--row-reduction)
    - 4.4 [LU Decomposition](#44-lu-decomposition)
    - 4.5 [Elementary Matrices & Row Equivalence](#45-elementary-matrices--row-equivalence)
+   - 4.6 [Block Matrices, Schur Complements & the Woodbury Identity](#46-block-matrices-schur-complements--the-woodbury-identity)
 5. [Determinant](#5-determinant)
    - 5.1 [Definition & Geometric Meaning](#51-definition--geometric-meaning)
    - 5.2 [Properties](#52-properties)
@@ -694,6 +695,129 @@ $F = \begin{bmatrix} 1 & -2 \\ 0 & 1 \end{bmatrix}$ ($C_2 \leftarrow C_2 - 2C_1$
 
 $$EA = \begin{bmatrix} 1 & 2 \\ 0 & 0 \end{bmatrix}, \qquad
 EAF = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} I_1 & 0 \\ 0 & 0 \end{bmatrix}$$
+
+### 4.6 Block Matrices, Schur Complements & the Woodbury Identity
+
+Many matrices in estimation and statistics come naturally in **blocks** — a joint covariance of $(\mathbf{x}_a, \mathbf{x}_b)$, a state stacked with a measurement. Four identities about block matrices do most of the work in the Kalman filter, Gaussian conditioning, and Gaussian processes.
+
+**Block multiplication** works like ordinary multiplication with blocks as entries, as long as the inner block sizes match:
+
+$$\begin{bmatrix} A & B \\ C & D \end{bmatrix}\begin{bmatrix} E & F \\ G & H \end{bmatrix} = \begin{bmatrix} AE + BG & AF + BH \\ CE + DG & CF + DH \end{bmatrix}$$
+
+(Order matters inside each product — blocks do not commute.)
+
+#### The Schur complement and block LDU factorization
+
+Let $M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}$ with $A$ square and invertible. The **Schur complement of $A$ in $M$** is
+
+$$S = D - CA^{-1}B$$
+
+**Theorem (block LDU).**
+
+$$M = \underbrace{\begin{bmatrix} I & 0 \\ CA^{-1} & I \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}}_{\text{block diagonal}}\underbrace{\begin{bmatrix} I & A^{-1}B \\ 0 & I \end{bmatrix}}_{U}$$
+
+*Proof.* Multiply the last two factors: $\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}\begin{bmatrix} I & A^{-1}B \\ 0 & I \end{bmatrix} = \begin{bmatrix} A & B \\ 0 & S \end{bmatrix}$. Then
+
+$$\begin{bmatrix} I & 0 \\ CA^{-1} & I \end{bmatrix}\begin{bmatrix} A & B \\ 0 & S \end{bmatrix} = \begin{bmatrix} A & B \\ C & CA^{-1}B + S \end{bmatrix} = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \qquad \blacksquare$$
+
+This is block Gaussian elimination: $L^{-1}$ subtracts $CA^{-1}$ times the first block row from the second (§4.3), leaving $S$ in the bottom-right corner.
+
+**Consequence 1 — block determinant.** $L$ and $U$ are block triangular with identity diagonal blocks, so $\det L = \det U = 1$ (§5.2):
+
+$$\det M = \det A \cdot \det(D - CA^{-1}B)$$
+
+In particular, when $A$ is invertible, **$M$ is invertible iff $S$ is**.
+
+**Consequence 2 — block inverse.** Invert each factor in reverse order; the triangular factors invert by flipping the sign of the off-diagonal block:
+
+$$M^{-1} = \begin{bmatrix} I & -A^{-1}B \\ 0 & I \end{bmatrix}\begin{bmatrix} A^{-1} & 0 \\ 0 & S^{-1} \end{bmatrix}\begin{bmatrix} I & 0 \\ -CA^{-1} & I \end{bmatrix} = \begin{bmatrix} A^{-1} + A^{-1}BS^{-1}CA^{-1} & -A^{-1}BS^{-1} \\ -S^{-1}CA^{-1} & S^{-1} \end{bmatrix}$$
+
+*Check of the flipped-sign rule:* $\begin{bmatrix} I & 0 \\ X & I \end{bmatrix}\begin{bmatrix} I & 0 \\ -X & I \end{bmatrix} = \begin{bmatrix} I & 0 \\ X - X & I \end{bmatrix} = I$.
+
+**The same with $D$ as pivot.** If instead $D$ is invertible, the Schur complement of $D$ is $S_D = A - BD^{-1}C$, and by the mirror-image argument
+
+$$\det M = \det D \cdot \det(A - BD^{-1}C), \qquad M^{-1} = \begin{bmatrix} S_D^{-1} & -S_D^{-1}BD^{-1} \\ -D^{-1}CS_D^{-1} & D^{-1} + D^{-1}CS_D^{-1}BD^{-1} \end{bmatrix}$$
+
+> **Key fact used in statistics:** the top-left block of $M^{-1}$ is the inverse of the Schur complement of the **other** block: $(M^{-1})_{11} = (A - BD^{-1}C)^{-1}$. For a covariance matrix, this says the precision of $\mathbf{x}_a$ in the joint precision matrix equals the inverse of the **conditional** covariance of $\mathbf{x}_a$ given $\mathbf{x}_b$ ([statistics_probability.md](statistics_probability.md) §4.3).
+
+**Actual example — marginalizing out a landmark (SLAM).** A robot at 1D position $x_r$ has a prior with information (precision) $1$, and it measures a landmark at $x_l$ through $z = x_l - x_r + \text{noise}$, also with information $1$. Adding the two quadratic penalties $\tfrac12 x_r^2$ and $\tfrac12(x_l - x_r - z)^2$ gives the joint information matrix (their Hessian):
+
+$$\Lambda = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} + \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix} = \begin{bmatrix} 2 & -1 \\ -1 & 1 \end{bmatrix} \qquad (\text{order: } x_r,\ x_l)$$
+
+To forget the landmark and keep only the robot, take the Schur complement of the landmark block:
+
+$$\Lambda_{rr} - \Lambda_{rl}\Lambda_{ll}^{-1}\Lambda_{lr} = 2 - (-1)(1)^{-1}(-1) = 1$$
+
+The robot's information is back to $1$ — exactly the prior. That makes sense: a landmark seen **once** only ties the landmark to the robot; it says nothing new about where the robot is. (Check via covariance: $\Sigma = \Lambda^{-1} = \begin{bmatrix} 1 & 1 \\ 1 & 2 \end{bmatrix}$, so $\operatorname{Var}(x_r) = 1$ ✓.) Sliding-window estimators in visual-inertial odometry use exactly this Schur-complement step to drop old poses while keeping their information.
+
+#### Positive definiteness of block matrices
+
+**Theorem.** For symmetric $M = \begin{bmatrix} A & B \\ B^\top & D \end{bmatrix}$:
+
+$$M \succ 0 \iff A \succ 0 \text{ and } S = D - B^\top A^{-1}B \succ 0$$
+
+*Proof.* ($\Rightarrow$) $A$ is a principal submatrix: for $\mathbf{x} \neq \mathbf{0}$, $\mathbf{x}^\top A\mathbf{x} = [\mathbf{x}^\top\ \mathbf{0}^\top]\,M\,[\mathbf{x};\ \mathbf{0}] > 0$, so $A \succ 0$ and invertible. With $C = B^\top$ the LDU factorization reads $M = U^\top\operatorname{diag}(A, S)\,U$ (since $L = U^\top$). Then for any $\mathbf{z}$, $\mathbf{z}^\top S\mathbf{z} = \mathbf{w}^\top M\mathbf{w}$ with $\mathbf{w} = U^{-1}[\mathbf{0};\ \mathbf{z}] \neq \mathbf{0}$ when $\mathbf{z} \neq \mathbf{0}$, so $S \succ 0$.
+
+($\Leftarrow$) For $\mathbf{w} \neq \mathbf{0}$, let $\mathbf{v} = U\mathbf{w} = [\mathbf{v}_1;\ \mathbf{v}_2] \neq \mathbf{0}$ ($U$ is invertible). Then $\mathbf{w}^\top M\mathbf{w} = \mathbf{v}_1^\top A\mathbf{v}_1 + \mathbf{v}_2^\top S\mathbf{v}_2 > 0$. $\blacksquare$
+
+The same holds with $\succeq$ for the PSD case when $A \succ 0$. Consequence: **a conditional covariance $\Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}$ is always positive definite** when the joint covariance is.
+
+#### The Woodbury identity
+
+**Theorem (matrix inversion lemma).** For invertible $A \in \mathbb{R}^{n \times n}$, $C \in \mathbb{R}^{k \times k}$ and any $U \in \mathbb{R}^{n \times k}$, $V \in \mathbb{R}^{k \times n}$ such that the inverses below exist:
+
+$$\boxed{\ (A + UCV)^{-1} = A^{-1} - A^{-1}U\big(C^{-1} + VA^{-1}U\big)^{-1}VA^{-1}\ }$$
+
+*Proof.* Compute the top-left block of the inverse of
+
+$$M = \begin{bmatrix} A & U \\ V & -C^{-1} \end{bmatrix}$$
+
+in two ways.
+
+- Pivot on $A$: $S = -C^{-1} - VA^{-1}U$, and the top-left block is $A^{-1} + A^{-1}US^{-1}VA^{-1} = A^{-1} - A^{-1}U(C^{-1} + VA^{-1}U)^{-1}VA^{-1}$.
+- Pivot on $D = -C^{-1}$: $S_D = A - U(-C^{-1})^{-1}V = A + UCV$, and the top-left block is $S_D^{-1} = (A + UCV)^{-1}$.
+
+Both are the same block of the same matrix. $\blacksquare$
+
+**Why it matters:** if $A^{-1}$ is known (or cheap, e.g. diagonal) and the update $UCV$ has low rank $k \ll n$, the right side only inverts a $k \times k$ matrix instead of an $n \times n$ one.
+
+**Sherman–Morrison** (rank-1 case, $k = 1$, $C = 1$):
+
+$$(A + \mathbf{u}\mathbf{v}^\top)^{-1} = A^{-1} - \frac{A^{-1}\mathbf{u}\mathbf{v}^\top A^{-1}}{1 + \mathbf{v}^\top A^{-1}\mathbf{u}}$$
+
+*Example:* $A = I_2$, $\mathbf{u} = \mathbf{v} = (1, 1)$: $(I + \mathbf{1}\mathbf{1}^\top)^{-1} = I - \tfrac{1}{3}\mathbf{1}\mathbf{1}^\top = \tfrac13\begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix}$. Check: $\begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\cdot\tfrac13\begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix} = \tfrac13\begin{bmatrix} 3 & 0 \\ 0 & 3 \end{bmatrix} = I$ ✓.
+
+**Actual example — adding one data point without re-inverting (recursive least squares).** In least squares the information matrix is $A = \Phi^\top\Phi$, and a new measurement row $\mathbf{u}^\top$ changes it to $A + \mathbf{u}\mathbf{u}^\top$. Say the current $A = \operatorname{diag}(2, 4)$, so $A^{-1} = \operatorname{diag}(0.5, 0.25)$ is already known, and the new row is $\mathbf{u} = (1, 1)$:
+
+$$1 + \mathbf{u}^\top A^{-1}\mathbf{u} = 1.75, \qquad A^{-1}\mathbf{u} = (0.5,\ 0.25)$$
+
+$$(A + \mathbf{u}\mathbf{u}^\top)^{-1} = \begin{bmatrix} 0.5 & 0 \\ 0 & 0.25 \end{bmatrix} - \frac{1}{1.75}\begin{bmatrix} 0.25 & 0.125 \\ 0.125 & 0.0625 \end{bmatrix} = \frac{1}{14}\begin{bmatrix} 5 & -1 \\ -1 & 3 \end{bmatrix}$$
+
+— identical to inverting $\begin{bmatrix} 3 & 1 \\ 1 & 5 \end{bmatrix}$ directly. The payoff is at scale: with $n = 1000$ parameters a fresh inversion costs about $n^3/3 \approx 3 \times 10^8$ operations, the rank-1 update about $3n^2 = 3 \times 10^6$ — roughly $100\times$ cheaper, for every new sample. This is recursive least squares, and it is the same reason the Kalman update never inverts an $n \times n$ matrix.
+
+#### The push-through identity and the determinant lemma
+
+**Push-through.** For $P \succ 0$, $R \succ 0$ and any $H$ of compatible size:
+
+$$PH^\top\big(HPH^\top + R\big)^{-1} = \big(P^{-1} + H^\top R^{-1}H\big)^{-1}H^\top R^{-1}$$
+
+*Proof.* Expand $H^\top R^{-1}(HPH^\top + R) = H^\top R^{-1}HPH^\top + H^\top = (H^\top R^{-1}H + P^{-1})\,PH^\top$. Multiply on the left by $(P^{-1} + H^\top R^{-1}H)^{-1}$ and on the right by $(HPH^\top + R)^{-1}$. $\blacksquare$
+
+The left side inverts an $m \times m$ matrix ($m$ = rows of $H$), the right side an $n \times n$ one — pick whichever is smaller. This is exactly the switch between the Kalman gain's covariance and information forms, and between Gaussian-process (function-space) and Bayesian-linear-regression (weight-space) formulas.
+
+**Matrix determinant lemma.**
+
+$$\det(A + UCV) = \det(C^{-1} + VA^{-1}U)\,\det C\,\det A$$
+
+*Proof.* Expand $\det M$ for the same $M$ as in the Woodbury proof both ways: $\det A \cdot \det(-C^{-1} - VA^{-1}U) = \det(-C^{-1})\cdot\det(A + UCV)$. The factors $(-1)^k$ cancel, and $1/\det(C^{-1}) = \det C$. $\blacksquare$
+
+| Identity | Used in |
+|----------|---------|
+| Block inverse / Schur complement | Gaussian conditioning ([statistics_probability.md](statistics_probability.md) §4.3), equality-constrained least squares (§13.6) |
+| Block PD theorem | Conditional covariances are valid covariances |
+| Woodbury | Kalman filter information form, recursive least squares, GP ↔ Bayesian linear regression |
+| Push-through | Kalman gain in two forms; kernel trick |
+| Determinant lemma | Log marginal likelihood of Gaussian processes with low-rank approximations |
 
 ---
 
@@ -1855,7 +1979,7 @@ So $\mathbf{x}(t) = \sum_i c_i\, e^{\lambda_i t}\, \mathbf{v}_i$ — modes again
 (Contrast with the discrete test, which compares $|\lambda|$ to $1$; the continuous test compares
 $\operatorname{Re}(\lambda)$ to $0$. The map $\lambda \mapsto e^{\lambda t}$ sends the left half-plane to the unit disk.)
 
-For inputs ($\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$), linearization of nonlinear systems, and turning continuous models into discrete ones, see [ode_linear_systems.md](engineering_math/ode_linear_systems.md).
+For inputs ($\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$), linearization of nonlinear systems, and turning continuous models into discrete ones, see [ode_linear_systems.md](../engineering_math/ode_linear_systems.md).
 
 ### 14.5 The Graph Laplacian
 

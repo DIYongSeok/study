@@ -2,7 +2,7 @@
 
 Dynamics and control are about how a **state changes over time**. A robot joint accelerates under torque, a drone tilts under rotor thrust, an estimator's uncertainty grows between measurements — each is an ordinary differential equation (ODE). This document builds the toolkit in the order you need it for robotics: solve scalar ODEs by hand, solve forced problems with the **Laplace transform**, rewrite any linear ODE as a **state-space model** $\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$, approximate nonlinear robots by **linearization**, decide **stability** from eigenvalues, and turn continuous models into the **discrete-time** updates that run on a computer.
 
-**Prerequisites:** eigenvalues and the matrix exponential ([linear_algebra.md](../linear_algebra.md) §6, §14.4), Jacobians ([multivariable_calculus.md](../multivariable_calculus.md) §6, §6.5).
+**Prerequisites:** eigenvalues and the matrix exponential ([linear_algebra.md](../basics/linear_algebra.md) §6, §14.4), Jacobians ([multivariable_calculus.md](../basics/multivariable_calculus.md) §6, §6.5).
 
 **Scope:** modeling and analysis. Frequency-domain tools (Fourier transform, frequency response, z-transform, filters) are in [signals_systems.md](signals_systems.md). Controller design (controllability, pole placement, LQR, PID tuning) builds directly on both and belongs in a separate control document.
 
@@ -419,7 +419,7 @@ The vector analogue of $\dot{x} = ax \Rightarrow x = e^{at}x_0$ is
 
 $$\dot{\mathbf{x}} = A\mathbf{x} \quad\Longrightarrow\quad \mathbf{x}(t) = e^{At}\,\mathbf{x}_0$$
 
-with the **matrix exponential** $e^{At} = I + At + \tfrac{(At)^2}{2!} + \cdots$ (definition and properties in [linear_algebra.md](../linear_algebra.md) §14.4).
+with the **matrix exponential** $e^{At} = I + At + \tfrac{(At)^2}{2!} + \cdots$ (definition and properties in [linear_algebra.md](../basics/linear_algebra.md) §14.4).
 
 **Modal solution.** If $A$ has $n$ independent eigenvectors $A\mathbf{v}_i = \lambda_i\mathbf{v}_i$:
 
@@ -560,7 +560,7 @@ The denominator is $\det(sI - A)$, so **poles of $G$ = eigenvalues of $A$** (bar
 
 $$\dot{\mathbf{z}} = TAT^{-1}\mathbf{z} + TB\,\mathbf{u}, \qquad \mathbf{y} = CT^{-1}\mathbf{z} + D\mathbf{u}$$
 
-$TAT^{-1}$ is **similar** to $A$ ([linear_algebra.md](../linear_algebra.md) §3.4) — same eigenvalues, same transfer function, same physics. Choosing $T^{-1}$ = eigenvectors of $A$ gives **modal coordinates** in which $A$ is diagonal and every mode evolves independently.
+$TAT^{-1}$ is **similar** to $A$ ([linear_algebra.md](../basics/linear_algebra.md) §3.4) — same eigenvalues, same transfer function, same physics. Choosing $T^{-1}$ = eigenvectors of $A$ gives **modal coordinates** in which $A$ is diagonal and every mode evolves independently.
 
 ---
 
@@ -578,13 +578,13 @@ Nonlinear systems can have **several** equilibria, each with its own local behav
 
 ### 6.2 Linearization via Jacobians
 
-Write the state and input as deviations from the operating point: $\delta\mathbf{x} = \mathbf{x} - \mathbf{x}^*$, $\delta\mathbf{u} = \mathbf{u} - \mathbf{u}^*$. A first-order Taylor expansion ([multivariable_calculus.md](../multivariable_calculus.md) §6.2) gives
+Write the state and input as deviations from the operating point: $\delta\mathbf{x} = \mathbf{x} - \mathbf{x}^*$, $\delta\mathbf{u} = \mathbf{u} - \mathbf{u}^*$. A first-order Taylor expansion ([multivariable_calculus.md](../basics/multivariable_calculus.md) §6.2) gives
 
 $$\dot{\delta\mathbf{x}} = \mathbf{f}(\mathbf{x}^* + \delta\mathbf{x}, \mathbf{u}^* + \delta\mathbf{u}) \approx \underbrace{\mathbf{f}(\mathbf{x}^*, \mathbf{u}^*)}_{=\,\mathbf{0}} + \frac{\partial\mathbf{f}}{\partial\mathbf{x}}\bigg|_*\delta\mathbf{x} + \frac{\partial\mathbf{f}}{\partial\mathbf{u}}\bigg|_*\delta\mathbf{u}$$
 
 $$\boxed{\ \dot{\delta\mathbf{x}} \approx A\,\delta\mathbf{x} + B\,\delta\mathbf{u}, \qquad A = \frac{\partial\mathbf{f}}{\partial\mathbf{x}}\bigg|_{(\mathbf{x}^*, \mathbf{u}^*)} \in \mathbb{R}^{n \times n}, \quad B = \frac{\partial\mathbf{f}}{\partial\mathbf{u}}\bigg|_{(\mathbf{x}^*, \mathbf{u}^*)} \in \mathbb{R}^{n \times p}\ }$$
 
-Both are Jacobians in numerator layout (row $i$ = gradient of $f_i$; [multivariable_calculus.md](../multivariable_calculus.md) §6.5). Similarly $C = \partial\mathbf{h}/\partial\mathbf{x}|_*$ for the output.
+Both are Jacobians in numerator layout (row $i$ = gradient of $f_i$; [multivariable_calculus.md](../basics/multivariable_calculus.md) §6.5). Similarly $C = \partial\mathbf{h}/\partial\mathbf{x}|_*$ for the output.
 
 **Recipe:**
 
@@ -670,7 +670,7 @@ For $\dot{\mathbf{x}} = A\mathbf{x}$, every solution is a combination of $e^{\la
 | All $\operatorname{Re}\lambda_i \leq 0$, those on the axis non-repeated (simple) | **Marginally stable** — bounded, no decay |
 | A repeated eigenvalue on the axis with a Jordan block | Unstable — grows like $t^k$ (e.g. double integrator: $x = x_0 + v_0 t$) |
 
-**Discrete time** $\mathbf{x}_{k+1} = A_d\mathbf{x}_k$: replace "$\operatorname{Re}\lambda < 0$" with "$|\lambda| < 1$" ([linear_algebra.md](../linear_algebra.md) §14.2). The exact discretization (§8.3) maps $\lambda \mapsto e^{\lambda T}$, which sends the open left half-plane exactly onto the open unit disk.
+**Discrete time** $\mathbf{x}_{k+1} = A_d\mathbf{x}_k$: replace "$\operatorname{Re}\lambda < 0$" with "$|\lambda| < 1$" ([linear_algebra.md](../basics/linear_algebra.md) §14.2). The exact discretization (§8.3) maps $\lambda \mapsto e^{\lambda T}$, which sends the open left half-plane exactly onto the open unit disk.
 
 **How fast:** the slowest mode — the eigenvalue with the **least negative real part** — sets the convergence rate. Its time constant is $1/|\operatorname{Re}\lambda|$.
 
@@ -708,7 +708,7 @@ Friction only removes energy, so the hanging position is stable. ($\dot{V} = 0$ 
 
 $$\boxed{\ A^\top P + PA = -Q\ }$$
 
-**Theorem:** $A$ is Hurwitz $\iff$ for any $Q \succ 0$ this equation has a unique solution $P \succ 0$ (positive definite: [linear_algebra.md](../linear_algebra.md) §10).
+**Theorem:** $A$ is Hurwitz $\iff$ for any $Q \succ 0$ this equation has a unique solution $P \succ 0$ (positive definite: [linear_algebra.md](../basics/linear_algebra.md) §10).
 
 **Worked example.** $A = \begin{bmatrix} 0 & 1 \\ -2 & -3 \end{bmatrix}$, $Q = I$, unknown symmetric $P = \begin{bmatrix} p_1 & p_2 \\ p_2 & p_3 \end{bmatrix}$.
 
@@ -920,7 +920,7 @@ A Kalman filter tracks a Gaussian belief $\mathcal{N}(\hat{\mathbf{x}}, P)$ over
 $$\hat{\mathbf{x}}_{k+1|k} = A_d\,\hat{\mathbf{x}}_{k|k} + B_d\,\mathbf{u}_k, \qquad P_{k+1|k} = A_d\,P_{k|k}\,A_d^\top + Q_d$$
 
 - The mean propagates through the dynamics (§8.3).
-- The covariance propagates by the affine-transformation rule $\Sigma \to A\Sigma A^\top$ ([statistics_probability.md](../statistics_probability.md) §4.3), plus **process noise** $Q_d$ for model error and disturbances.
+- The covariance propagates by the affine-transformation rule $\Sigma \to A\Sigma A^\top$ ([statistics_probability.md](../basics/statistics_probability.md) §4.3), plus **process noise** $Q_d$ for model error and disturbances.
 - For continuous white noise with intensity $Q_c$ entering through $G$: $Q_d = \int_0^T e^{A\sigma}GQ_cG^\top e^{A^\top\sigma}d\sigma \approx GQ_cG^\top T$ for small $T$ (also computable with a Van Loan block exponential).
 - **Extended Kalman Filter:** for nonlinear $\mathbf{f}$, propagate the mean with the nonlinear model (e.g. RK4) and the covariance with the **Jacobian** $A_d \approx \partial\mathbf{f}_d/\partial\mathbf{x}$ evaluated at the current estimate (§6.4 time-varying linearization).
 
@@ -936,7 +936,7 @@ Stacking all $N$ steps gives one linear map from the current state and the input
 
 $$\underbrace{\begin{bmatrix} \mathbf{x}_{k+1} \\ \mathbf{x}_{k+2} \\ \vdots \\ \mathbf{x}_{k+N} \end{bmatrix}}_{\mathbf{X}} = \underbrace{\begin{bmatrix} A_d \\ A_d^2 \\ \vdots \\ A_d^N \end{bmatrix}}_{\mathcal{A}}\mathbf{x}_k + \underbrace{\begin{bmatrix} B_d & & & \\ A_dB_d & B_d & & \\ \vdots & & \ddots & \\ A_d^{N-1}B_d & \cdots & A_dB_d & B_d \end{bmatrix}}_{\mathcal{B}}\underbrace{\begin{bmatrix} \mathbf{u}_k \\ \mathbf{u}_{k+1} \\ \vdots \\ \mathbf{u}_{k+N-1} \end{bmatrix}}_{\mathbf{U}}$$
 
-With a quadratic cost on $\mathbf{X}$ and $\mathbf{U}$ and linear limits on torques and states, choosing $\mathbf{U}$ is a **quadratic program** ([optimization.md](../optimization.md) §10.2, §12.4). Only $\mathbf{u}_k$ is applied; at the next sample the state is re-measured and the problem re-solved (**receding horizon**). For nonlinear robots the same structure is rebuilt each cycle from a linearization along the previous solution (§6.4).
+With a quadratic cost on $\mathbf{X}$ and $\mathbf{U}$ and linear limits on torques and states, choosing $\mathbf{U}$ is a **quadratic program** ([optimization.md](../basics/optimization.md) §10.2, §12.4). Only $\mathbf{u}_k$ is applied; at the next sample the state is re-measured and the problem re-solved (**receding horizon**). For nonlinear robots the same structure is rebuilt each cycle from a linearization along the previous solution (§6.4).
 
 ---
 
@@ -952,4 +952,4 @@ With a quadratic cost on $\mathbf{X}$ and $\mathbf{U}$ and linear limits on torq
 | 5 | Damping ratio and natural frequency (§2.3) | Common language for tuning and specifying joint response |
 | 6 | Lyapunov functions (§7.3) | Stability proofs for nonlinear systems; foundation for LQR and robust control |
 
-**Companion documents:** [linear_algebra.md](../linear_algebra.md) (eigenvalues, matrix exponential, similarity, discrete linear systems) · [multivariable_calculus.md](../multivariable_calculus.md) (Jacobians, Taylor expansion, matrix calculus) · [statistics_probability.md](../statistics_probability.md) (Gaussians for the Kalman filter) · [optimization.md](../optimization.md) (QP and trajectory optimization for MPC) · [signals_systems.md](signals_systems.md) (Fourier, frequency response, sampling, z-transform, filters)
+**Companion documents:** [linear_algebra.md](../basics/linear_algebra.md) (eigenvalues, matrix exponential, similarity, discrete linear systems) · [multivariable_calculus.md](../basics/multivariable_calculus.md) (Jacobians, Taylor expansion, matrix calculus) · [statistics_probability.md](../basics/statistics_probability.md) (Gaussians for the Kalman filter) · [optimization.md](../basics/optimization.md) (QP and trajectory optimization for MPC) · [signals_systems.md](signals_systems.md) (Fourier, frequency response, sampling, z-transform, filters)

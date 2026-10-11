@@ -137,7 +137,7 @@ $|c_n|$ is the **amplitude** and $\angle c_n$ the **phase** of harmonic $n$. Plo
 
 ### 2.2 Computing the Coefficients
 
-The exponentials $e^{in\omega_0 t}$ are **orthogonal** over one period — $\int_{T_0} e^{in\omega_0 t}e^{-im\omega_0 t}\,dt = T_0$ if $n = m$, else $0$ — so each coefficient is a projection, just like coordinates in an orthonormal basis ([linear_algebra.md](../linear_algebra.md) §9.2):
+The exponentials $e^{in\omega_0 t}$ are **orthogonal** over one period — $\int_{T_0} e^{in\omega_0 t}e^{-im\omega_0 t}\,dt = T_0$ if $n = m$, else $0$ — so each coefficient is a projection, just like coordinates in an orthonormal basis ([linear_algebra.md](../basics/linear_algebra.md) §9.2):
 
 $$c_n = \frac{1}{T_0}\int_{T_0} x(t)\, e^{-in\omega_0 t}\, dt, \qquad a_n = \frac{2}{T_0}\int_{T_0} x(t)\cos n\omega_0 t\, dt, \qquad b_n = \frac{2}{T_0}\int_{T_0} x(t)\sin n\omega_0 t\, dt$$
 
@@ -453,7 +453,7 @@ Real data is a **finite** list of $N$ samples. The **DFT** gives its spectrum at
 
 $$X[m] = \sum_{k=0}^{N-1} x[k]\, e^{-i2\pi mk/N}, \qquad x[k] = \frac{1}{N}\sum_{m=0}^{N-1} X[m]\, e^{i2\pi mk/N}, \qquad m = 0, \ldots, N-1$$
 
-It is a change of basis to $N$ orthogonal complex sinusoids — an $N \times N$ matrix multiplication ([linear_algebra.md](../linear_algebra.md) §3.4).
+It is a change of basis to $N$ orthogonal complex sinusoids — an $N \times N$ matrix multiplication ([linear_algebra.md](../basics/linear_algebra.md) §3.4).
 
 **Tiny example.** $N = 4$, $x = [1, 0, -1, 0]$ (a cosine at $f_s/4$). With $e^{-i2\pi/4} = -i$:
 
@@ -687,4 +687,4 @@ The fitted transfer function becomes a state-space model ([ode_linear_systems.md
 | 5 | $z$-transform and $z = e^{sT}$ (§6) | Analyzing the discrete filters and controllers that actually run |
 | 6 | Convolution ↔ multiplication, Fourier pairs (§1.3, §3) | The conceptual core that ties it all together |
 
-**Companion documents:** [ode_linear_systems.md](ode_linear_systems.md) (Laplace transform, state space, stability, discretization) · [linear_algebra.md](../linear_algebra.md) (orthogonal projections and change of basis behind Fourier analysis) · [statistics_probability.md](../statistics_probability.md) (noise models and Gaussians for Kalman filtering)
+**Companion documents:** [ode_linear_systems.md](ode_linear_systems.md) (Laplace transform, state space, stability, discretization) · [linear_algebra.md](../basics/linear_algebra.md) (orthogonal projections and change of basis behind Fourier analysis) · [statistics_probability.md](../basics/statistics_probability.md) (noise models and Gaussians for Kalman filtering)

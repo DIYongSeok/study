@@ -189,8 +189,22 @@
 - We're out of coffee.(커피가 다 떨어지다.)
 - run out (syn. be out of, deplete)
     + We ran out of milk.(우유가 다 떨어졌어.)
+    + ✅ run out of = 떨어지게 되다(순간), be out of = 없는 상태
 - lack (부족하다, 처음부터 부족한 상태)
     + She lacks experience. (그녀는 경험이 부족하다)
+
+> ~가 부족하다
+- lack + 명사 (자질·능력, of 없음)
+    + He lacks confidence. (그는 자신감이 부족하다.)
+    + 명사일 땐 a lack of: a lack of sleep (수면 부족)
+- be short of/on (돈·시간·인원)
+    + We're short on time. (시간이 부족해.)
+- not have enough (회화에서 가장 무난)
+    + I don't have enough money. (돈이 부족해.)
+- be low on (떨어져 가다)
+    + My phone is low on battery. (배터리가 얼마 없어.)
+- not good enough (기준 미달)
+    + My English isn't good enough yet. (내 영어는 아직 부족해.)
 
 > end up, result in, turn out
 - end up (결국 ~에 이르다)
