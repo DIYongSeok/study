@@ -361,7 +361,7 @@ $$\min_{\mathbf{w}, b} \|\mathbf{w}\|^2 \quad \text{s.t.} \quad y_i(\mathbf{w}^\
 | Term | Meaning |
 |------|---------|
 | $\mathbf{w}^\top \mathbf{x} + b = 0$ | Decision hyperplane |
-| $2/\|\mathbf{w}\|$ | Margin width — maximized by minimizing $\|\mathbf{w}\|$ |
+| $2/\lVert \mathbf{w}\rVert $ | Margin width — maximized by minimizing $\lVert \mathbf{w}\rVert $ |
 | Support vectors | Training points closest to the boundary (on the margin lines) |
 
 **Soft-margin SVM (with slack):**
@@ -380,7 +380,7 @@ $$\min_{\mathbf{w}, b, \xi} \|\mathbf{w}\|^2 + C\sum_i \xi_i \quad \text{s.t.} \
 | Kernel | Formula | Intuition |
 |--------|---------|-----------|
 | Linear | $\mathbf{x}^\top \mathbf{x}'$ | No transformation |
-| RBF (Gaussian) | $\exp(-\gamma\|\mathbf{x}-\mathbf{x}'\|^2)$ | Similarity decreases with distance |
+| RBF (Gaussian) | $\exp(-\gamma\lVert \mathbf{x}-\mathbf{x}'\rVert ^2)$ | Similarity decreases with distance |
 | Polynomial | $(\mathbf{x}^\top\mathbf{x}' + r)^d$ | Degree-$d$ polynomial features |
 
 ---
@@ -923,7 +923,7 @@ $$\text{if} \quad \|\mathbf{g}\| > \tau: \quad \mathbf{g} \leftarrow \frac{\tau}
 |------|---------|
 | $\mathbf{g}$ | Gradient vector (all parameters concatenated) |
 | $\tau$ | Clip threshold (typically 1.0) |
-| $\|\mathbf{g}\|$ | Global gradient norm |
+| $\lVert \mathbf{g}\rVert $ | Global gradient norm |
 
 Essential for RNNs and Transformers, which are prone to gradient spikes.
 
@@ -944,8 +944,8 @@ $$\mathcal{L}_\text{reg} = \mathcal{L} + \lambda R(\theta)$$
 
 | Type | Penalty | Gradient | Effect |
 |------|---------|---------|--------|
-| **L2** (Ridge) | $\lambda \|\theta\|_2^2$ | $2\lambda\theta$ | Shrinks all weights toward zero (smooth) |
-| **L1** (Lasso) | $\lambda \|\theta\|_1$ | $\lambda \text{sign}(\theta)$ | Pushes many weights to exactly zero (sparse) |
+| **L2** (Ridge) | $\lambda \lVert \theta\rVert _2^2$ | $2\lambda\theta$ | Shrinks all weights toward zero (smooth) |
+| **L1** (Lasso) | $\lambda \lVert \theta\rVert _1$ | $\lambda \text{sign}(\theta)$ | Pushes many weights to exactly zero (sparse) |
 
 **L2 in practice:** called **weight decay** — implemented as an optimizer parameter:
 
@@ -1454,7 +1454,7 @@ $$\mathcal{L} = y \cdot D^2 + (1-y) \cdot \max(0,\, m - D)^2$$
 |------|---------|
 | $y = 1$ | Similar pair |
 | $y = 0$ | Dissimilar pair |
-| $D = \|\mathbf{z}_1 - \mathbf{z}_2\|$ | Distance between embeddings |
+| $D = \lVert \mathbf{z}_1 - \mathbf{z}_2\rVert $ | Distance between embeddings |
 | $m$ | Margin — push dissimilar pairs at least $m$ apart |
 
 **Triplet Loss:**
@@ -1478,7 +1478,7 @@ $$\mathcal{L}_{i,j} = -\log \frac{\exp(\text{sim}(\mathbf{z}_i, \mathbf{z}_j)/\t
 |------|---------|
 | $\mathbf{z}_i, \mathbf{z}_j$ | Two augmented views of the same image (positive pair) |
 | $\tau$ | Temperature — controls sharpness of distribution |
-| $\text{sim}(\mathbf{u},\mathbf{v}) = \mathbf{u}^\top\mathbf{v}/(\|\mathbf{u}\|\|\mathbf{v}\|)$ | Cosine similarity |
+| $\text{sim}(\mathbf{u},\mathbf{v}) = \mathbf{u}^\top\mathbf{v}/(\lVert \mathbf{u}\rVert \lVert \mathbf{v}\rVert )$ | Cosine similarity |
 
 ---
 

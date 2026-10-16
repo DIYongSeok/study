@@ -652,7 +652,7 @@ Let $\mathbf{x}^* = \mathbf{0}$ be an equilibrium of $\dot{\mathbf{x}} = \mathbf
 |--------|---------|---------|
 | **Lyapunov stable** | Start close enough → stay close forever | Frictionless pendulum (center) |
 | **Asymptotically stable** | Lyapunov stable **and** $\mathbf{x}(t) \to \mathbf{0}$ | Damped pendulum |
-| **Exponentially stable** | $\|\mathbf{x}(t)\| \leq c\,e^{-\alpha t}\|\mathbf{x}_0\|$ for some $c, \alpha > 0$ | Any stable LTI system |
+| **Exponentially stable** | $\lVert \mathbf{x}(t)\rVert  \leq c\,e^{-\alpha t}\lVert \mathbf{x}_0\rVert $ for some $c, \alpha > 0$ | Any stable LTI system |
 | **Globally** asymptotically stable | Converges from **every** starting point | $\dot{x} = -x$; not the pendulum (it has another equilibrium) |
 | **Unstable** | Not Lyapunov stable | Inverted pendulum |
 | **BIBO stable** | Every bounded input gives a bounded output | Stable LTI system; not the double integrator |
@@ -827,7 +827,7 @@ Ad, Bd = c2d_zoh(A, B, 0.1)              # Ad = [[1, .1], [0, 1]], Bd = [[.005],
 
 | Guideline | Reason |
 |-----------|--------|
-| $T \ll 1/|\lambda_{\max}|$ — several samples per fastest time constant | Capture the fastest dynamics you care about |
+| $T \ll 1/\lvert \lambda_{\max}\rvert $ — several samples per fastest time constant | Capture the fastest dynamics you care about |
 | Sample rate ≈ 10–30× the desired closed-loop bandwidth | Common control rule of thumb |
 | Sample faster than unstable modes diverge | Inverted pendulum (§6.3) doubles every 0.22 s → control at ≥ 100 Hz is comfortable |
 | ZOH adds roughly $T/2$ of effective delay | Delay erodes stability margins, so slower sampling hurts even with exact discretization |

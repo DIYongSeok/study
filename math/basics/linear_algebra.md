@@ -117,7 +117,7 @@ $$\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^\top \mathbf{b} = \sum_{i=1}^n a_i b_
 | Term | Meaning |
 |------|---------|
 | $\sum a_i b_i$ | Element-wise multiply then sum |
-| $\|\mathbf{a}\|\|\mathbf{b}\|$ | Product of the two lengths |
+| $\lVert \mathbf{a}\rVert \lVert \mathbf{b}\rVert $ | Product of the two lengths |
 | $\cos\theta$ | Cosine of the angle between the vectors |
 | Result is a **scalar** | Not a vector |
 
@@ -143,8 +143,8 @@ $$\|\mathbf{x}\|_\infty = \max_i |x_i| \qquad (\text{L}\infty\text{ norm — lar
 
 | Norm | Unit ball in $\mathbb{R}^2$ |
 |------|----------------|
-| L2 ($\|\cdot\|_2$) | Circle |
-| L1 ($\|\cdot\|_1$) | Diamond |
+| L2 ($\lVert \cdot\rVert _2$) | Circle |
+| L1 ($\lVert \cdot\rVert _1$) | Diamond |
 | $L^\infty$ | Square |
 
 Every norm satisfies: $\|\mathbf{x}\| \geq 0$ with equality only for $\mathbf{x} = \mathbf{0}$; $\|c\mathbf{x}\| = |c|\,\|\mathbf{x}\|$; and the triangle inequality $\|\mathbf{x} + \mathbf{y}\| \leq \|\mathbf{x}\| + \|\mathbf{y}\|$.
@@ -160,7 +160,7 @@ $$\mathbf{a} \times \mathbf{b} = \begin{bmatrix} a_2 b_3 - a_3 b_2 \\ a_3 b_1 - 
 
 | Property | Meaning |
 |----------|---------|
-| $\|\mathbf{a} \times \mathbf{b}\| = \|\mathbf{a}\|\|\mathbf{b}\|\sin\theta$ | Magnitude = area of the parallelogram spanned by $\mathbf{a},\mathbf{b}$ |
+| $\lVert \mathbf{a} \times \mathbf{b}\rVert  = \lVert \mathbf{a}\rVert \lVert \mathbf{b}\rVert \sin\theta$ | Magnitude = area of the parallelogram spanned by $\mathbf{a},\mathbf{b}$ |
 | $\mathbf{a} \times \mathbf{b} \perp \mathbf{a}$ and $\perp \mathbf{b}$ | Direction given by the right-hand rule |
 | $\mathbf{a} \times \mathbf{b} = -(\mathbf{b} \times \mathbf{a})$ | Anticommutative |
 | $\mathbf{a} \times \mathbf{b} = \mathbf{0}$ | $\mathbf{a}, \mathbf{b}$ are parallel (linearly dependent) |
@@ -960,7 +960,7 @@ If $|\lambda| > 1$: repeated application explodes exponentially. If $|\lambda| <
 |-------------|----------------------------------------|
 | **Covariance matrix** | Eigenvectors = directions of max variance; eigenvalues = variance in each direction |
 | **Quadratic forms / Hessian** | Signs of eigenvalues classify $\mathbf{x}^\top A\mathbf{x}$ (§10) |
-| **Dynamical systems** | $\|\lambda\| < 1$ → decay; $\|\lambda\| > 1$ → growth (§14.2) |
+| **Dynamical systems** | $\lvert\lambda\rvert < 1$ → decay; $\lvert\lambda\rvert > 1$ → growth (§14.2) |
 | **Graph Laplacian** | Eigenvectors encode graph connectivity and clusters (§14.5) |
 | **Markov chains** | Eigenvector with $\lambda = 1$ = steady-state distribution (§14.3) |
 
@@ -1111,7 +1111,7 @@ No other rank-$k$ matrix is closer to $A$ than $A_k = U_k \Sigma_k V_k^\top$. Th
 |-------------|----------------|
 | **Rank** | Number of nonzero $\sigma_i$ |
 | **Four fundamental subspaces** | Columns of $U$ / $V$ give orthonormal bases for column space, left null space, row space, null space (§8.4) |
-| **Matrix norms** | $\|A\|_2 = \sigma_1$, $\|A\|_F = \sqrt{\sum \sigma_i^2}$ |
+| **Matrix norms** | $\lVert A\rVert _2 = \sigma_1$, $\lVert A\rVert _F = \sqrt{\sum \sigma_i^2}$ |
 | **Noise removal** | Keep top-$k$ singular values; small $\sigma_i$ correspond to noise directions |
 | **Condition number** | $\kappa(A) = \sigma_{\max}/\sigma_{\min}$; large → solving $A\mathbf{x} = \mathbf{b}$ is numerically unstable |
 | **Pseudo-inverse** | $A^+ = V\Sigma^+ U^\top$ solves $A\mathbf{x}=\mathbf{b}$ in the least-squares sense even when $A$ is not invertible |
@@ -1388,7 +1388,7 @@ $$A = QR, \qquad A \in \mathbb{R}^{m \times n}\ (m \geq n,\ \text{full column ra
 | Factor | Shape | Meaning |
 |--------|-------|---------|
 | $Q$ | $m \times n$ | Orthonormal columns ($Q^\top Q = I_n$) — the $\mathbf{q}_j$ from Gram–Schmidt |
-| $R$ | $n \times n$ | Upper triangular, $R_{kj} = \mathbf{q}_k^\top \mathbf{a}_j$, $R_{jj} = \|\tilde{\mathbf{q}}_j\| > 0$ |
+| $R$ | $n \times n$ | Upper triangular, $R_{kj} = \mathbf{q}_k^\top \mathbf{a}_j$, $R_{jj} = \lVert \tilde{\mathbf{q}}_j\rVert  > 0$ |
 
 $R$ is upper triangular precisely *because* $\mathbf{q}_k$ (built from $\mathbf{a}_1, \ldots, \mathbf{a}_k$) is
 orthogonal to $\mathbf{a}_j$ for $j < k$. Since $Q^\top Q = I$, we get $R = Q^\top A$.
@@ -1523,7 +1523,7 @@ It points in the direction of **steepest increase** (derived in [multivariable_c
 |----------|----------|
 | $f(\mathbf{x}) = \mathbf{a}^\top \mathbf{x}$ | $\nabla f = \mathbf{a}$ |
 | $f(\mathbf{x}) = \mathbf{x}^\top A \mathbf{x}$ | $\nabla f = (A + A^\top)\mathbf{x} = 2A\mathbf{x}$ (if $A$ symmetric) |
-| $f(\mathbf{x}) = \|\mathbf{x}\|_2^2$ | $\nabla f = 2\mathbf{x}$ |
+| $f(\mathbf{x}) = \lVert \mathbf{x}\rVert _2^2$ | $\nabla f = 2\mathbf{x}$ |
 | $f(W) = \mathbf{a}^\top W \mathbf{b}$ | $\nabla_W f = \mathbf{a}\mathbf{b}^\top$ |
 
 ### 11.2 Jacobian Matrix
@@ -1765,8 +1765,8 @@ $$\mathbf{r} = -\mathbf{b} = \begin{bmatrix}-1\\-2\\-2\end{bmatrix}, \qquad \fra
 | $\mathbf{x}^\top \mathbf{x}$ | $2\mathbf{x}$ |
 | $\mathbf{x}^\top A \mathbf{x}$ | $(A + A^\top)\mathbf{x}$; $2A\mathbf{x}$ for symmetric $A$ |
 | $A\mathbf{x}$ (Jacobian) | $A^\top$ |
-| $\|A\mathbf{x} - \mathbf{b}\|_2^2$ w.r.t. $\mathbf{x}$ | $2A^\top(A\mathbf{x} - \mathbf{b})$ |
-| $\|\mathbf{y} - W\mathbf{x}\|_2^2$ w.r.t. $W$ | $-2(\mathbf{y} - W\mathbf{x})\mathbf{x}^\top$ |
+| $\lVert A\mathbf{x} - \mathbf{b}\rVert _2^2$ w.r.t. $\mathbf{x}$ | $2A^\top(A\mathbf{x} - \mathbf{b})$ |
+| $\lVert \mathbf{y} - W\mathbf{x}\rVert _2^2$ w.r.t. $W$ | $-2(\mathbf{y} - W\mathbf{x})\mathbf{x}^\top$ |
 | $\mathbf{a}^\top W \mathbf{b}$ w.r.t. $W$ | $\mathbf{a}\mathbf{b}^\top$ |
 | $\text{tr}(A^\top W)$ w.r.t. $W$ | $A$ |
 | $\log\det(W)$ w.r.t. $W$ | $W^{-\top}$ |
@@ -1886,8 +1886,8 @@ each constraint. Example: forcing coefficients to sum to one, $C = [1\ 1\ \cdots
 
 | Problem | Solution |
 |---------|----------|
-| $\min \|A\mathbf{x} - \mathbf{b}\|_2^2$ | $A^\top A\,\hat{\mathbf{x}} = A^\top \mathbf{b}$; or $R\hat{\mathbf{x}} = Q^\top \mathbf{b}$ |
-| Ridge: $+\,\lambda\|\mathbf{x}\|_2^2$ | $(A^\top A + \lambda I)\hat{\mathbf{x}} = A^\top \mathbf{b}$ |
+| $\min \lVert A\mathbf{x} - \mathbf{b}\rVert _2^2$ | $A^\top A\,\hat{\mathbf{x}} = A^\top \mathbf{b}$; or $R\hat{\mathbf{x}} = Q^\top \mathbf{b}$ |
+| Ridge: $+\,\lambda\lVert \mathbf{x}\rVert _2^2$ | $(A^\top A + \lambda I)\hat{\mathbf{x}} = A^\top \mathbf{b}$ |
 | Constrained: $C\mathbf{x} = \mathbf{d}$ | KKT block system above |
 | Underdetermined ($m < n$), min-norm | $\hat{\mathbf{x}} = A^\top(AA^\top)^{-1}\mathbf{b}$ |
 | Rank-deficient, min-norm | $\hat{\mathbf{x}} = A^{+}\mathbf{b}$ via SVD (§7) |
@@ -1920,9 +1920,9 @@ Let the **spectral radius** be $\rho(A) = \max_i |\lambda_i|$.
 | Condition | Long-run behavior of $\mathbf{x}_t$ |
 |-----------|------------------------------------|
 | $\rho(A) < 1$ | $\mathbf{x}_t \to \mathbf{0}$ — every mode decays |
-| $\rho(A) > 1$ | $\|\mathbf{x}_t\| \to \infty$ — the mode(s) with largest $|\lambda|$ dominate and blow up |
+| $\rho(A) > 1$ | $\lVert \mathbf{x}_t\rVert  \to \infty$ — the mode(s) with largest $\lvert \lambda\rvert $ dominate and blow up |
 | $\rho(A) = 1$, simple dominant $\lambda = 1$ | $\mathbf{x}_t \to c_1 \mathbf{v}_1$ — a nonzero **steady state** along the dominant eigenvector |
-| $|\lambda| = 1$ complex | Undamped oscillation / rotation |
+| $\lvert \lambda\rvert  = 1$ complex | Undamped oscillation / rotation |
 
 For large $t$ the term with the largest $|\lambda_i|$ swamps the rest — the **dominant eigenpair** governs the
 asymptotics. Normalizing $\mathbf{x}_t/\|\mathbf{x}_t\|$ at each step to extract it is **power iteration**
@@ -2079,15 +2079,15 @@ $$J = \sum_{i=1}^{N} \left\| \mathbf{x}_i - \boldsymbol{\mu}_{c_i} \right\|_2^2,
 |------|---------|
 | $c_i$ | Cluster index assigned to point $\mathbf{x}_i$ |
 | $\boldsymbol{\mu}_k \in \mathbb{R}^D$ | Centroid (mean vector) of cluster $k$ |
-| $\|\mathbf{x}_i - \boldsymbol{\mu}_{c_i}\|_2^2$ | Squared Euclidean distance — the quantity §1.4 calls the L2 norm |
+| $\lVert \mathbf{x}_i - \boldsymbol{\mu}_{c_i}\rVert _2^2$ | Squared Euclidean distance — the quantity §1.4 calls the L2 norm |
 
 **The algorithm — Lloyd's iteration:**
 
 | Step | Operation | Linear algebra |
 |------|-----------|----------------|
 | **0. Init** | Pick $K$ initial centroids (e.g. $K$ random points) | — |
-| **1. Assign** | $c_i \leftarrow \arg\min_k \|\mathbf{x}_i - \boldsymbol{\mu}_k\|_2$ | Nearest-centroid by L2 distance |
-| **2. Update** | $\boldsymbol{\mu}_k \leftarrow \dfrac{1}{|S_k|} \sum_{i \in S_k} \mathbf{x}_i$ | Feature-wise mean of the points in cluster $S_k$ |
+| **1. Assign** | $c_i \leftarrow \arg\min_k \lVert \mathbf{x}_i - \boldsymbol{\mu}_k\rVert _2$ | Nearest-centroid by L2 distance |
+| **2. Update** | $\boldsymbol{\mu}_k \leftarrow \dfrac{1}{\lvert S_k\rvert } \sum_{i \in S_k} \mathbf{x}_i$ | Feature-wise mean of the points in cluster $S_k$ |
 | **3. Repeat** | Alternate steps 1–2 until assignments stabilize | $J$ decreases monotonically → converges |
 
 **Why the centroid is the mean:** for a fixed set $S_k$, the point $\boldsymbol{\mu}$ minimizing

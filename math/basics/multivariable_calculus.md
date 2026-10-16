@@ -121,7 +121,7 @@ $$\nabla f(\mathbf{x}) = \begin{bmatrix} \partial f / \partial x_1 \\ \partial f
 | Property | Meaning |
 |----------|---------|
 | Direction of $\nabla f$ | Direction of **steepest ascent** of $f$ |
-| $\|\nabla f\|$ | The slope in that steepest direction |
+| $\lVert \nabla f\rVert $ | The slope in that steepest direction |
 | $\nabla f = \mathbf{0}$ | A **critical point** — candidate minimum, maximum, or saddle |
 | $\nabla f \perp$ level set | Gradient is normal to the contour/surface |
 
@@ -149,8 +149,8 @@ Since $D_{\mathbf{u}} f = \nabla f^\top \mathbf{u} = \|\nabla f\| \cos\theta$, i
 
 | Direction $\mathbf{u}$ | $D_{\mathbf{u}} f$ |
 |------------------------|--------------------|
-| Aligned with $\nabla f$ ($\theta = 0$) | Maximal: $+\|\nabla f\|$ — **steepest ascent** |
-| Opposite to $\nabla f$ ($\theta = \pi$) | Minimal: $-\|\nabla f\|$ — **steepest descent** |
+| Aligned with $\nabla f$ ($\theta = 0$) | Maximal: $+\lVert \nabla f\rVert $ — **steepest ascent** |
+| Opposite to $\nabla f$ ($\theta = \pi$) | Minimal: $-\lVert \nabla f\rVert $ — **steepest descent** |
 | Perpendicular to $\nabla f$ ($\theta = \pi/2$) | Zero — moving along the level set |
 
 > **This is the justification for gradient descent:** $-\nabla f$ is provably the direction that decreases $f$ fastest, locally.
@@ -367,7 +367,7 @@ For $D\mathbf{f}\,\mathbf{h}$ to make sense, the shape is forced:
 |-----------------|-----------------------------------|----------------------|--------------------|
 | $\mathbf{a}^\top\mathbf{x}$ | $\mathbf{a}^\top\mathbf{h}$ | $\mathbf{a}^\top$ | $\mathbf{a}$ |
 | $A\mathbf{x}$ (vector-valued) | $A\mathbf{h}$ | $A$ | — |
-| $\mathbf{x}^\top\mathbf{x} = \|\mathbf{x}\|^2$ | $2\mathbf{x}^\top\mathbf{h}$ | $2\mathbf{x}^\top$ | $2\mathbf{x}$ |
+| $\mathbf{x}^\top\mathbf{x} = \lVert \mathbf{x}\rVert ^2$ | $2\mathbf{x}^\top\mathbf{h}$ | $2\mathbf{x}^\top$ | $2\mathbf{x}$ |
 | $\mathbf{x}^\top A\mathbf{x}$ | $\mathbf{x}^\top(A + A^\top)\mathbf{h}$ | $\mathbf{x}^\top(A + A^\top)$ | $(A + A^\top)\mathbf{x}$; $2A\mathbf{x}$ if $A$ symmetric |
 
 **Derivation of the last row** (the others are the same idea):
@@ -745,7 +745,7 @@ and the chain rule (§4) handles the rest. This is just differentiating through 
 |----------|-------|---------|
 | 1 | Gradient, directional derivative, chain rule (§2–4) | Every training step; backprop |
 | 2 | Jacobian — shapes, geometry, pseudo-inverse (§6.1–6.4) | Robot kinematics, flows, sensitivity analysis |
-| 2 | Matrix calculus — $\|A\mathbf{x}-\mathbf{b}\|^2$, Jacobians, matrix chain rule, dimension checks (§6.5) | Common foundation for IK, nonlinear least squares, state estimation, and backprop — learn before [optimization.md](optimization.md) |
+| 2 | Matrix calculus — $\lVert A\mathbf{x}-\mathbf{b}\rVert ^2$, Jacobians, matrix chain rule, dimension checks (§6.5) | Common foundation for IK, nonlinear least squares, state estimation, and backprop — learn before [optimization.md](optimization.md) |
 | 3 | Hessian, curvature, Taylor (§5, §7) | Optimizer behavior, saddle points, conditioning |
 | 4 | Lagrange multipliers & KKT (§9) | Constrained control, SVMs, trajectory optimization, RL with constraints |
 | 5 | Change of variables & expectation integrals (§11) | Normalizing flows, VAEs, Monte Carlo objectives |

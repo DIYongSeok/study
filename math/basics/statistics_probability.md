@@ -361,7 +361,11 @@ $$\mathcal{N}(\boldsymbol{\mu}, \Sigma): \quad f(\mathbf{x}) = \frac{1}{(2\pi)^{
 
 **Normalizing constant:** $|\Sigma|^{1/2}$ is the volume scaling of the ellipse. With $n = 1$, $\Sigma = \sigma^2$, the formula reduces to the 1D Gaussian.
 
-**Geometry — eigendecomposition of $\Sigma$.** $\Sigma$ is symmetric positive definite, so $\Sigma = Q\Lambda Q^\top$ with orthonormal eigenvectors $\mathbf{q}_i$ and eigenvalues $\lambda_i > 0$. The density is constant where the Mahalanobis distance is constant:
+---
+
+#### Geometry — Eigendecomposition of $\Sigma$
+
+$\Sigma$ is symmetric positive definite, so $\Sigma = Q\Lambda Q^\top$ with orthonormal eigenvectors $\mathbf{q}_i$ and eigenvalues $\lambda_i > 0$. The density is constant where the Mahalanobis distance is constant:
 
 $$(\mathbf{x}-\boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x}-\boldsymbol{\mu}) = \sum_i \frac{y_i^2}{\lambda_i} = c, \qquad \mathbf{y} = Q^\top(\mathbf{x} - \boldsymbol{\mu})$$
 
@@ -377,39 +381,58 @@ That is an **ellipse** (ellipsoid) centered at $\boldsymbol{\mu}$:
 
 In the rotated coordinates $\mathbf{y}$ the components are **independent** 1D Gaussians with variances $\lambda_i$ — that is exactly what PCA finds.
 
-**Example:**
+**Example**
 
 $$\Sigma = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}: \quad \lambda_1 = 3,\ \mathbf{q}_1 = \tfrac{1}{\sqrt2}(1, 1); \qquad \lambda_2 = 1,\ \mathbf{q}_2 = \tfrac{1}{\sqrt2}(1, -1)$$
 
 The ellipse is tilted 45°, stretched along $y = x$ (std. $\sqrt3$) and narrow along $y = -x$ (std. $1$). Correlation $\rho = 1/\sqrt{2 \cdot 2} = 0.5$.
 
-**Sampling (the reparameterization trick).** Factor $\Sigma = LL^\top$ (Cholesky, or $L = Q\Lambda^{1/2}$). Then:
+---
+
+#### Sampling — the Reparameterization Trick
+
+Factor $\Sigma = LL^\top$ (Cholesky, or $L = Q\Lambda^{1/2}$). Then:
 
 $$\mathbf{z} \sim \mathcal{N}(\mathbf{0}, I) \quad \Rightarrow \quad \mathbf{x} = \boldsymbol{\mu} + L\mathbf{z} \sim \mathcal{N}(\boldsymbol{\mu}, \Sigma)$$
 
 Stretch a standard Gaussian blob by $L$, then shift by $\boldsymbol{\mu}$.
 
-**Key Property 1 — Affine transformations stay Gaussian.** If $\mathbf{x} \sim \mathcal{N}(\boldsymbol{\mu}, \Sigma)$, then for any matrix $A$ and vector $\mathbf{b}$:
+---
+
+#### Key Property 1 — Affine Transformations Stay Gaussian
+
+If $\mathbf{x} \sim \mathcal{N}(\boldsymbol{\mu}, \Sigma)$, then for any matrix $A$ and vector $\mathbf{b}$:
 
 $$A\mathbf{x} + \mathbf{b} \sim \mathcal{N}(A\boldsymbol{\mu} + \mathbf{b},\ A\Sigma A^\top)$$
 
 Mean: linearity of expectation. Covariance: $\text{Cov}(A\mathbf{x}) = \mathbb{E}[A(\mathbf{x}-\boldsymbol\mu)(\mathbf{x}-\boldsymbol\mu)^\top A^\top] = A\Sigma A^\top$. (That the result is still *Gaussian* is the special part — most distributions lose their family under linear maps.)
 
-Special cases:
+**Special cases**
+
 - Sum of independent Gaussians: $X + Y \sim \mathcal{N}(\mu_X + \mu_Y,\ \sigma_X^2 + \sigma_Y^2)$ — take $A = [1\ \ 1]$.
 - Projection onto a direction $\mathbf{w}$: $\mathbf{w}^\top\mathbf{x} \sim \mathcal{N}(\mathbf{w}^\top\boldsymbol\mu,\ \mathbf{w}^\top\Sigma\mathbf{w})$.
 
-**Partitioned form.** Split $\mathbf{x}$ into two blocks:
+---
+
+#### Partitioned Form
+
+Properties 2–4 split $\mathbf{x}$ into two blocks:
 
 $$\mathbf{x} = \begin{bmatrix} \mathbf{x}_a \\ \mathbf{x}_b \end{bmatrix}, \qquad \boldsymbol{\mu} = \begin{bmatrix} \boldsymbol{\mu}_a \\ \boldsymbol{\mu}_b \end{bmatrix}, \qquad \Sigma = \begin{bmatrix} \Sigma_{aa} & \Sigma_{ab} \\ \Sigma_{ba} & \Sigma_{bb} \end{bmatrix}$$
 
-**Key Property 2 — Marginals are Gaussian.** Just read off the block:
+---
+
+#### Key Property 2 — Marginals Are Gaussian
+
+Just read off the block:
 
 $$p(\mathbf{x}_a) = \mathcal{N}(\boldsymbol{\mu}_a,\ \Sigma_{aa})$$
 
 (This is Property 1 with $A = [I\ \ 0]$.) No integration needed.
 
-**Key Property 3 — Conditionals are Gaussian.**
+---
+
+#### Key Property 3 — Conditionals Are Gaussian
 
 $$p(\mathbf{x}_a \mid \mathbf{x}_b) = \mathcal{N}\big(\boldsymbol{\mu}_{a|b},\ \Sigma_{a|b}\big)$$
 
@@ -419,25 +442,49 @@ $$\boldsymbol{\mu}_{a|b} = \boldsymbol{\mu}_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\mat
 |------|---------|
 | $\mathbf{x}_b - \boldsymbol{\mu}_b$ | How surprising the observation is |
 | $\Sigma_{ab}\Sigma_{bb}^{-1}$ | Regression coefficient — how much to shift $\mathbf{x}_a$ per unit of surprise |
-| $\Sigma_{a|b}$ | Remaining uncertainty — always $\preceq \Sigma_{aa}$; observing never increases variance. It does **not** depend on the observed value $\mathbf{x}_b$. |
+| $\Sigma_{a\mid b}$ | Remaining uncertainty — always $\preceq \Sigma_{aa}$; observing never increases variance. It does **not** depend on the observed value $\mathbf{x}_b$. |
 
-**2D example.** $(X, Y)$ with $\mu_X = \mu_Y = 0$, $\sigma_X^2 = \sigma_Y^2 = 1$, correlation $\rho$:
+**Why the update has this form — 1D intuition**
+
+Take scalars $x_a, x_b$ with variances $\sigma_a^2, \sigma_b^2$ and covariance $\sigma_{ab}$. Look for the best **linear** guess of $x_a$ from $x_b$, $\hat{x}_a = \mu_a + \beta(x_b - \mu_b)$, minimizing the mean squared error:
+
+$$\mathbb{E}\big[(x_a - \hat{x}_a)^2\big] = \mathbb{E}\big[\big((x_a - \mu_a) - \beta(x_b - \mu_b)\big)^2\big] = \sigma_a^2 - 2\beta\,\sigma_{ab} + \beta^2\sigma_b^2$$
+
+Setting the derivative in $\beta$ to zero gives $\beta = \sigma_{ab}/\sigma_b^2$ — the **regression slope** — and the leftover error variance is
+
+$$\sigma_a^2 - 2\frac{\sigma_{ab}}{\sigma_b^2}\sigma_{ab} + \frac{\sigma_{ab}^2}{\sigma_b^4}\sigma_b^2 = \sigma_a^2 - \frac{\sigma_{ab}^2}{\sigma_b^2}$$
+
+These are exactly $\boldsymbol\mu_{a|b}$ and $\Sigma_{a\mid b}$ with $\Sigma_{ab}\Sigma_{bb}^{-1} \to \sigma_{ab}/\sigma_b^2$. So the conditional mean **shifts by (regression slope) × (surprise)**, and the conditional variance is **the part of $x_a$'s variance that $x_b$ cannot explain**. For Gaussians this best linear guess is also the exact conditional distribution — proved twice in "Proofs of the Key Properties" below (Proof 1: decorrelation; Proof 2: completing the square in the density).
+
+**2D example**
+
+$(X, Y)$ with $\mu_X = \mu_Y = 0$, $\sigma_X^2 = \sigma_Y^2 = 1$, correlation $\rho$:
 
 $$X \mid Y = y \ \sim\ \mathcal{N}\big(\rho\, y,\ 1 - \rho^2\big)$$
 
 With $\rho = 0.8$ and $y = 2$: $X \mid Y{=}2 \sim \mathcal{N}(1.6,\ 0.36)$. The std. dev. drops from $1$ to $0.6$. With $\rho = 0$ the conditional equals the marginal — for Gaussians, **uncorrelated ⇔ independent** (false for general distributions).
 
-**Actual example — covering for a broken temperature sensor.** Two sensors in the same room read $(T_A, T_B)$ with mean $22$°C each, variance $4$ each, and covariance $3$ (correlation $0.75$). Sensor A fails; sensor B reads $25$°C. Property 3 gives
+**Actual example — covering for a broken temperature sensor**
+
+Two sensors in the same room read $(T_A, T_B)$ with mean $22$°C each, variance $4$ each, and covariance $3$ (correlation $0.75$). Sensor A fails; sensor B reads $25$°C. Property 3 gives
 
 $$T_A \mid T_B{=}25 \ \sim\ \mathcal{N}\Big(22 + \tfrac{3}{4}(25 - 22),\ \ 4 - \tfrac{3 \cdot 3}{4}\Big) = \mathcal{N}(24.25,\ 1.75)$$
 
 So the best guess for A is $24.25$°C (B is 3° above average, and A is expected to follow 75% of that), and A's uncertainty drops from std $2.0$ to $1.32$°C. Note the variance $1.75$ would be the same whatever B had read.
 
-#### Proofs of the Key Properties
+---
 
-**Tool — the characteristic function** $\varphi_{\mathbf{x}}(\mathbf{t}) = \mathbb{E}\big[e^{i\mathbf{t}^\top\mathbf{x}}\big]$. Two facts are used (standard results of probability theory): it **uniquely determines** the distribution, and $\mathbf{x}_a, \mathbf{x}_b$ are **independent iff** $\varphi_{(\mathbf{x}_a, \mathbf{x}_b)}(\mathbf{t}_a, \mathbf{t}_b) = \varphi_{\mathbf{x}_a}(\mathbf{t}_a)\,\varphi_{\mathbf{x}_b}(\mathbf{t}_b)$.
+#### Proofs of Key Properties 1–3
 
-**Lemma A — characteristic function of a Gaussian.** If $\mathbf{x} \sim \mathcal{N}(\boldsymbol\mu, \Sigma)$, then
+> Statements first, proofs here. Key Property 4 (below) is proved using these results.
+
+##### Tool — the characteristic function
+
+The characteristic function is $\varphi_{\mathbf{x}}(\mathbf{t}) = \mathbb{E}\big[e^{i\mathbf{t}^\top\mathbf{x}}\big]$. Two facts are used (standard results of probability theory): it **uniquely determines** the distribution, and $\mathbf{x}_a, \mathbf{x}_b$ are **independent iff** $\varphi_{(\mathbf{x}_a, \mathbf{x}_b)}(\mathbf{t}_a, \mathbf{t}_b) = \varphi_{\mathbf{x}_a}(\mathbf{t}_a)\,\varphi_{\mathbf{x}_b}(\mathbf{t}_b)$.
+
+##### Lemma A — Characteristic function of a Gaussian
+
+If $\mathbf{x} \sim \mathcal{N}(\boldsymbol\mu, \Sigma)$, then
 
 $$\varphi_{\mathbf{x}}(\mathbf{t}) = \exp\!\Big(i\,\mathbf{t}^\top\boldsymbol\mu - \tfrac12\,\mathbf{t}^\top\Sigma\,\mathbf{t}\Big)$$
 
@@ -451,33 +498,43 @@ $$\varphi_{\mathbf{x}}(\mathbf{t}) = e^{i\mathbf{t}^\top\boldsymbol\mu}\,\mathbb
 
 This formula also makes sense when $\Sigma$ is only PSD (singular), so it is used as the general **definition** of $\mathcal{N}(\boldsymbol\mu, \Sigma)$ — including degenerate Gaussians that live on a subspace and have no density.
 
-**Proof of Property 1 (affine maps).** Let $\mathbf{y} = A\mathbf{x} + \mathbf{b}$. Then
+##### Proof of Property 1 (affine maps)
+
+Let $\mathbf{y} = A\mathbf{x} + \mathbf{b}$. Then
 
 $$\varphi_{\mathbf{y}}(\mathbf{t}) = \mathbb{E}\big[e^{i\mathbf{t}^\top(A\mathbf{x} + \mathbf{b})}\big] = e^{i\mathbf{t}^\top\mathbf{b}}\,\varphi_{\mathbf{x}}(A^\top\mathbf{t}) = \exp\!\Big(i\,\mathbf{t}^\top(A\boldsymbol\mu + \mathbf{b}) - \tfrac12\,\mathbf{t}^\top A\Sigma A^\top\mathbf{t}\Big)$$
 
 which is the characteristic function of $\mathcal{N}(A\boldsymbol\mu + \mathbf{b},\ A\Sigma A^\top)$. By uniqueness, that is the distribution of $\mathbf{y}$. $\blacksquare$
 
-**Proof of Property 2 (marginals).** Property 1 with $A = [I\ \ 0]$, $\mathbf{b} = \mathbf{0}$: $A\boldsymbol\mu = \boldsymbol\mu_a$ and $A\Sigma A^\top = \Sigma_{aa}$. $\blacksquare$
+##### Proof of Property 2 (marginals)
 
-**Lemma B — for jointly Gaussian vectors, uncorrelated ⇒ independent.** If $(\mathbf{x}_a, \mathbf{x}_b)$ is jointly Gaussian with $\Sigma_{ab} = 0$, then $\mathbf{x}_a$ and $\mathbf{x}_b$ are independent.
+Property 1 with $A = [I\ \ 0]$, $\mathbf{b} = \mathbf{0}$: $A\boldsymbol\mu = \boldsymbol\mu_a$ and $A\Sigma A^\top = \Sigma_{aa}$. $\blacksquare$
+
+##### Lemma B — For jointly Gaussian vectors, uncorrelated ⇒ independent
+
+If $(\mathbf{x}_a, \mathbf{x}_b)$ is jointly Gaussian with $\Sigma_{ab} = 0$, then $\mathbf{x}_a$ and $\mathbf{x}_b$ are independent.
 
 *Proof.* With $\Sigma_{ab} = 0$ the quadratic form splits, $\mathbf{t}^\top\Sigma\mathbf{t} = \mathbf{t}_a^\top\Sigma_{aa}\mathbf{t}_a + \mathbf{t}_b^\top\Sigma_{bb}\mathbf{t}_b$, so by Lemma A the joint characteristic function factors into $\varphi_{\mathbf{x}_a}(\mathbf{t}_a)\,\varphi_{\mathbf{x}_b}(\mathbf{t}_b)$. $\blacksquare$
 
 > **"Jointly" is essential.** Let $X \sim \mathcal{N}(0, 1)$ and $Y = SX$ with $S = \pm 1$ a fair coin flip independent of $X$. Then $Y \sim \mathcal{N}(0, 1)$ and $\text{Cov}(X, Y) = \mathbb{E}[S]\,\mathbb{E}[X^2] = 0$, yet $|Y| = |X|$ — completely dependent. $(X, Y)$ is not jointly Gaussian ($X + Y$ equals $0$ with probability $\tfrac12$).
 
-**Proof of Property 3 (conditionals) — the decorrelation trick.** Assume $\Sigma_{bb}$ is invertible and define
+##### Proof 1 of Property 3 — the decorrelation trick
+
+Assume $\Sigma_{bb}$ is invertible and define
 
 $$\mathbf{w} = \mathbf{x}_a - \Sigma_{ab}\Sigma_{bb}^{-1}\mathbf{x}_b = \begin{bmatrix} I & -\Sigma_{ab}\Sigma_{bb}^{-1} \end{bmatrix}\mathbf{x}$$
 
-*Step 1 — $(\mathbf{w}, \mathbf{x}_b)$ is jointly Gaussian*, being an affine function of $\mathbf{x}$ (Property 1 with the stacked matrix $\begin{bmatrix} I & -\Sigma_{ab}\Sigma_{bb}^{-1} \\ 0 & I \end{bmatrix}$).
+**Step 1 — $(\mathbf{w}, \mathbf{x}_b)$ is jointly Gaussian**
 
-*Step 2 — $\mathbf{w}$ is uncorrelated with $\mathbf{x}_b$:*
+It is an affine function of $\mathbf{x}$ (Property 1 with the stacked matrix $\begin{bmatrix} I & -\Sigma_{ab}\Sigma_{bb}^{-1} \\ 0 & I \end{bmatrix}$).
+
+**Step 2 — $\mathbf{w}$ is uncorrelated with $\mathbf{x}_b$**
 
 $$\text{Cov}(\mathbf{w}, \mathbf{x}_b) = \Sigma_{ab} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{bb} = 0$$
 
 so by Lemma B, $\mathbf{w}$ is **independent** of $\mathbf{x}_b$.
 
-*Step 3 — moments of $\mathbf{w}$:*
+**Step 3 — moments of $\mathbf{w}$**
 
 $$\mathbb{E}[\mathbf{w}] = \boldsymbol\mu_a - \Sigma_{ab}\Sigma_{bb}^{-1}\boldsymbol\mu_b$$
 
@@ -485,16 +542,73 @@ $$\text{Cov}(\mathbf{w}) = \Sigma_{aa} - 2\,\Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{b
 
 (using $\Sigma_{ba} = \Sigma_{ab}^\top$ and the symmetry of $\Sigma_{bb}^{-1}$).
 
-*Step 4 — condition.* Write $\mathbf{x}_a = \mathbf{w} + \Sigma_{ab}\Sigma_{bb}^{-1}\mathbf{x}_b$. Given $\mathbf{x}_b$, the second term is a fixed vector, and $\mathbf{w}$ keeps its distribution because it is independent of $\mathbf{x}_b$. A Gaussian plus a constant is Gaussian, so
+**Step 4 — condition**
+
+Write $\mathbf{x}_a = \mathbf{w} + \Sigma_{ab}\Sigma_{bb}^{-1}\mathbf{x}_b$. Given $\mathbf{x}_b$, the second term is a fixed vector, and $\mathbf{w}$ keeps its distribution because it is independent of $\mathbf{x}_b$. A Gaussian plus a constant is Gaussian, so
 
 $$\mathbf{x}_a \mid \mathbf{x}_b \sim \mathcal{N}\big(\boldsymbol\mu_a - \Sigma_{ab}\Sigma_{bb}^{-1}\boldsymbol\mu_b + \Sigma_{ab}\Sigma_{bb}^{-1}\mathbf{x}_b,\ \ \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}\big) \qquad \blacksquare$$
 
-**Two corollaries.**
+##### Proof 2 of Property 3 — completing the square in the density
+
+This proof works directly with the formula for $f(\mathbf{x})$ and needs no characteristic functions. Assume $\Sigma \succ 0$, write $\mathbf{d} = \mathbf{x} - \boldsymbol\mu$ with blocks $\mathbf{d}_a, \mathbf{d}_b$, and let $\Lambda = \Sigma^{-1}$ (partitioned the same way; $\Lambda_{aa}, \Lambda_{bb}$ symmetric and $\Lambda_{ba} = \Lambda_{ab}^\top$).
+
+**Step 1 — the conditional density is proportional to the joint**
+
+By definition $p(\mathbf{x}_a \mid \mathbf{x}_b) = p(\mathbf{x}_a, \mathbf{x}_b)/p(\mathbf{x}_b)$, and the denominator does not depend on $\mathbf{x}_a$. So, **as a function of $\mathbf{x}_a$** with $\mathbf{x}_b$ fixed,
+
+$$p(\mathbf{x}_a \mid \mathbf{x}_b) \propto \exp\!\Big(-\tfrac12\,\mathbf{d}^\top\Lambda\,\mathbf{d}\Big)$$
+
+**Step 2 — expand the exponent in blocks**
+
+$$\mathbf{d}^\top\Lambda\,\mathbf{d} = \mathbf{d}_a^\top\Lambda_{aa}\mathbf{d}_a + 2\,\mathbf{d}_a^\top\Lambda_{ab}\mathbf{d}_b + \mathbf{d}_b^\top\Lambda_{bb}\mathbf{d}_b$$
+
+(the two cross terms $\mathbf{d}_a^\top\Lambda_{ab}\mathbf{d}_b$ and $\mathbf{d}_b^\top\Lambda_{ba}\mathbf{d}_a$ are equal scalars). The last term does not involve $\mathbf{x}_a$ and is absorbed into the proportionality constant.
+
+**Step 3 — complete the square in $\mathbf{d}_a$**
+
+With $\mathbf{m} = -\Lambda_{aa}^{-1}\Lambda_{ab}\mathbf{d}_b$,
+
+$$(\mathbf{d}_a - \mathbf{m})^\top\Lambda_{aa}(\mathbf{d}_a - \mathbf{m}) = \mathbf{d}_a^\top\Lambda_{aa}\mathbf{d}_a + 2\,\mathbf{d}_a^\top\Lambda_{ab}\mathbf{d}_b + \underbrace{\mathbf{d}_b^\top\Lambda_{ba}\Lambda_{aa}^{-1}\Lambda_{ab}\mathbf{d}_b}_{\text{no } \mathbf{x}_a}$$
+
+(expand and use $-2\,\mathbf{d}_a^\top\Lambda_{aa}\mathbf{m} = 2\,\mathbf{d}_a^\top\Lambda_{ab}\mathbf{d}_b$). Comparing with Step 2, the $\mathbf{x}_a$-dependent parts agree, so
+
+$$p(\mathbf{x}_a \mid \mathbf{x}_b) \propto \exp\!\Big(-\tfrac12\,(\mathbf{d}_a - \mathbf{m})^\top\Lambda_{aa}(\mathbf{d}_a - \mathbf{m})\Big)$$
+
+**Step 4 — recognize the Gaussian**
+
+$\Lambda_{aa} \succ 0$ (a principal block of $\Lambda \succ 0$). A density proportional to $\exp(-\tfrac12(\mathbf{x}_a - \mathbf{c})^\top\Lambda_{aa}(\mathbf{x}_a - \mathbf{c}))$ must be $\mathcal{N}(\mathbf{c}, \Lambda_{aa}^{-1})$, because the normalizing constant is forced by integrating to $1$. Here $\mathbf{d}_a - \mathbf{m} = \mathbf{x}_a - (\boldsymbol\mu_a + \mathbf{m})$, so
+
+$$\mathbf{x}_a \mid \mathbf{x}_b \sim \mathcal{N}\big(\boldsymbol\mu_a - \Lambda_{aa}^{-1}\Lambda_{ab}(\mathbf{x}_b - \boldsymbol\mu_b),\ \ \Lambda_{aa}^{-1}\big)$$
+
+**Step 5 — translate from $\Lambda$ back to $\Sigma$**
+
+The block-inverse formula with $\Sigma_{bb}$ as pivot ([linear_algebra.md](linear_algebra.md) §4.6) gives the top blocks of $\Lambda = \Sigma^{-1}$:
+
+$$\Lambda_{aa} = \big(\Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}\big)^{-1}, \qquad \Lambda_{ab} = -\Lambda_{aa}\,\Sigma_{ab}\Sigma_{bb}^{-1}$$
+
+Therefore $\Lambda_{aa}^{-1} = \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}$ and $-\Lambda_{aa}^{-1}\Lambda_{ab} = \Sigma_{ab}\Sigma_{bb}^{-1}$, which turns Step 4 into
+
+$$\boldsymbol\mu_{a|b} = \boldsymbol\mu_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\mathbf{x}_b - \boldsymbol\mu_b), \qquad \Sigma_{a\mid b} = \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba} \qquad \blacksquare$$
+
+**Check with the 2D example**
+
+($\Sigma = \begin{bmatrix} 1 & \rho \\ \rho & 1 \end{bmatrix}$): $\Lambda = \dfrac{1}{1 - \rho^2}\begin{bmatrix} 1 & -\rho \\ -\rho & 1 \end{bmatrix}$, so $\Lambda_{aa}^{-1} = 1 - \rho^2$ and $-\Lambda_{aa}^{-1}\Lambda_{ab} = -(1 - \rho^2)\cdot\dfrac{-\rho}{1 - \rho^2} = \rho$. Hence $X \mid Y{=}y \sim \mathcal{N}(\rho y,\ 1 - \rho^2)$ ✓.
+
+| | Proof 1 (decorrelation) | Proof 2 (completing the square) |
+|---|---|---|
+| Idea | Subtract the part of $\mathbf{x}_a$ predictable from $\mathbf{x}_b$; the remainder is independent of $\mathbf{x}_b$ | Read the conditional off the exponent of the joint density |
+| Needs | Affine property + "uncorrelated ⇒ independent" | Only the density formula + block inverse |
+| Works for singular $\Sigma$ | Yes (only $\Sigma_{bb}$ must be invertible) | No ($\Lambda = \Sigma^{-1}$ must exist) |
+| Gives for free | Why the variance does not depend on $\mathbf{x}_b$ | The precision form $\Sigma_{a\mid b} = \Lambda_{aa}^{-1}$ |
+
+##### Corollaries
 
 - $\Sigma_{a|b} \preceq \Sigma_{aa}$: the subtracted term is $(\Sigma_{bb}^{-1/2}\Sigma_{ba})^\top(\Sigma_{bb}^{-1/2}\Sigma_{ba}) \succeq 0$. Observing $\mathbf{x}_b$ can never increase uncertainty about $\mathbf{x}_a$.
 - $\Sigma_{a|b} \succ 0$: it is the Schur complement of $\Sigma_{bb}$ in $\Sigma \succ 0$ ([linear_algebra.md](linear_algebra.md) §4.6).
 
-**Precision (information) form of Property 3.** Partition the precision matrix $\Lambda = \Sigma^{-1}$ like $\Sigma$. Then
+##### Precision (information) form of Property 3
+
+Partition the precision matrix $\Lambda = \Sigma^{-1}$ like $\Sigma$. Then
 
 $$\Sigma_{a|b} = \Lambda_{aa}^{-1}, \qquad \boldsymbol\mu_{a|b} = \boldsymbol\mu_a - \Lambda_{aa}^{-1}\Lambda_{ab}(\mathbf{x}_b - \boldsymbol\mu_b)$$
 
@@ -502,7 +616,11 @@ $$\Sigma_{a|b} = \Lambda_{aa}^{-1}, \qquad \boldsymbol\mu_{a|b} = \boldsymbol\mu
 
 Conditioning is **easy in precision form** (read off a block), while marginalizing is easy in covariance form — the reason information filters and Gaussian graphical models work with $\Lambda$.
 
-**Key Property 4 — The linear-Gaussian model (Bayes' rule for Gaussians).** Let
+---
+
+#### Key Property 4 — The Linear-Gaussian Model (Bayes' Rule for Gaussians)
+
+Let
 
 $$\mathbf{x} \sim \mathcal{N}(\boldsymbol\mu, P), \qquad \mathbf{y} = H\mathbf{x} + \mathbf{c} + \mathbf{v}, \qquad \mathbf{v} \sim \mathcal{N}(\mathbf{0}, R) \text{ independent of } \mathbf{x}$$
 
@@ -515,7 +633,9 @@ Then, with $S = HPH^\top + R$ and $K = PH^\top S^{-1}$:
 | (iii) Posterior, covariance form | $\mathbf{x} \mid \mathbf{y} \sim \mathcal{N}\big(\boldsymbol\mu + K(\mathbf{y} - H\boldsymbol\mu - \mathbf{c}),\ (I - KH)P\big)$ |
 | (iv) Posterior, information form | $P_{\text{post}}^{-1} = P^{-1} + H^\top R^{-1}H, \quad \boldsymbol\mu_{\text{post}} = P_{\text{post}}\big(P^{-1}\boldsymbol\mu + H^\top R^{-1}(\mathbf{y} - \mathbf{c})\big)$ |
 
-*Proof.* (i) Independent Gaussians are jointly Gaussian with block-diagonal covariance (the product of their characteristic functions is of the form in Lemma A). Write
+**Proof**
+
+(i) Independent Gaussians are jointly Gaussian with block-diagonal covariance (the product of their characteristic functions is of the form in Lemma A). Write
 
 $$\begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix} = \begin{bmatrix} I & 0 \\ H & I \end{bmatrix}\begin{bmatrix} \mathbf{x} \\ \mathbf{v} \end{bmatrix} + \begin{bmatrix} \mathbf{0} \\ \mathbf{c} \end{bmatrix}$$
 
@@ -533,16 +653,22 @@ so the covariances agree. For the mean, push-through gives $K = P_{\text{post}}H
 
 $$\boldsymbol\mu + K(\mathbf{y} - \mathbf{c} - H\boldsymbol\mu) = P_{\text{post}}\Big[\big(P_{\text{post}}^{-1} - H^\top R^{-1}H\big)\boldsymbol\mu + H^\top R^{-1}(\mathbf{y} - \mathbf{c})\Big] = P_{\text{post}}\big[P^{-1}\boldsymbol\mu + H^\top R^{-1}(\mathbf{y} - \mathbf{c})\big] \qquad \blacksquare$$
 
-**Reading (iv):** information **adds** — posterior precision = prior precision + measurement precision mapped through $H$ — and the posterior mean is a **precision-weighted average** of the prior mean and the measurement.
+**Reading (iv)**
 
-**Scalar example.** Prior $x \sim \mathcal{N}(0, 4)$, measurement $y = x + v$, $R = 1$, observed $y = 2$:
+information **adds** — posterior precision = prior precision + measurement precision mapped through $H$ — and the posterior mean is a **precision-weighted average** of the prior mean and the measurement.
+
+**Scalar example**
+
+Prior $x \sim \mathcal{N}(0, 4)$, measurement $y = x + v$, $R = 1$, observed $y = 2$:
 
 - Covariance form: $S = 5$, $K = 0.8$, mean $0 + 0.8 \cdot 2 = 1.6$, variance $(1 - 0.8) \cdot 4 = 0.8$.
 - Information form: precision $\tfrac14 + 1 = 1.25$ → variance $0.8$; mean $0.8\,(\tfrac14 \cdot 0 + 1 \cdot 2) = 1.6$. ✓
 
 The measurement is 4× more precise than the prior, so the estimate moves 80% of the way toward it.
 
-**Actual example — fusing an ultrasonic and a laser range sensor.** Both measure the same distance $d$; there is no useful prior ($P^{-1} = 0$).
+**Actual example — fusing an ultrasonic and a laser range sensor**
+
+Both measure the same distance $d$; there is no useful prior ($P^{-1} = 0$).
 
 | Sensor | Reading | Std | Precision $1/\sigma^2$ |
 |--------|---------|-----|------------------------|
@@ -551,13 +677,15 @@ The measurement is 4× more precise than the prior, so the estimate moves 80% of
 
 Information form (iv), applied once per sensor: precision $100 + 400 = 500$, so std $= 1/\sqrt{500} = 0.045$ m; mean $= (100 \cdot 2.00 + 400 \cdot 2.05)/500 = 2.04$ m. The fused estimate is **better than either sensor alone** and sits 80% of the way toward the more precise laser. The covariance form gives the same: after the ultrasonic, $d \sim \mathcal{N}(2.00, 0.01)$; then the laser update has $K = 0.01/(0.01 + 0.0025) = 0.8$, mean $2.00 + 0.8 \cdot 0.05 = 2.04$, variance $0.2 \cdot 0.01 = 0.002$ ✓.
 
-**Where Property 4 is used:**
+**Where Property 4 is used**
 
 - **Kalman filter update** = (iii) with the predicted state as prior ([kalman_filter.md](../probabilistic_inference/kalman_filter.md) §3).
 - **Gaussian-process regression**: prior $\mathbf{f} \sim \mathcal{N}(\mathbf{0}, K)$, observations $\mathbf{y} = \mathbf{f} + \boldsymbol\varepsilon$; the predictive distribution is (iii), and the marginal likelihood used to fit hyperparameters is (ii) ([gaussian_process_regression.md](../probabilistic_inference/gaussian_process_regression.md)).
 - **Bayesian linear regression**: (iv) with $\mathbf{x}$ = weights, $H$ = design matrix.
 
-**In AI:**
+---
+
+#### In AI
 - **Gaussian processes:** prediction at new points is exactly Property 3 — condition the joint Gaussian on the observed training outputs.
 - **Kalman filter:** the predict step is Property 1 ($\Sigma \to F\Sigma F^\top + Q$); the update step is Property 3.
 - **VAE / diffusion:** sampling via $\boldsymbol\mu + L\mathbf{z}$ makes the sample differentiable w.r.t. $\boldsymbol\mu$ and $L$ (§11.3–11.4).
@@ -781,13 +909,13 @@ $$D_{\text{KL}}(p \| q) = H(p, q) - H(p)$$
 
 | Property | Value |
 |----------|-------|
-| $D_{\text{KL}}(p \| q) \geq 0$ | Always — zero only when $p = q$ (Gibbs' inequality) |
-| $D_{\text{KL}}(p \| q) \neq D_{\text{KL}}(q \| p)$ | **Not symmetric** — not a true distance |
-| $D_{\text{KL}}(p \| q) = \infty$ | If $q(x) = 0$ anywhere that $p(x) > 0$ |
+| $D_{\text{KL}}(p \parallel q) \geq 0$ | Always — zero only when $p = q$ (Gibbs' inequality) |
+| $D_{\text{KL}}(p \parallel q) \neq D_{\text{KL}}(q \parallel p)$ | **Not symmetric** — not a true distance |
+| $D_{\text{KL}}(p \parallel q) = \infty$ | If $q(x) = 0$ anywhere that $p(x) > 0$ |
 
 **Forward vs Reverse KL:**
 
-| | $D_{\text{KL}}(p \| q)$ | $D_{\text{KL}}(q \| p)$ |
+| | $D_{\text{KL}}(p \parallel q)$ | $D_{\text{KL}}(q \parallel p)$ |
 |---|---|---|
 | Name | Forward KL | Reverse KL |
 | Forces $q$ to... | Cover all of $p$ (zero-avoiding) | Fit one mode of $p$ (zero-forcing) |
@@ -1090,8 +1218,8 @@ $$\hat{\theta}_{\text{MAP}} = \arg\max_\theta \, p(\theta \mid \mathcal{D}) = \a
 
 | Prior $p(\theta)$ | Log-prior | Equivalent regularization |
 |-------------------|-----------|--------------------------|
-| Gaussian $\mathcal{N}(0, \sigma^2)$ | $-\|\theta\|_2^2 / 2\sigma^2$ | L2 (weight decay) |
-| Laplace $\text{Lap}(0, b)$ | $-\|\theta\|_1 / b$ | L1 (sparsity) |
+| Gaussian $\mathcal{N}(0, \sigma^2)$ | $-\lVert \theta\rVert _2^2 / 2\sigma^2$ | L2 (weight decay) |
+| Laplace $\text{Lap}(0, b)$ | $-\lVert \theta\rVert _1 / b$ | L1 (sparsity) |
 
 > **Key insight:** L2 regularization is the MAP estimate under a Gaussian prior on weights. The regularization strength $\lambda = 1/\sigma^2$ encodes how strongly you believe weights should be near zero.
 
@@ -1461,10 +1589,10 @@ Every standard loss function is the negative log-likelihood of a specific distri
 
 | Loss | Distribution | Setting |
 |------|-------------|---------|
-| MSE $\|y - \hat{y}\|_2^2$ | Gaussian $p(y\mid x) = \mathcal{N}(\hat{y}, \sigma^2)$ | Regression |
+| MSE $\lVert y - \hat{y}\rVert _2^2$ | Gaussian $p(y\mid x) = \mathcal{N}(\hat{y}, \sigma^2)$ | Regression |
 | Cross-entropy $-\log \hat{p}_c$ | Categorical $p(y\mid x) = \text{Cat}(\hat{\mathbf{p}})$ | Classification |
 | BCE $-y\log\hat{p} - (1-y)\log(1-\hat{p})$ | Bernoulli $p(y\mid x) = \text{Bern}(\hat{p})$ | Binary classification |
-| MAE $\|y - \hat{y}\|_1$ | Laplace $p(y\mid x) = \text{Lap}(\hat{y}, b)$ | Robust regression |
+| MAE $\lVert y - \hat{y}\rVert _1$ | Laplace $p(y\mid x) = \text{Lap}(\hat{y}, b)$ | Robust regression |
 | Huber loss | Mixture of Gaussian and Laplace | Robust regression |
 
 **Derivation of MSE from MLE:**

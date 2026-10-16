@@ -94,3 +94,15 @@
 | Evening      | 6:00 – 10:00  |
 | Night        | 10:00 – 12:00 |
 | Midnight     | 12:00 – 4:00  | 
+
+> 사칙연산 (Arithmetic)
+
+| 연산 | 동사 표현 | 읽기 | 결과 |
+|------|-----------|------|------|
+| 2 + 3 = 5 | add 2 and 3 | two plus three equals five | sum |
+| 5 − 2 = 3 | subtract 2 from 5 | five minus two is three | difference |
+| 2 × 3 = 6 | multiply 2 by 3 | two times three is six | product |
+| 6 ÷ 2 = 3 | divide 6 by 2 | six divided by two is three | quotient |
+
+- = 은 equals / is 둘 다 OK
+- 7 ÷ 2 = 3 ... 1 → three with a remainder of one (나머지: remainder)

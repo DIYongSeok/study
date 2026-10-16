@@ -89,7 +89,7 @@ Maximization is the same problem: $\max f = -\min(-f)$. Everything below is stat
 | Type | Definition |
 |------|------------|
 | **Global minimum** | $f(\mathbf{x}^\star) \le f(\mathbf{x})$ for **all** feasible $\mathbf{x}$ |
-| **Local minimum** | $f(\mathbf{x}^\star) \le f(\mathbf{x})$ for all feasible $\mathbf{x}$ in some ball $\|\mathbf{x} - \mathbf{x}^\star\| < r$ |
+| **Local minimum** | $f(\mathbf{x}^\star) \le f(\mathbf{x})$ for all feasible $\mathbf{x}$ in some ball $\lVert \mathbf{x} - \mathbf{x}^\star\rVert  < r$ |
 | **Strict** local minimum | Same with $<$ for $\mathbf{x} \neq \mathbf{x}^\star$ |
 | **Critical / stationary point** | $\nabla f(\mathbf{x}^\star) = \mathbf{0}$ (unconstrained) — a minimum, maximum, or saddle |
 
@@ -169,9 +169,9 @@ $\mathbf{z}$ is inside the ball but $f(\mathbf{z}) < f(\mathbf{x}^\star)$, contr
 | Function | Convex? | Why |
 |----------|---------|-----|
 | $\mathbf{a}^\top \mathbf{x} + b$ | Yes (and concave) | Affine |
-| $\|\mathbf{x}\|_p$, any $p \ge 1$ | Yes | Triangle inequality |
+| $\lVert \mathbf{x}\rVert _p$, any $p \ge 1$ | Yes | Triangle inequality |
 | $\mathbf{x}^\top A \mathbf{x}$ | Yes iff $A \succeq 0$ | Hessian is $2A$ |
-| $\|A\mathbf{x} - \mathbf{b}\|_2^2$ | Yes | Hessian $2A^\top A \succeq 0$ |
+| $\lVert A\mathbf{x} - \mathbf{b}\rVert _2^2$ | Yes | Hessian $2A^\top A \succeq 0$ |
 | $e^{ax}$, $-\log x$, $x \log x$ | Yes | Second derivative $> 0$ |
 | $\log \sum_i e^{x_i}$ (log-sum-exp) | Yes | Smooth max — underlies softmax cross-entropy |
 | $\max_i f_i(\mathbf{x})$, each $f_i$ convex | Yes | Pointwise max preserves convexity |
@@ -187,8 +187,8 @@ Two constants control how fast gradient methods converge. Both are statements ab
 
 | Property | Definition | Hessian form | Meaning |
 |----------|------------|--------------|---------|
-| **$\mu$-strongly convex** | $f(\mathbf{y}) \ge f(\mathbf{x}) + \nabla f(\mathbf{x})^\top(\mathbf{y} - \mathbf{x}) + \frac{\mu}{2}\|\mathbf{y} - \mathbf{x}\|^2$ | $\nabla^2 f \succeq \mu I$ | Curves up **at least** as fast as a parabola with curvature $\mu$ |
-| **$L$-smooth** | $\|\nabla f(\mathbf{x}) - \nabla f(\mathbf{y})\| \le L\|\mathbf{x} - \mathbf{y}\|$ | $\nabla^2 f \preceq L I$ | Curves up **at most** as fast as a parabola with curvature $L$; gradient is $L$-Lipschitz |
+| **$\mu$-strongly convex** | $f(\mathbf{y}) \ge f(\mathbf{x}) + \nabla f(\mathbf{x})^\top(\mathbf{y} - \mathbf{x}) + \frac{\mu}{2}\lVert \mathbf{y} - \mathbf{x}\rVert ^2$ | $\nabla^2 f \succeq \mu I$ | Curves up **at least** as fast as a parabola with curvature $\mu$ |
+| **$L$-smooth** | $\lVert \nabla f(\mathbf{x}) - \nabla f(\mathbf{y})\rVert  \le L\lVert \mathbf{x} - \mathbf{y}\rVert $ | $\nabla^2 f \preceq L I$ | Curves up **at most** as fast as a parabola with curvature $L$; gradient is $L$-Lipschitz |
 | **Condition number** | $\kappa = L / \mu \ge 1$ | $\lambda_{\max} / \lambda_{\min}$ | Ratio of steepest to gentlest curvature |
 
 For a quadratic $f(\mathbf{x}) = \frac{1}{2}\mathbf{x}^\top A \mathbf{x}$ with $A \succ 0$: $\mu = \lambda_{\min}(A)$, $L = \lambda_{\max}(A)$ exactly.
@@ -373,10 +373,10 @@ How many iterations to reach $f(\mathbf{x}_k) - f^\star \le \varepsilon$?
 
 | Assumption on $f$ | Rate | Iterations for $\varepsilon$ | Name |
 |-------------------|------|------------------------------|------|
-| $L$-smooth, non-convex | $\min_k \|\nabla f(\mathbf{x}_k)\|^2 \le \dfrac{2L(f(\mathbf{x}_0) - f^\star)}{k}$ | $O(1/\varepsilon)$ to a stationary point | Sublinear |
-| $L$-smooth + convex | $f(\mathbf{x}_k) - f^\star \le \dfrac{L\|\mathbf{x}_0 - \mathbf{x}^\star\|^2}{2k}$ | $O(1/\varepsilon)$ | Sublinear, $O(1/k)$ |
-| $L$-smooth + $\mu$-strongly convex | $\|\mathbf{x}_k - \mathbf{x}^\star\| \le \left(1 - \tfrac{1}{\kappa}\right)^k \|\mathbf{x}_0 - \mathbf{x}^\star\|$ | $O(\kappa \log(1/\varepsilon))$ | **Linear** (geometric) |
-| Newton, near optimum (§8.1) | $\|\mathbf{x}_{k+1} - \mathbf{x}^\star\| \le C\|\mathbf{x}_k - \mathbf{x}^\star\|^2$ | $O(\log\log(1/\varepsilon))$ | **Quadratic** |
+| $L$-smooth, non-convex | $\min_k \lVert \nabla f(\mathbf{x}_k)\rVert ^2 \le \dfrac{2L(f(\mathbf{x}_0) - f^\star)}{k}$ | $O(1/\varepsilon)$ to a stationary point | Sublinear |
+| $L$-smooth + convex | $f(\mathbf{x}_k) - f^\star \le \dfrac{L\lVert \mathbf{x}_0 - \mathbf{x}^\star\rVert ^2}{2k}$ | $O(1/\varepsilon)$ | Sublinear, $O(1/k)$ |
+| $L$-smooth + $\mu$-strongly convex | $\lVert \mathbf{x}_k - \mathbf{x}^\star\rVert  \le \left(1 - \tfrac{1}{\kappa}\right)^k \lVert \mathbf{x}_0 - \mathbf{x}^\star\rVert $ | $O(\kappa \log(1/\varepsilon))$ | **Linear** (geometric) |
+| Newton, near optimum (§8.1) | $\lVert \mathbf{x}_{k+1} - \mathbf{x}^\star\rVert  \le C\lVert \mathbf{x}_k - \mathbf{x}^\star\rVert ^2$ | $O(\log\log(1/\varepsilon))$ | **Quadratic** |
 
 **Where the strongly convex rate comes from — the quadratic case.**
 
@@ -666,7 +666,7 @@ Works whenever projection is cheap:
 | Set $C$ | Projection $\Pi_C(\mathbf{y})$ |
 |---------|--------------------------------|
 | Box $[\mathbf{l}, \mathbf{u}]$ | $\operatorname{clip}(\mathbf{y}, \mathbf{l}, \mathbf{u})$ per coordinate |
-| L2 ball of radius $r$ | $\mathbf{y} \cdot \min(1, r/\|\mathbf{y}\|)$ |
+| L2 ball of radius $r$ | $\mathbf{y} \cdot \min(1, r/\lVert \mathbf{y}\rVert )$ |
 | Non-negative orthant | $\max(\mathbf{y}, \mathbf{0})$ |
 | Probability simplex | Sort-and-threshold in $O(n\log n)$ |
 | Affine set $A\mathbf{x} = \mathbf{b}$ | $\mathbf{y} - A^\top(AA^\top)^{-1}(A\mathbf{y} - \mathbf{b})$ ([linear_algebra.md](linear_algebra.md) §9.2) |
@@ -739,11 +739,11 @@ Convex iff $P \succeq 0$ ([linear_algebra.md](linear_algebra.md) §10). Equality
 
 | Problem | Objective | Solution | Reference |
 |---------|-----------|----------|-----------|
-| Ordinary LS | $\|A\mathbf{x} - \mathbf{b}\|^2$ | $A^\top A\,\mathbf{x} = A^\top \mathbf{b}$ | LA §13.2 |
-| Ridge | $\|A\mathbf{x} - \mathbf{b}\|^2 + \lambda\|\mathbf{x}\|^2$ | $(A^\top A + \lambda I)\mathbf{x} = A^\top \mathbf{b}$ | LA §13.5 |
-| Lasso | $\|A\mathbf{x} - \mathbf{b}\|^2 + \lambda\|\mathbf{x}\|_1$ | No closed form — ISTA / coordinate descent | §9.2, §9.4 |
-| Constrained LS | $\|A\mathbf{x} - \mathbf{b}\|^2$ s.t. $C\mathbf{x} = \mathbf{d}$ | KKT block system | LA §13.6 |
-| Nonlinear LS | $\|\mathbf{r}(\mathbf{x})\|^2$ | Gauss–Newton / LM | §8.3 |
+| Ordinary LS | $\lVert A\mathbf{x} - \mathbf{b}\rVert ^2$ | $A^\top A\,\mathbf{x} = A^\top \mathbf{b}$ | LA §13.2 |
+| Ridge | $\lVert A\mathbf{x} - \mathbf{b}\rVert ^2 + \lambda\lVert \mathbf{x}\rVert ^2$ | $(A^\top A + \lambda I)\mathbf{x} = A^\top \mathbf{b}$ | LA §13.5 |
+| Lasso | $\lVert A\mathbf{x} - \mathbf{b}\rVert ^2 + \lambda\lVert \mathbf{x}\rVert _1$ | No closed form — ISTA / coordinate descent | §9.2, §9.4 |
+| Constrained LS | $\lVert A\mathbf{x} - \mathbf{b}\rVert ^2$ s.t. $C\mathbf{x} = \mathbf{d}$ | KKT block system | LA §13.6 |
+| Nonlinear LS | $\lVert \mathbf{r}(\mathbf{x})\rVert ^2$ | Gauss–Newton / LM | §8.3 |
 
 Least squares is the one non-trivial optimization problem with a closed-form solution — which is why it appears as the inner loop of so many other methods (Gauss–Newton, Newton on a quadratic model, Kalman filtering).
 
@@ -785,7 +785,7 @@ The SGD noise ball (§6.1) cannot sit inside a basin narrower than itself, so no
 | **Residual connections** | Optimization difficulty in deep nets | Gives the gradient an identity path; smooths the landscape |
 | **Gradient clipping** | Exploding gradients, rare huge steps | Projection of $\mathbf{g}$ onto an L2 ball (§9.1) |
 | **Warmup** | Early instability with adaptive methods | Small LR until Adam's $\hat{\mathbf{v}}$ is a reliable estimate |
-| **Weight decay** | Overfitting; also improves conditioning | L2 penalty — a strongly convex term $\frac{\lambda}{2}\|\boldsymbol\theta\|^2$ raises $\mu$ |
+| **Weight decay** | Overfitting; also improves conditioning | L2 penalty — a strongly convex term $\frac{\lambda}{2}\lVert \boldsymbol\theta\rVert ^2$ raises $\mu$ |
 | **Mixed precision + loss scaling** | Underflow in fp16 gradients | Multiply loss by $2^k$ before backward, divide after |
 
 > **Key insight:** almost every deep-learning "trick" is a way of **improving the conditioning** of the loss or **controlling the noise** of the gradient estimate. The optimizer itself (AdamW) changes rarely; what evolves is the landscape it is asked to descend.
@@ -803,7 +803,7 @@ Putting the pieces together for one training step of a transformer:
 | 1 | Sample a mini-batch $\mathcal{B}$ of size $B$ | §6.2 |
 | 2 | Forward pass → loss $\mathcal{L}_\mathcal{B}(\boldsymbol\theta) = \frac{1}{B}\sum_{i \in \mathcal{B}}\ell_i$ | LA §15.1–15.2 |
 | 3 | Backward pass → $\mathbf{g} = \nabla_{\boldsymbol\theta}\mathcal{L}_\mathcal{B}$ (unbiased estimate of full gradient) | MC §4.3, LA §12 |
-| 4 | Clip: $\mathbf{g} \leftarrow \mathbf{g}\cdot\min(1, c/\|\mathbf{g}\|)$ | §9.1 |
+| 4 | Clip: $\mathbf{g} \leftarrow \mathbf{g}\cdot\min(1, c/\lVert \mathbf{g}\rVert )$ | §9.1 |
 | 5 | Update Adam moments $\mathbf{m}, \mathbf{v}$; bias-correct | §7.3 |
 | 6 | Learning rate from schedule: $\alpha_k$ = warmup then cosine | §6.3 |
 | 7 | AdamW step: $\boldsymbol\theta \leftarrow \boldsymbol\theta - \alpha_k(\hat{\mathbf{m}}/(\sqrt{\hat{\mathbf{v}}} + \epsilon) + \lambda\boldsymbol\theta)$ | §7.3 |
@@ -895,7 +895,7 @@ This is stochastic gradient **ascent** (§6.1) with extremely high-variance esti
 | Method | Constraint | Optimization tool |
 |--------|-----------|-------------------|
 | **Natural policy gradient** | Step $\Delta$ with $\frac{1}{2}\Delta^\top F\Delta \le \delta$ | Natural gradient $F^{-1}\nabla J$ (§8.4) |
-| **TRPO** | $\mathbb{E}[\text{KL}(\pi_{\text{old}} \,\|\, \pi_{\boldsymbol\theta})] \le \delta$ | Trust region; solve $F\Delta = \nabla J$ with conjugate gradient + line search |
+| **TRPO** | $\mathbb{E}[\text{KL}(\pi_{\text{old}} \parallel  \pi_{\boldsymbol\theta})] \le \delta$ | Trust region; solve $F\Delta = \nabla J$ with conjugate gradient + line search |
 | **PPO** | Clip the probability ratio $\frac{\pi_{\boldsymbol\theta}}{\pi_{\text{old}}}$ to $[1 - \epsilon, 1 + \epsilon]$ | First-order surrogate of the trust region — Adam on the clipped objective |
 
 PPO is the workhorse for RLHF fine-tuning of language models: the same AdamW loop as §12.1, with the clipped surrogate standing in for the trust-region constraint and a KL penalty to the reference model as an augmented-Lagrangian-style soft constraint (§9.3).
